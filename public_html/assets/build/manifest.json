@@ -1,0 +1,15 @@
+{
+  "src/css/app.css": {
+    "file": "app-4RI6LT5t.css",
+    "isEntry": true,
+    "src": "src/css/app.css"
+  },
+  "src/js/app.js": {
+    "css": [
+      "app-4RI6LT5t.css"
+    ],
+    "file": "app-boYV8IQe.js",
+    "isEntry": true,
+    "src": "src/js/app.js"
+  }
+}

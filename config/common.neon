@@ -1,0 +1,29 @@
+parameters:
+
+
+application:
+	errorPresenter: Error
+	mapping:
+		*: App\*Module\Presenters\*Presenter
+
+
+latte:
+	strictTypes: yes
+
+
+session:
+	expiration: 14 days
+
+
+di:
+	export:
+		parameters: no
+		tags: no
+
+extensions:
+	vite: Mskocik\Vinette\Bridges\NetteDI\ViteExtension
+
+vite:
+	manifest: assets/build/manifest.json
+	wwwDir: public_html
+	devServer: http://localhost:5174 

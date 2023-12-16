@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+{$vite->printTags('src/js/app.js')|noescape}
+	<title n:snippet="title">{ifset title}{include title|stripHtml} | {/ifset}Nette Web</title>
+</head>
+
+<body>
+	<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
+<main class="mainContent" n:snippet="content">
+	{include content}
+</main>
+	{block scripts}
+	{* <script src="https://unpkg.com/nette-forms@3/src/assets/netteForms.js"></script> *}
+	{/block}
+</body>
+</html>
