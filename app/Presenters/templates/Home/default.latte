@@ -2,7 +2,7 @@
 
 {block content}
 <div id="banner">
-	<h1 n:block=title>Congratulations!</h1>
+	<h1 n:block=title>Home</h1>
 </div>
 
 <div id="content">
@@ -25,7 +25,7 @@
 	<div n:foreach="$products as $product" class="post">
 		<div class="date">{$product->created_at|date:'F j, Y'}</div>
 
-		<h2>{$product->name}</h2>
+		<h2><a n:href="Product:show $product->id" class="ajax link link-primary link-hover">{$product->name}</a></h2>
 
 		<div>{$product->description}</div>
 	</div>

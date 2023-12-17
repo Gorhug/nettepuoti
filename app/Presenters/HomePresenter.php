@@ -4,21 +4,15 @@ declare(strict_types=1);
 
 namespace App\Presenters;
 
+use Naja\Guide\Application\UI\Presenters\BasePresenter;
 use Nette;
 
 
-final class HomePresenter extends Nette\Application\UI\Presenter
+final class HomePresenter extends BasePresenter
 {
     public function __construct(
         private Nette\Database\Explorer $database,
     ) {
-    }
-    public function beforeRender(): void
-    {
-        parent::beforeRender();
-        $this->redrawControl('title');
-        $this->redrawControl('content');
-        // $this['basketWidget']->redrawControl();
     }
 
     public function renderDefault(): void
