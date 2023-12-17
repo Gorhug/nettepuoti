@@ -9,6 +9,10 @@ use Nette;
 
 final class HomePresenter extends Nette\Application\UI\Presenter
 {
+    public function __construct(
+        private Nette\Database\Explorer $database,
+    ) {
+    }
     public function beforeRender(): void
     {
         parent::beforeRender();
@@ -16,4 +20,13 @@ final class HomePresenter extends Nette\Application\UI\Presenter
         $this->redrawControl('content');
         // $this['basketWidget']->redrawControl();
     }
+
+    public function renderDefault(): void
+    {
+        $this->template->products = $this->database
+            ->table('products')
+            ->order('created_at DESC')
+            ->limit(5);
+    }
+
 }

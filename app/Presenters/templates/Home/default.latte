@@ -18,7 +18,17 @@
             class="btn btn-primary btn-disabled"
         >
             Clicks: disabled
-        </button>
+    </button>
+
+	<h1>Items for sale</h1>
+
+	<div n:foreach="$products as $product" class="post">
+		<div class="date">{$product->created_at|date:'F j, Y'}</div>
+
+		<h2>{$product->name}</h2>
+
+		<div>{$product->description}</div>
+	</div>
 </div>
 
 <style>
