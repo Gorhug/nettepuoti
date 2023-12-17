@@ -1,0 +1,15 @@
+{define basic-form, $form}
+<form n:name=$form class="form ajax">
+	<ul class="errors" n:ifcontent>
+		<li class="alert alert-error" n:foreach="$form->getOwnErrors() as $error">{$error}</li>
+	</ul>
+
+	<div class="form-control" n:foreach="$form->getControls() as $input"
+		n:if="$input->getOption(type) !== hidden">
+		{label $input, class: "label" /}
+        {* <input n:name=$input-> class="input w-72 sm:w-96 invalid:input-error valid:input-success placeholder-shown:border-gray-500"size=20 autofocus></label> *}
+		{input $input, class: "input w-72 sm:w-96 invalid:input-error valid:input-success placeholder-shown:border-gray-500"}
+		{inputError $input}
+	</div>
+</form>
+{/define}
