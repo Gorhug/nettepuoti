@@ -22,12 +22,15 @@
 
 	<h1>Items for sale</h1>
 
-	<div n:foreach="$products as $product" class="post">
-		<div class="date">{$product->created_at|date:'F j, Y'}</div>
-
-		<h2><a n:href="Product:show $product->id" class="ajax link link-primary link-hover">{$product->name}</a></h2>
-
-		<div>{$product->description}</div>
+	<div class="card w-96 bg-base-100 shadow-xl" n:foreach="$products as $product">
+		<div class="card-body">
+			<a class="card-title link ajax link-primary" n:href="Product:show $product->id">{$product->name}</a>
+			<div class="date">{$product->created_at|date:'F j, Y'}</div>
+			<div class="post">{$product->description}</div>
+			{* <div class="card-actions justify-end">
+				<a n:href="Edit:edit $product->id" class="btn btn-primary ajax">Edit this product</a>
+    		</div> *}
+  		</div>
 	</div>
 </div>
 
