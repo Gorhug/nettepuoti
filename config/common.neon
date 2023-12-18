@@ -5,7 +5,8 @@ application:
 	errorPresenter: Error
 	mapping:
 		*: App\*Module\Presenters\*Presenter
-
+		Admin: App\Module\Admin\Presenters\*Presenter
+		Auxiliary: App\Module\Auxiliary\Presenters\*Presenter
 
 latte:
 	strictTypes: yes
