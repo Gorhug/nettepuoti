@@ -2,8 +2,13 @@
 
 <p><a n:href="Home:default" class="link link-primary link-hover ajax">← back to homepage</a></p>
 
-<div class="date">{$product->created_at|date:'F j, Y'}</div>
-
-<h1 n:block="title">{$product->name}</h1>
-
-<div class="post">{$product->description}</div>
+<div class="card w-96 bg-base-100 shadow-xl">
+  <div class="card-body">
+    <h2 class="card-title" n:block="title">{$product->name}</h2>
+    <div class="date">{$product->created_at|date:'F j, Y'}</div>
+    <div class="post">{$product->description}</div>
+    <div class="card-actions justify-end">
+      <a n:href="Edit:edit $product->id" class="btn btn-primary ajax">Edit this product</a>
+    </div>
+  </div>
+</div>

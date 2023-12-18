@@ -24,10 +24,10 @@ final class EditPresenter extends BasePresenter
             // ->addRule($form::Float, 'Price must be a decimal number')
             ->addRule($form::Min, 'Price may not be negative', 0);
         $form->addSubmit('send', 'Save and publish');
-        
+
         // $form->addProtection();
 
-        
+
         $form->onSuccess[] = $this->productFormSucceeded(...);
 
         return $form;
@@ -35,12 +35,36 @@ final class EditPresenter extends BasePresenter
 
     private function productFormSucceeded(array $data): void
     {
-        $product = $this->database
-            ->table('products')
-            ->insert($data);
+        $productId = $this->getParameter('productId');
 
+        if ($productId) {
+            $product = $this->database
+                ->table('products')
+                ->get($productId);
+            $product->update($data);
+    
+        } else {
+            $product = $this->database
+                ->table('posts')
+                ->insert($data);
+        }
         $this->flashMessage('Product was published', 'alert-success');
         $this->redirect('Product:show', $product->id);
     }
+
+    public function renderEdit(int $productId): void
+    {
+        $product = $this->database
+            ->table('products')
+            ->get($productId);
+
+        if (!$product) {
+            $this->error('Product not found');
+        }
+
+        $this->getComponent('productForm')
+            ->setDefaults($product->toArray());
+    }
+
 
 }
