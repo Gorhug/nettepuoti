@@ -23,6 +23,7 @@ di:
 
 extensions:
 	vite: Mskocik\Vinette\Bridges\NetteDI\ViteExtension
+	parsedown: Contributte\Parsedown\DI\ParsedownExtraExtension
 
 vite:
 	manifest: assets/build/manifest.json

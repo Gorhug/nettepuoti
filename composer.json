@@ -19,7 +19,8 @@
 		"nette/utils": "^4.0",
 		"latte/latte": "^3.0",
 		"tracy/tracy": "^2.9",
-		"mskocik/vinette": "^1.0"
+		"mskocik/vinette": "^1.0",
+		"contributte/latte-parsedown-extra": "^2.0"
 	},
 	"require-dev": {
 		"nette/tester": "^2.4",
