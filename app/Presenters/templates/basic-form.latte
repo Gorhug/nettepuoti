@@ -1,5 +1,6 @@
 {define basic-form, $form}
-<form n:name=$form class="form-control">
+{var $testing=true}
+<form n:name=$form class="form-control ajax">
 	{* List for form-level error messages *}
 	<ul class="alert alert-error" n:ifcontent>
 		<li n:foreach="$form->ownErrors as $error">{$error}</li>
@@ -10,6 +11,8 @@
 	</fieldset>
 
 	{include controls $form->getControls()}
+
+	<button n:if="$testing" formnovalidate class="btn btn-warning">Server validation test</button>
 </form>
 
 
@@ -17,7 +20,7 @@
 	{* Loop over form controls and render each one *}
 	<div n:foreach="$controls as $control"
 		n:if="!$control->getOption(rendered) && $control->getOption(type) !== hidden"
-		n:class="mb-3, row, $control->required ? required, $control->error ? 'border-error border-2'">
+		n:class="mb-3, row, $control->required ? required">
 
 		{* Label for the control *}
 		<div class="col-sm-3 label">{label $control /}</div>

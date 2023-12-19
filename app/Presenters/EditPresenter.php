@@ -45,7 +45,7 @@ final class EditPresenter extends BasePresenter
     
         } else {
             $product = $this->database
-                ->table('posts')
+                ->table('products')
                 ->insert($data);
         }
         $this->flashMessage('Product was published', 'alert-success');
