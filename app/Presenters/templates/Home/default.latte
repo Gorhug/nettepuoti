@@ -1,17 +1,15 @@
 {* This is the welcome page, you can delete it *}
 
 {block content}
-<div id="banner">
-	<h1 n:block=title>Home</h1>
-</div>
-
-<div id="content">
+<div class="max-w-md">
+      {define title}Home{/define}
 <div class="prose">
 {block|parsedown}
 # gorhug.fi
 ----
 Tervetuloa kotisivuilleni. Ne ovat mikstuura blogia ja demoa - tunnustan olevani webohjelmoija... 😱
-{/block}</div>
+{/block}
+</div>
 	<button 
             class="btn btn-primary btn-disabled"
         >
@@ -20,12 +18,11 @@ Tervetuloa kotisivuilleni. Ne ovat mikstuura blogia ja demoa - tunnustan olevani
 
 	<h1>Items for sale</h1>
 
-	<div class="card w-96 bg-base-100 shadow-xl" n:foreach="$products as $product">
+	<div class="card w-96 bg-base-100 shadow-xl my-4" n:foreach="$products as $product">
 		<div class="card-body">
 			<a class="card-title link ajax link-primary" n:href="Product:show $product->id">{$product->name}</a>
 			<div class="date">{$product->created_at|date:'F j, Y'}</div>
-			<div class="prose">{block|trim|parsedown}
-			{$product->description}{/block}</div>
+			<div class="prose">{block|trim|parsedown}{$product->description}{/block}</div>
 			{* <div class="card-actions justify-end">
 				<a n:href="Edit:edit $product->id" class="btn btn-primary ajax">Edit this product</a>
     		</div> *}
