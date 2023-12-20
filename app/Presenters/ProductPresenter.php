@@ -12,11 +12,11 @@ final class ProductPresenter extends BasePresenter
 	) {
 	}
 
-	public function renderShow(int $productId): void
+	public function renderShow(int $id): void
 	{
 		$product = $this->database
 			->table('products')
-			->get($productId);
+			->get($id);
 
 		if (!$product) {
 			$this->error('Product not found');
@@ -24,4 +24,17 @@ final class ProductPresenter extends BasePresenter
 
 		$this->template->product = $product;
 	}
+// 	public function renderShow(string $name): void 
+// 	{
+// 		$product = $this->database
+// 			->table('products')
+// 			->where('name', $name)
+// 			->fetch();
+
+// 		if (!$product) {
+// 			$this->error('Product not found');
+// 		}
+
+// 		$this->template->product = $product;
+// 	}
 }

@@ -8,7 +8,7 @@
     <div class="date">{$product->created_at|date:'F j, Y'}</div>
     <div class="prose">{block|trim|parsedown}{$product->description}{/block}</div>
     <div class="card-actions justify-end">
-      <a n:href="Edit:edit $product->id" class="btn btn-primary ajax">Edit this product</a>
+      <a n:if="$user->isLoggedIn()" n:href="Edit:edit $product->id" class="btn btn-primary ajax">Edit this product</a>
     </div>
   </div>
 </div>

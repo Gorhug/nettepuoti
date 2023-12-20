@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Admin\Presenters;
 
 use App\Forms;
+use Naja\Guide\Application\UI\Presenters\BasePresenter;
 use Nette;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
@@ -13,7 +14,7 @@ use Nette\Application\UI\Form;
 /**
  * Presenter for sign-in and sign-up actions.
  */
-final class SignPresenter extends Nette\Application\UI\Presenter
+final class SignPresenter extends BasePresenter
 {
 	/**
 	 * Stores the previous page hash to redirect back after successful login.

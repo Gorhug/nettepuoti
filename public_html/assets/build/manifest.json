@@ -1,15 +1,25 @@
 {
   "src/css/app.css": {
-    "file": "app-m2MY1P3b.css",
+    "file": "app-10h7Gril.css",
     "isEntry": true,
     "src": "src/css/app.css"
   },
   "src/js/app.js": {
     "css": [
-      "app-m2MY1P3b.css"
+      "app-10h7Gril.css"
     ],
-    "file": "app-kUtXIBPC.js",
+    "file": "app-CZcjpSef.js",
     "isEntry": true,
     "src": "src/js/app.js"
+  },
+  "src/js/onDomReady.js": {
+    "file": "onDomReady-w40geAFS.js",
+    "isEntry": true,
+    "src": "src/js/onDomReady.js"
+  },
+  "src/js/spinner.js": {
+    "file": "spinner-w40geAFS.js",
+    "isEntry": true,
+    "src": "src/js/spinner.js"
   }
 }

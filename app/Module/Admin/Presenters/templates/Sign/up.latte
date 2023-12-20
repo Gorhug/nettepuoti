@@ -1,9 +1,10 @@
 {* The sign-up page *}
 
 {block content}
-<h1 n:block=title>Sign Up</h1>
+<div class="flex flex-col">
+<h1 n:block=title class="text-5xl">Sign Up</h1>
 
 {* Include the generic form template for sign-up *}
 {include "../@form.latte", name: signUpForm}
 
-<p class="text-center"><a n:href="in">Already have an account? Log in.</a></p>
+<p class="text-center"><a n:href="in" class="link link-primary ajax">Already have an account? Log in.</a></p>

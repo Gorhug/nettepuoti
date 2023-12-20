@@ -1,16 +1,14 @@
 {*import basic-form.latte*}
 <!DOCTYPE html>
-{var $user = false}
 {define links}
 
-    {if $user}
-        <li><a href="/home">{$user['username']}</a></li>
-        <li><a href="/auth/logout" class="text-warning">Logout</a></li>
+    {if $user->isLoggedIn()}
+        <li><a n:href=":Admin:Dashboard:default" class="ajax">{$user->getIdentity()->username}</a></li>
+		<li><a n:href=":Edit:create" class="ajax">Add a product</a></li>
+        <li><a n:href=":Admin:Sign:out" class="text-warning">Logout</a></li>
     {else}
-		<li><a class="ajax" n:href=":Edit:create">Add a product</a></li>
-
-        <li><a n:href=":Admin:Sign:up">Register</a></li>
-        <li><a n:href=":Admin:Sign:in">Login</a></li>
+        <li><a n:href=":Admin:Sign:up" class="ajax">Register</a></li>
+        <li><a n:href=":Admin:Sign:in" class="ajax">Login</a></li>
     {/if}
 {/define}
 <html>

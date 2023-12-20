@@ -16,6 +16,7 @@
         "vite": "^5.0.10"
     },
     "dependencies": {
+        "htmx.org": "^1.9.9",
         "naja": "^2.6.1",
         "nette-forms": "^3.3.5"
     }
