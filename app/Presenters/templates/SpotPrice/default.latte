@@ -12,21 +12,22 @@
 
 {foreach $spotPrices as $price}
     <thead>
-      <tr><th>{$price->hour|date:'l'}</th></tr>
+      <tr><th>{$price->hour|date:'l d.m.Y'}</th><th class="text-right">snt/kWh</th>
+      </tr>
     </thead>
 	<tbody>
         <tr class="text-warning">
-            <td class="text-neutral-content">{$price->hour|date:'H'} - {$iterator->last ? '01' : ($iterator->nextValue->hour|date:'H')}</td>
+            <td class="text-base-content">{$price->hour|date:'H'} - {$iterator->last ? '01' : ($iterator->nextValue->hour|date:'H')}</td>
             {var $p = $price->euro_mwh}
             {var $pr = $p > 0 ? $p/10*$VAT : $p/10}
-            <td n:class="text-right, $pr > $warn ? text-error, $pr < $green ? text-success">{$pr|number:2,',',' '}</td>
+            <td n:class="text-right, font-bold, $pr > $warn ? text-error, $pr < $green ? text-lime-300">{$pr|number:2,',',' '}</td>
         </tr>
-		{iterateWhile ($price->hour|date:'D') === ($iterator->nextValue->hour|date:'D')}
+		{iterateWhile ($price->hour|date:'l') === ($iterator->nextValue->hour|date:'l')}
         <tr class="text-warning">
-            <td class="text-neutral-content">{$price->hour|date:'H'} - {$iterator->last ? '01' : ($iterator->nextValue->hour|date:'H')}</td>
+            <td class="text-base-content">{$price->hour|date:'H'} - {$iterator->last ? '01' : ($iterator->nextValue->hour|date:'H')}</td>
             {var $p = $price->euro_mwh}
             {var $pr = $p > 0 ? $p/10*$VAT : $p/10}
-            <td n:class="text-right, $pr > $warn ? text-error, $pr < $green ? text-success">{$pr|number:2,',',' '}</td>
+            <td n:class="text-right, font-bold, $pr > $warn ? text-error, $pr < $green ? text-lime-300">{$pr|number:2,',',' '}</td>
         </tr>
 		{/iterateWhile}
 	</tbody>
@@ -34,7 +35,7 @@
     <tfoot>
        <tr>
         <th>Hour</th>
-        <th>Price</th>
+        <th class="text-right">Price</th>
       </tr>
     </tfoot>
   </table>
