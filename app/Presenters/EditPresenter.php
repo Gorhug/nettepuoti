@@ -9,6 +9,7 @@ final class EditPresenter extends BasePresenter
 {
     public function __construct(
         private Nette\Database\Explorer $database,
+        private \App\Forms\FormFactory $factory,
     ) {
     }
 
@@ -23,7 +24,7 @@ final class EditPresenter extends BasePresenter
 
     protected function createComponentProductForm(): Form
     {
-        $form = new Form;
+        $form = $this->factory->create();
         $form->addText('name', 'Name:')
             ->setRequired('A name for the product is required');
         $form->addTextArea('description', 'Description:')

@@ -14,7 +14,7 @@ final class ProductFacade
 	{
 		return $this->database
 			->table('products')
-			->where('created_at < ', new \DateTime)
+			->where('created_at < ', (new \DateTimeImmutable())->format(DATE_ATOM))
 			->order('created_at DESC');
 	}
 }
