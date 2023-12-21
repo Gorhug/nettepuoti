@@ -10,11 +10,13 @@
         <li><a n:href=":Admin:Sign:up" class="ajax">Register</a></li>
         <li><a n:href=":Admin:Sign:in" class="ajax">Login</a></li>
     {/if}
+		<li><a n:href="SpotPrice:">SPOT</a></li>
 {/define}
 <html data-theme="gorhug">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
+	{Tracy\Debugger::renderLoader()|noescape}
 {$vite->printTags('src/js/app.js')|noescape}
 	<title n:snippet="title">{ifset title}{include title|stripHtml} | {/ifset}gorhug.fi</title>
 </head>

@@ -1,0 +1,41 @@
+{block content}
+{var $VAT = 1.24}
+{var $warn = 12}
+{var $green = 8}
+<div class="flex flex-col">
+<h1 n:block=title class="text-5xl">SPOT prices</h1>
+<br>
+<h2 class="text-2xl">Prices in euro cent / kWh, including VAT</h2>
+<div class="overflow-x-auto h-96">
+  <table class="table table-zebra table-pin-rows">
+
+
+{foreach $spotPrices as $price}
+    <thead>
+      <tr><th>{$price->hour|date:'l'}</th></tr>
+    </thead>
+	<tbody>
+        <tr class="text-warning">
+            <td class="text-neutral-content">{$price->hour|date:'H'} - {$iterator->last ? '01' : ($iterator->nextValue->hour|date:'H')}</td>
+            {var $p = $price->euro_mwh}
+            {var $pr = $p > 0 ? $p/10*$VAT : $p/10}
+            <td n:class="text-right, $pr > $warn ? text-error, $pr < $green ? text-success">{$pr|number:2,',',' '}</td>
+        </tr>
+		{iterateWhile ($price->hour|date:'D') === ($iterator->nextValue->hour|date:'D')}
+        <tr class="text-warning">
+            <td class="text-neutral-content">{$price->hour|date:'H'} - {$iterator->last ? '01' : ($iterator->nextValue->hour|date:'H')}</td>
+            {var $p = $price->euro_mwh}
+            {var $pr = $p > 0 ? $p/10*$VAT : $p/10}
+            <td n:class="text-right, $pr > $warn ? text-error, $pr < $green ? text-success">{$pr|number:2,',',' '}</td>
+        </tr>
+		{/iterateWhile}
+	</tbody>
+{/foreach}
+    <tfoot>
+       <tr>
+        <th>Hour</th>
+        <th>Price</th>
+      </tr>
+    </tfoot>
+  </table>
+</div>

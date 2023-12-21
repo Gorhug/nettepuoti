@@ -15,6 +15,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
+	{Tracy\Debugger::renderLoader()|noescape}
 {$vite->printTags('src/js/app.js')|noescape}
 	<title n:snippet="title">{ifset title}{include title|stripHtml} | {/ifset}gorhug.fi</title>
 </head>
