@@ -4,7 +4,7 @@
 
     {if $user->isLoggedIn()}
         <li><a n:href=":Admin:Dashboard:default" class="ajax">{$user->getIdentity()->username}</a></li>
-		<li><a n:href="Edit:create" class="ajax">Add a product</a></li>
+		<li><a n:if="$user->isAllowed('product')" n:href="Edit:create" class="ajax">Add a product</a></li>
         <li><a n:href=":Admin:Sign:out" class="text-warning">Logout</a></li>
     {else}
         <li><a n:href=":Admin:Sign:up" class="ajax">Register</a></li>
@@ -19,7 +19,7 @@
 	<title n:snippet="title">{ifset title}{include title|stripHtml} | {/ifset}gorhug.fi</title>
 </head>
 
-<body hx-boost="true">
+<body hx-boost="true" hx-indicator="#indicator">
 	<div class="drawer">
 		<input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
 		<div class="drawer-content flex flex-col">
@@ -45,7 +45,7 @@
 				</div>
 			</div>
 			{* <span class="bg-clip-text text-transparent box-decoration-clone bg-gradient-to-br from-primary via-accent to-secondary text-center text-9xl h-48">gorhug.fi</span> *}
-			<div class="toast toast-center toast-middle z-50 mainContent hidden"><span class="loading loading-bars text-primary loading-lg"></span></div>
+			<div id="indicator" class="htmx-indicator toast toast-center toast-middle z-50 mainContent"><span class="loading loading-bars text-primary loading-lg"></span></div>
 			<div class="hero min-h-screen bg-base-200">
 				<main class="hero-content text-center" n:snippet="content">
 				<div n:ifcontent class="toast toast-top toast-center">

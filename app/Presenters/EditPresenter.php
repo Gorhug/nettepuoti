@@ -12,6 +12,15 @@ final class EditPresenter extends BasePresenter
     ) {
     }
 
+    protected function startup()
+    {
+        parent::startup();
+        if (!$this->getUser()->isAllowed('product')) {
+            $this->error('You do not have the right to edit products', 403);
+        }
+    }
+
+
     protected function createComponentProductForm(): Form
     {
         $form = new Form;
@@ -43,7 +52,7 @@ final class EditPresenter extends BasePresenter
                 ->table('products')
                 ->get($productId);
             $product->update($data);
-    
+
         } else {
             $product = $this->database
                 ->table('products')

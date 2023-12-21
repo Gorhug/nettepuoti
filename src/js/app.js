@@ -1,4 +1,5 @@
 import '../css/app.css';
+import '../css/htmx.css';
 import 'htmx.org';
 // import naja from 'naja';
 // import netteForms from 'nette-forms';

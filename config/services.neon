@@ -1,6 +1,6 @@
 services:
 	- App\Router\RouterFactory::createRouter
-
+	- App\Model\AuthorizatorFactory::create
 
 search:
 	-	in: %appDir%

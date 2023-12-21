@@ -50,7 +50,8 @@ final class SignPresenter extends BasePresenter
 	protected function createComponentSignUpForm(): Form
 	{
 		return $this->signUpFactory->create(function (): void {
-			$this->redirect('Dashboard:');
+			$this->flashMessage('Your account was created, you may log in now.', 'alert-success');
+			$this->redirect('Sign:in');
 		});
 	}
 
