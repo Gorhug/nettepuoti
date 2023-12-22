@@ -99,7 +99,7 @@ final class SpotPriceFacade
             if ($new) {
                 try {
                     $result = $this->database->query('INSERT INTO price ? ON CONFLICT DO NOTHING', $new);
-                    echo 'Inserted ' .  $result->getRowCount() . ' rows\n';
+                    echo 'Inserted ' .  $result->getRowCount() . " rows\n";
                 } catch (\Exception $e) {
                     error_log($e->getMessage());
                 }

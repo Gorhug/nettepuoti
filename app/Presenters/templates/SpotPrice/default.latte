@@ -16,14 +16,14 @@
         </tr>
       </thead>
     <tbody>
-          <tr class="text-warning">
+          <tr class="text-orange-500">
               <td class="text-base-content">{$price->hour|date:'H'} - {$iterator->last ? '01' : ($iterator->nextValue->hour|date:'H')}</td>
               {var $p = $price->euro_mwh}
               {var $pr = $p > 0 ? $p/10*$VAT : $p/10}
               <td n:class="text-right, font-bold, $pr > $warn ? text-error, $pr < $green ? text-lime-300">{$pr|number:2,',',' '}</td>
           </tr>
       {iterateWhile ($price->hour|date:'l') === ($iterator->nextValue->hour|date:'l')}
-          <tr class="text-warning">
+          <tr class="text-orange-500">
               <td class="text-base-content">{$price->hour|date:'H'} - {$iterator->last ? '01' : ($iterator->nextValue->hour|date:'H')}</td>
               {var $p = $price->euro_mwh}
               {var $pr = $p > 0 ? $p/10*$VAT : $p/10}
