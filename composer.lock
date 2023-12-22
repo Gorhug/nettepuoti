@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1085aaecc4c74a539d9e74fe17315b30",
+    "content-hash": "ffa3b92e901391699dd66252bfbaf691",
     "packages": [
         {
             "name": "contributte/latte-parsedown-extra",
@@ -258,6 +258,56 @@
                 "source": "https://github.com/nette/latte/tree/v3.0.12"
             },
             "time": "2023-11-13T11:31:09+00:00"
+        },
+        {
+            "name": "milo/embedded-svg",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/milo/embedded-svg.git",
+                "reference": "91ec679f7f386c6a63721b41a10e8b6093a357e5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/milo/embedded-svg/zipball/91ec679f7f386c6a63721b41a10e8b6093a357e5",
+                "reference": "91ec679f7f386c6a63721b41a10e8b6093a357e5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "latte/latte": "^v2.4.0|^v3.0.0",
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Miloslav Hůla",
+                    "email": "miloslav.hula@gmail.com",
+                    "homepage": "https://github.com/milo"
+                }
+            ],
+            "description": "Latte macro to embed SVG from file into HTML",
+            "keywords": [
+                "embedded",
+                "latte",
+                "macro",
+                "nette",
+                "svg"
+            ],
+            "support": {
+                "issues": "https://github.com/milo/embedded-svg/issues",
+                "source": "https://github.com/milo/embedded-svg/tree/v1.3.0"
+            },
+            "time": "2022-05-23T08:38:33+00:00"
         },
         {
             "name": "mskocik/vinette",

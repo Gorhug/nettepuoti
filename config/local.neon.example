@@ -1,0 +1,8 @@
+parameters:
+	entsoeToken: 
+
+database:
+	# dsn: 'sqlite::memory:'
+	dsn: 'pgsql:host=localhost;port=5432;dbname=nettetesti;'
+	user: 
+	password: 

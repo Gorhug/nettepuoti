@@ -24,8 +24,13 @@ di:
 extensions:
 	vite: Mskocik\Vinette\Bridges\NetteDI\ViteExtension
 	parsedown: Contributte\Parsedown\DI\ParsedownExtraExtension
+	embeddedSvg: Milo\EmbeddedSvg\Extension
 
 vite:
 	manifest: assets/build/manifest.json
 	wwwDir: public_html
 	devServer: http://localhost:5174 
+
+embeddedSvg:
+	baseDir: %wwwDir%/img
+	macroName: svgIcon

@@ -1,4 +1,6 @@
 config/local.neon
+config/local.neon.*
+!config/local.neon.example
 vendor
 node_modules
 
