@@ -1,9 +1,14 @@
 {block content}
 
-<div class="flex flex-col">
-<h1 class="text-5xl">Administation</h1>
+<div class="flex flex-col space-y-8">
+<h1 class="text-5xl" n:block=title>Dashboard</h1>
 
-<p>If you see this page, it means you have successfully logged in.</p>
+<p>You have successfully logged in.</p>
 
+{if $user->isAllowed('product')}
+    <p>You can add and edit products.</p>
+{else}
+    <p>You do not have permissions on this site.</p>
+{/if}
 <p><a n:href="Sign:out" class="link link-primary">Sign out</a></p>
 </div>

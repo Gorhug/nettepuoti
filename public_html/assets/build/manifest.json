@@ -1,14 +1,20 @@
 {
   "src/css/app.css": {
-    "file": "app-10h7Gril.css",
+    "file": "app-X5YRdO67.css",
     "isEntry": true,
     "src": "src/css/app.css"
   },
+  "src/css/htmx.css": {
+    "file": "htmx-jleTPgU_.css",
+    "isEntry": true,
+    "src": "src/css/htmx.css"
+  },
   "src/js/app.js": {
     "css": [
-      "app-10h7Gril.css"
+      "app-X5YRdO67.css",
+      "htmx-jleTPgU_.css"
     ],
-    "file": "app-CZcjpSef.js",
+    "file": "app-VLV0GbCI.js",
     "isEntry": true,
     "src": "src/js/app.js"
   },

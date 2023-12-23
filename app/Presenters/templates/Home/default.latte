@@ -10,21 +10,21 @@
 {block|parsedown}
 # Welcome
 ----
-Tervetuloa kotisivuilleni. Ne ovat mikstuura blogia ja demoa - tunnustan olevani webohjelmoija... 😱
+Welcome to my homepage. This is a mixture of blog (for now) and demo, as I am, *I must confess*, a web developer. 😱
 {/block}
 </div>
-	<button 
+	{* <button 
             class="btn btn-primary btn-disabled"
         >
             Clicks: disabled
-    </button>
+    </button> *}
 
-	<h1>Items for sale</h1>
+	{* <h1>Items for sale</h1> *}
 
 	<div class="card w-96 bg-base-100 shadow-xl my-4" n:foreach="$products as $product">
 		<div class="card-body">
 			<a class="card-title link ajax link-primary" n:href="Product:show $product->id">{$product->name}</a>
-			<div class="date">{$product->created_at|date:'F j, Y'}</div>
+			<div class="text-left italic">{$product->created_at|date:'F jS, Y'}</div>
 			<div class="prose">{block|trim|parsedown}{$product->description}{/block}</div>
 			{* <div class="card-actions justify-end">
 				<a n:href="Edit:edit $product->id" class="btn btn-primary ajax">Edit this product</a>

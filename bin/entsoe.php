@@ -23,7 +23,7 @@ $manager = $container->getByType(App\Model\SpotPriceFacade::class);
 
 try {
 	$manager->updateSpotPrices();
-	echo "Prices updated\n";
+	// echo "Prices updated\n";
 
 } catch (Exception $e) {
 	echo $e->getMessage() . "\n";

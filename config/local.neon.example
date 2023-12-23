@@ -1,8 +1,20 @@
 parameters:
 	entsoeToken: 
+	adminEmail: ''
+	adminName: ''
+	botEmail: ''
 
 database:
 	# dsn: 'sqlite::memory:'
 	dsn: 'pgsql:host=localhost;port=5432;dbname=nettetesti;'
 	user: 
 	password: 
+
+mail:
+	# use SmtpMailer
+	smtp: true       # (bool) defaults to false
+	host: 'sandbox.smtp.mailtrap.io'        # (string)
+	port: 2525        # (int)
+	username: ''    # (string)
+	password: ''    # (string)
+	encryption: 'tls'  # (ssl|tls|null) defaults to null (has alias 'secure')
