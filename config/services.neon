@@ -2,7 +2,10 @@ services:
 	- App\Router\RouterFactory::createRouter
 	- App\Model\AuthorizatorFactory::create
 	- App\Settings(
-		%entsoeToken%
+		%entsoeToken%,
+		%adminEmail%,
+		%adminName%,
+		%botEmail%
 	)
 
 search:

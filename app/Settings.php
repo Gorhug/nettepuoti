@@ -9,5 +9,8 @@ class Settings
 		// public string $appDir,
 		// and so on
         public string $entsoeToken,
+		public string $adminEmail,
+		public string $adminName,
+		public string $botEmail,
 	) {}
 }
