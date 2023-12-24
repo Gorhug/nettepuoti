@@ -84,6 +84,13 @@ final class UserFacade implements Nette\Security\Authenticator
 			throw new DuplicateNameException;
 		}
 	}
+
+	public function changeRole(string $username, string $role): void
+	{
+		$this->database->table(self::TableName)
+			->where(self::ColumnName, $username)
+			->update([self::ColumnRole => $role]);
+	}
 }
 
 

@@ -1,0 +1,4 @@
+- menuikoni väärä iPhonessa
+- server validation test nappi pois julkaisusta
+- valikko varjo?
+- leipätekstin tasaus vasemmalle?
