@@ -1,7 +1,6 @@
-{* Generic form template for Bootstrap v5 *}
-
-{parameters $name}
-<form n:name=$name class="form-control">
+{define basic-form, $form}
+{var $testing=false}
+<form n:name=$form class="ajax">
 	{* List for form-level error messages *}
 	<ul class="alert alert-error" n:ifcontent>
 		<li n:foreach="$form->ownErrors as $error">{$error}</li>
@@ -12,14 +11,17 @@
 	</fieldset>
 
 	{include controls $form->getControls()}
+
+	<button n:if="$testing" formnovalidate class="btn btn-warning">Server validation test</button>
 </form>
 
+{* <script src="{='src/js/liveform.js'|asset}" type="module"></script> *}
 
 {define controls array $controls}
 	{* Loop over form controls and render each one *}
 	<div n:foreach="$controls as $control"
 		n:if="!$control->getOption(rendered) && $control->getOption(type) !== hidden"
-		n:class="mb-3, row, $control->required ? required, $control->error ? 'border-error border-2'">
+		n:class="mb-3, row, form-control, $control->required ? required">
 
 		{* Label for the control *}
 		<div class="col-sm-3 label">{label $control /}</div>
@@ -43,13 +45,17 @@
 
 {define control Nette\Forms\Controls\BaseControl $control}
 	{* Conditionally render controls based on their type with appropriate Bootstrap classes *}
-	{if $control->getOption(type) in [text, select, textarea, datetime, file]}
+	{switch $control->getOption(type)}
+	{case text, select, datetime, file}
 		{input $control class => "input w-72 sm:w-96 invalid:input-error valid:input-success placeholder-shown:border-gray-500", placeholder: ''}
 
-	{elseif $control->getOption(type) === button}
+	{case textarea}
+		{input $control class => "input w-72 sm:w-96 h-96 invalid:input-error valid:input-success placeholder-shown:border-gray-500", placeholder: ''}
+
+	{case button}
 		{input $control class => "btn btn-primary"}
 
-	{elseif $control->getOption(type) in [checkbox, radio]}
+	{case checkbox, radio}
 		{var $items = $control instanceof Nette\Forms\Controls\Checkbox ? [''] : $control->getItems()}
 		<div n:foreach="$items as $key => $foo" class="form-control">
 			<div class="label">
@@ -58,10 +64,12 @@
 			</div>
 		</div>
 
-	{elseif $control->getOption(type) === color}
+	{case color}
 		{input $control class => "form-control form-control-color"}
 
-	{else}
+	{default}
 		{input $control}
-	{/if}
+	{/switch}
+{/define}
+
 {/define}

@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "htmx.org": "^1.9.9",
+        "live-form-validation": "^1.10.0",
         "naja": "^2.6.1",
         "nette-forms": "^3.3.5"
     }

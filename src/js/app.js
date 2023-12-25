@@ -1,10 +1,21 @@
 import '../css/app.css';
 import '../css/htmx.css';
+// import 'live-form-validation';
+
 import 'htmx.org';
+// import { LiveForm, Nette } from 'live-form-validation';
+
+// LiveForm.setOptions( {
+//     controlErrorClass: 'input-invalid',
+//     controlValidClass: 'input-valid',
+//     messageErrorClass: 'text-error',
+//     showMessageClassOnParent: false,
+//     messageErrorPrefix: '⚠️&nbsp;',
+ 
+// });
 // import naja from 'naja';
-// import netteForms from 'nette-forms';
 // import {SpinnerExtension} from './spinner';
-// netteForms.initOnLoad();
+// Nette.initOnLoad();
 
 
 // naja.registerExtension(new SpinnerExtension('.mainContent'));

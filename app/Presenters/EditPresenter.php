@@ -28,10 +28,11 @@ final class EditPresenter extends BasePresenter
         $form->addText('name', 'Name:')
             ->setRequired('A name for the product is required');
         $form->addTextArea('description', 'Description:')
-            ->setRequired('A description of the product is required')
-            ->setHtmlAttribute('hx-trigger', 'change, keyup delay:200ms changed');
+            ->setRequired('A description of the product is required');
+            // ->setHtmlAttribute('hx-trigger', 'change, keyup delay:200ms changed');
         $form->addFloat('price', 'Price (€):')
             ->setRequired('A price for the product is required')
+            ->setHtmlAttribute('step', 0.01)
             // ->addRule($form::Float, 'Price must be a decimal number')
             ->addRule($form::Min, 'Price may not be negative', 0);
         $form->addSubmit('send', 'Save and publish');

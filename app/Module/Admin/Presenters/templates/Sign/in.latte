@@ -5,7 +5,8 @@
 <h1 n:block=title class="text-5xl">Sign In</h1>
 
 {* Include the generic form template for sign-in *}
-{include "../@form.latte", name: signInForm}
+{embed basic-form, form: signInForm}
+{/embed}
 
 <p class="text-center"><a n:href="up" class="link link-primary ajax">Don't have an account yet? Sign up.</a></p>
 </div>

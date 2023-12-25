@@ -1,4 +1,8 @@
-- menuikoni väärä iPhonessa
-- server validation test nappi pois julkaisusta
+- menuikoni väärä iPhonessa (puoliksi korjattu?)
+- server validation test nappi pois julkaisusta (korjattu)
 - valikko varjo?
 - leipätekstin tasaus vasemmalle?
+- käännös
+- käyttäjähallinta
+- kuvalataus
+- ariat admin-layout, ehkä yhtenäiset layoutit?
