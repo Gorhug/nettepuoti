@@ -2,17 +2,18 @@
 {var $VAT = 1.24}
 {var $warn = 12}
 {var $green = 8}
-<div class="flex flex-col">
-<h1 n:block=title class="text-5xl">SPOT prices</h1>
+<div class="flex flex-col spacing-4">
+<h1 n:block=title class="text-5xl hidden">SPOT prices</h1>
 <br>
-<h2 class="text-2xl">Prices in euro cent / kWh, including VAT</h2>
+<h2 class="text-2xl">Day-ahead prices for electricity in Finland</h2>
+<p>Prices listed in eurocent / kWh, including VAT</p>
   <div class="overflow-x-auto h-96">
     <table class="table table-zebra table-pin-rows">
 
 
   {foreach $spotPrices as $price}
       <thead>
-        <tr><th>{$price->hour|date:'l d.m.Y'}</th><th class="text-right">snt/kWh</th>
+        <tr><th>{$price->hour|date:'l d.m.Y'}</th><th class="text-right">cent/kWh</th>
         </tr>
       </thead>
     <tbody>

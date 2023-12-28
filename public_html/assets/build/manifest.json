@@ -1,6 +1,6 @@
 {
-  "__commonjsHelpers-7qxkJEiA.js": {
-    "file": "_commonjsHelpers-7qxkJEiA.js"
+  "__commonjsHelpers-5-cIlDoe.js": {
+    "file": "_commonjsHelpers-5-cIlDoe.js"
   },
   "src/css/app.css": {
     "file": "app-qVsdLq1l.css",
@@ -17,20 +17,33 @@
       "app-qVsdLq1l.css",
       "htmx-jleTPgU_.css"
     ],
-    "file": "app-fTn_7nAp.js",
+    "file": "app-zjuWsYRt.js",
     "imports": [
-      "__commonjsHelpers-7qxkJEiA.js"
+      "__commonjsHelpers-5-cIlDoe.js"
     ],
     "isEntry": true,
     "src": "src/js/app.js"
   },
+  "src/js/dg.js": {
+    "file": "dg-5kqmejjh.js",
+    "isEntry": true,
+    "src": "src/js/dg.js"
+  },
   "src/js/liveform.js": {
-    "file": "liveform-ti1CCp-j.js",
+    "file": "liveform-zFuqwqNW.js",
     "imports": [
-      "__commonjsHelpers-7qxkJEiA.js"
+      "__commonjsHelpers-5-cIlDoe.js"
     ],
     "isEntry": true,
     "src": "src/js/liveform.js"
+  },
+  "src/js/naja.js": {
+    "file": "naja-_nFXy15r.js",
+    "imports": [
+      "__commonjsHelpers-5-cIlDoe.js"
+    ],
+    "isEntry": true,
+    "src": "src/js/naja.js"
   },
   "src/js/onDomReady.js": {
     "file": "onDomReady-w40geAFS.js",

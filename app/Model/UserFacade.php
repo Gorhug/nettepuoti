@@ -91,6 +91,11 @@ final class UserFacade implements Nette\Security\Authenticator
 			->where(self::ColumnName, $username)
 			->update([self::ColumnRole => $role]);
 	}
+
+	public function getDataSource(): Nette\Database\Table\Selection
+	{
+		return $this->database->table(self::TableName);
+	}
 }
 
 

@@ -25,6 +25,7 @@ extensions:
 	vite: Mskocik\Vinette\Bridges\NetteDI\ViteExtension
 	parsedown: Contributte\Parsedown\DI\ParsedownExtraExtension
 	embeddedSvg: Milo\EmbeddedSvg\Extension
+	translation: Contributte\Translation\DI\TranslationExtension
 
 vite:
 	manifest: assets/build/manifest.json
@@ -34,3 +35,14 @@ vite:
 embeddedSvg:
 	baseDir: %wwwDir%/img
 	macroName: svgIcon
+
+translation:
+	locales:
+		whitelist: [en, fi]
+		default: en
+		fallback: [en]
+	dirs:
+		- %appDir%/lang
+	returnOriginalMessage: true # to not translate undefined messages, default is true
+	localeResolvers:
+		- Contributte\Translation\LocalesResolvers\Router

@@ -10,5 +10,13 @@
 {else}
     <p>You do not have permissions on this site.</p>
 {/if}
+
+{if $user->isAllowed('user')}
+<div class="prose">
+    {control simpleGrid}
+</div>
+{* <script src="{='src/js/dg.js'|asset}" type="module"></script> *}
+{/if}
+
 <p><a n:href="Sign:out" class="link link-primary">Sign out</a></p>
 </div>

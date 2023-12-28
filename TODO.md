@@ -1,8 +1,9 @@
-- menuikoni väärä iPhonessa (puoliksi korjattu?)
 - server validation test nappi pois julkaisusta (korjattu)
-- valikko varjo?
-- leipätekstin tasaus vasemmalle?
+- valikko varjo? (vaivaa iPhonessa mutta vain etusivulla?)
+- leipätekstin tasaus vasemmalle? (korjattu)
 - käännös
 - käyttäjähallinta
 - kuvalataus
 - ariat admin-layout, ehkä yhtenäiset layoutit?
+- mobiilimenuihin isommat TEKSTIT että voi jopa osua niihin 🔍😵
+- cPanel: ext-fileinfo
