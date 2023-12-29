@@ -3,7 +3,7 @@
     "file": "_commonjsHelpers-5-cIlDoe.js"
   },
   "src/css/app.css": {
-    "file": "app-qVsdLq1l.css",
+    "file": "app-CFKTxFZB.css",
     "isEntry": true,
     "src": "src/css/app.css"
   },
@@ -14,10 +14,10 @@
   },
   "src/js/app.js": {
     "css": [
-      "app-qVsdLq1l.css",
+      "app-CFKTxFZB.css",
       "htmx-jleTPgU_.css"
     ],
-    "file": "app-zjuWsYRt.js",
+    "file": "app-bIGGZsI0.js",
     "imports": [
       "__commonjsHelpers-5-cIlDoe.js"
     ],

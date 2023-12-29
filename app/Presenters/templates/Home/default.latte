@@ -18,11 +18,16 @@
     </button> *}
 
 	{* <h1>Items for sale</h1> *}
-
+{var $fullLoc = $locale === 'fi'? 'fi_FI' : 'en_FI'}
+{var $dater =   new IntlDateFormatter($fullLoc, 
+					IntlDateFormatter::RELATIVE_FULL,
+					IntlDateFormatter::NONE,
+					'Europe/Helsinki',
+					IntlDateFormatter::GREGORIAN)}
 	<div class="card w-96 bg-base-100 shadow-xl my-4" n:foreach="$products as $product">
 		<div class="card-body">
 			<a class="card-title link ajax link-primary" n:href="Product:show $product->id">{$product->name}</a>
-			<div class="text-left italic">{$product->created_at|date:'F jS, Y'}</div>
+			<div class="text-left italic">{$dater->format($product->created_at)}</div>
 			<div class="prose text-justify hyphens-auto line-clamp-6">{block|trim|parsedown}{$product->description}{/block}</div>
 			{* <div class="card-actions justify-end">
 				<a n:href="Edit:edit $product->id" class="btn btn-primary ajax">Edit this product</a>

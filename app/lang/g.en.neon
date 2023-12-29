@@ -3,4 +3,10 @@ welcome: '''
 ----
 Welcome to my homepage. This is a mixture of blog (for now) and demo, as I am, *I must confess*, a web developer. 😱
 '''
-
+elsewhere: 'Elsewhere'
+addproduct: 'Add a product'
+logout: "Log out"
+login: "Login"
+register: "Register"
+spot: "SPOT"
+feedback: "Feedback"

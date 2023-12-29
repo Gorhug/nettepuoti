@@ -17,5 +17,6 @@ abstract class BasePresenter extends Presenter
         parent::beforeRender();
         $this->redrawControl('title');
         $this->redrawControl('content');
+        $this->template->locale = $this->locale;
     }
 }

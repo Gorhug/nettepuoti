@@ -4,14 +4,14 @@
 
     {if $user->isLoggedIn()}
         <li><a n:href=":Admin:Dashboard:default" class="ajax">{$user->getIdentity()->username}</a></li>
-		<li><a n:if="$user->isAllowed('product')" n:href="Edit:create" class="ajax">Add a product</a></li>
-        <li><a n:href=":Admin:Sign:out" class="text-warning">Logout</a></li>
+		<li><a n:if="$user->isAllowed('product')" n:href="Edit:create" class="ajax">{_g.addproduct}</a></li>
+        <li><a n:href=":Admin:Sign:out" class="text-warning">{_g.logout}</a></li>
     {else}
-        <li><a n:href=":Admin:Sign:up" class="ajax">Register</a></li>
-        <li><a n:href=":Admin:Sign:in" class="ajax">Login</a></li>
+        <li><a n:href=":Admin:Sign:up" class="ajax">{_g.register}</a></li>
+        <li><a n:href=":Admin:Sign:in" class="ajax">{_g.login}</a></li>
     {/if}
-		<li><a n:href="SpotPrice:">SPOT</a></li>
-		<li><a n:href="Feedback:">Feedback</a></li>
+		<li><a n:href="SpotPrice:">{_g.spot}</a></li>
+		<li><a n:href="Feedback:">{_g.feedback}</a></li>
 {/define}
 <html data-theme="gorhug">
 <head>
@@ -43,7 +43,7 @@
 					<a n:href="Home:default" class="font-black text-2xl ajax">gorhug.fi</a>
 				</div>
 				<details class="dropdown">
-					<summary class="m-1 btn">Language</summary>
+					<summary class="m-1 btn">{svgIcon 'fill/svg/globe.svg', class: 'fill-current stroke-none w-8 h-8'} {$locale}</summary>
 					<ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
 						<li><a n:href="this, locale: en">English</a></li>
 						<li><a n:href="this, locale: fi">suomi</a></li>
@@ -73,7 +73,7 @@
 					<p>gorhug.fi<br />&copy; Ilkka Forsblom</p>
 				</div>
 				<div>
-					<span class="footer-title">Muualla</span>
+					<span class="footer-title">{_g.elsewhere}</span>
 					<div class="grid grid-flow-col gap-4">
 
 						<a href="https://github.com/Gorhug"
