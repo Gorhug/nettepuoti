@@ -4,9 +4,19 @@ welcome: '''
 Tervetuloa kotisivuilleni. Tämä on blogin ja demon yhdistelmää, olenhan - *pakko tunnustaa* - webohjelmoija. 😱
 '''
 elsewhere: 'Muualla'
-addproduct: 'Lisää tuote'
-logout: "Kirjaudu ulos"
-login: "Kirjaudu"
-register: "Rekisteröidy"
-spot: "SPOT"
-feedback: "Palaute"
+home: 'Etusivu'
+link:
+    addproduct: 'Lisää tuote'
+    logout: "Kirjaudu ulos"
+    login: "Kirjaudu"
+    register: "Rekisteröidy"
+    spot: "SPOT"
+    feedback: "Palaute"
+    editproduct: 'Muokkaa tuotetta'
+spot:
+    hour: 'Tunti'
+    centKwh: 'snt/kWh'
+    price: 'Hinta'
+    title: 'SPOT hinnat'
+    heading: 'Sähkön markkinahinnat Suomessa'
+    explain: 'Hinnat eurosenteissä /kWh, sisältäen ALV:n'

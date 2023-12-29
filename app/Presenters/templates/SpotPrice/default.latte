@@ -3,17 +3,17 @@
 {var $warn = 12}
 {var $green = 8}
 <div class="flex flex-col spacing-4">
-<h1 n:block=title class="text-5xl hidden">SPOT prices</h1>
+<h1 n:block=title class="text-5xl hidden">{_g.spot.title}</h1>
 <br>
-<h2 class="text-2xl">Day-ahead prices for electricity in Finland</h2>
-<p>Prices listed in eurocent / kWh, including VAT</p>
+<h2 class="text-2xl">{_g.spot.heading}</h2>
+<p>{_g.spot.explain}</p>
   <div class="overflow-x-auto h-96">
     <table class="table table-zebra table-pin-rows">
 
 
   {foreach $spotPrices as $price}
       <thead>
-        <tr><th>{$price->hour|date:'l d.m.Y'}</th><th class="text-right">cent/kWh</th>
+        <tr><th>{$price->hour|intlDay}</th><th class="text-right">{_g.spot.centKwh}</th>
         </tr>
       </thead>
     <tbody>
@@ -35,8 +35,8 @@
   {/foreach}
       <tfoot>
         <tr>
-          <th>Hour</th>
-          <th class="text-right">Price</th>
+          <th>{_g.spot.hour}</th>
+          <th class="text-right">{_g.spot.price}</th>
         </tr>
       </tfoot>
     </table>

@@ -1,12 +1,22 @@
 welcome: '''
-# Welcome
+# Welcome!
 ----
 Welcome to my homepage. This is a mixture of blog (for now) and demo, as I am, *I must confess*, a web developer. 😱
 '''
 elsewhere: 'Elsewhere'
-addproduct: 'Add a product'
-logout: "Log out"
-login: "Login"
-register: "Register"
-spot: "SPOT"
-feedback: "Feedback"
+home: 'Home'
+link:
+    addproduct: 'Add a product'
+    logout: "Log out"
+    login: "Login"
+    register: "Register"
+    spot: "SPOT"
+    feedback: "Feedback"
+    editproduct: 'Edit this product'
+spot:
+    hour: 'Hour'
+    centKwh: 'cent/kWh'
+    price: 'Price'
+    title: 'SPOT prices'
+    heading: 'Day-ahead prices for electricity in Finland'
+    explain: 'Prices listed in eurocent / kWh, including VAT'

@@ -4,16 +4,16 @@
 
     {if $user->isLoggedIn()}
         <li><a n:href=":Admin:Dashboard:default" class="ajax">{$user->getIdentity()->username}</a></li>
-		<li><a n:if="$user->isAllowed('product')" n:href="Edit:create" class="ajax">{_g.addproduct}</a></li>
-        <li><a n:href=":Admin:Sign:out" class="text-warning">{_g.logout}</a></li>
+		<li><a n:if="$user->isAllowed('product')" n:href="Edit:create" class="ajax">{_g.link.addproduct}</a></li>
+        <li><a n:href=":Admin:Sign:out" class="text-warning">{_g.link.logout}</a></li>
     {else}
-        <li><a n:href=":Admin:Sign:up" class="ajax">{_g.register}</a></li>
-        <li><a n:href=":Admin:Sign:in" class="ajax">{_g.login}</a></li>
+        <li><a n:href=":Admin:Sign:up" class="ajax">{_g.link.register}</a></li>
+        <li><a n:href=":Admin:Sign:in" class="ajax">{_g.link.login}</a></li>
     {/if}
-		<li><a n:href="SpotPrice:">{_g.spot}</a></li>
-		<li><a n:href="Feedback:">{_g.feedback}</a></li>
+		<li><a n:href="SpotPrice:">{_g.link.spot}</a></li>
+		<li><a n:href="Feedback:">{_g.link.feedback}</a></li>
 {/define}
-<html data-theme="gorhug">
+<html data-theme="gorhug" lang={$locale}>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
@@ -45,8 +45,8 @@
 				<details class="dropdown">
 					<summary class="m-1 btn">{svgIcon 'fill/svg/globe.svg', class: 'fill-current stroke-none w-8 h-8'} {$locale}</summary>
 					<ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
-						<li><a n:href="this, locale: en">English</a></li>
-						<li><a n:href="this, locale: fi">suomi</a></li>
+						<li><a n:href="this, locale: en" lang="en">English</a></li>
+						<li><a n:href="this, locale: fi" lang="fi">suomi</a></li>
 					</ul>
 				</details>
 				<div class="flex-none hidden lg:block">

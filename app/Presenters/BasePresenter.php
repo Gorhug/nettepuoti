@@ -7,16 +7,24 @@ namespace Naja\Guide\Application\UI\Presenters;
 
 use Nette\Application\UI\Presenter;
 use Nette\Application\Attributes\Persistent;
+use IntlDateFormatter;
 
 abstract class BasePresenter extends Presenter
 {
     #[Persistent]
-	public string $locale; // must be public
+    public string $locale; // must be public
     protected function beforeRender(): void
     {
         parent::beforeRender();
         $this->redrawControl('title');
         $this->redrawControl('content');
         $this->template->locale = $this->locale;
+        $fullLoc = $this->locale === 'fi' ? 'fi_FI' : 'en_FI';
+        $dater = new IntlDateFormatter($fullLoc,
+            IntlDateFormatter::RELATIVE_FULL,
+            IntlDateFormatter::NONE,
+            'Europe/Helsinki',
+            IntlDateFormatter::GREGORIAN);
+        $this->template->addFilter('intlDay', fn($date) => $dater->format($date));
     }
 }
