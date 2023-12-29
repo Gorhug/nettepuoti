@@ -7,3 +7,4 @@
 - ariat admin-layout, ehkä yhtenäiset layoutit?
 - mobiilimenuihin isommat TEKSTIT että voi jopa osua niihin 🔍😵
 - cPanel: ext-fileinfo
+- html lang=en/fi
