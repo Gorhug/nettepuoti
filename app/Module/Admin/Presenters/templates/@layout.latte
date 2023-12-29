@@ -4,16 +4,16 @@
 
     {if $user->isLoggedIn()}
         <li><a n:href=":Admin:Dashboard:default" class="ajax">{$user->getIdentity()->username}</a></li>
-		<li><a n:if="$user->isAllowed('product')" n:href=":Edit:create" class="ajax">Add a product</a></li>
-        <li><a n:href=":Admin:Sign:out" class="text-warning">Logout</a></li>
+		<li><a n:if="$user->isAllowed('product')" n:href=":Edit:create" class="ajax">{_g.link.addproduct}</a></li>
+        <li><a n:href=":Admin:Sign:out" class="text-warning">{_g.link.logout}</a></li>
     {else}
-        <li><a n:href=":Admin:Sign:up" class="ajax">Register</a></li>
-        <li><a n:href=":Admin:Sign:in" class="ajax">Login</a></li>
+        <li><a n:href=":Admin:Sign:up" class="ajax">{_g.link.register}</a></li>
+        <li><a n:href=":Admin:Sign:in" class="ajax">{_g.link.login}</a></li>
     {/if}
-		<li><a n:href=":SpotPrice:">SPOT</a></li>
-		<li><a n:href=":Feedback:">Feedback</a></li>
+		<li><a n:href=":SpotPrice:">{_g.link.spot}</a></li>
+		<li><a n:href=":Feedback:">{_g.link.feedback}</a></li>
 {/define}
-<html>
+<html data-theme="gorhug" lang={$locale}>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
@@ -33,7 +33,8 @@
 				<div class="flex-none lg:hidden">
 					<label
 						for="my-drawer-3"
-						class="btn btn-square btn-ghost"
+						aria-label="open sidebar"
+						class="btn btn-square btn-ghost hover:animate-ping"
 					>
 						{svgIcon 'fill/svg/menu.svg', fill: currentColor, height: '100%', width: '100%' }
 					</label>
@@ -41,6 +42,13 @@
 				<div class="flex-1 px-2 mx-2">
 					<a n:href=":Home:default" class="font-black text-2xl ajax">gorhug.fi</a>
 				</div>
+				<details class="dropdown">
+					<summary class="m-1 btn">{svgIcon 'fill/svg/globe.svg', class: 'fill-current stroke-none w-6 h-6'} {$locale}</summary>
+					<ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
+						<li><a n:href="this, locale: en" lang="en">English</a></li>
+						<li><a n:href="this, locale: fi" lang="fi">suomi</a></li>
+					</ul>
+				</details>
 				<div class="flex-none hidden lg:block">
 					<menu class="menu menu-horizontal">
 						<!-- Navbar menu content here -->
@@ -50,7 +58,7 @@
 			</div>
 			<div id="indicator" class="htmx-indicator toast toast-center toast-middle z-50 mainContent"><span class="loading loading-bars text-primary loading-lg"></span></div>
 			<div class="hero min-h-screen bg-base-200">
-				<main class="mainContent hero-content text-center" n:snippet="content">
+				<main class="hero-content text-center" n:snippet="content">
 				<div n:ifcontent class="toast toast-top toast-center">
 					<div n:foreach="$flashes as $flash" n:class="alert, $flash->type"><span>{$flash->message}</span></div>
 				</div>
@@ -60,12 +68,12 @@
 			{block footer}
 			<footer class="footer p-10">
 				<div>
-					{* LOGO TÄHÄN, käytin lataus-ikonia *}
+					<!-- LOGO TÄHÄN, käytin lataus-ikonia -->
 					<img src="/img/catlogo.svg" class="w-16 rounded-lg shadow-2xl" /> 
 					<p>gorhug.fi<br />&copy; Ilkka Forsblom</p>
 				</div>
 				<div>
-					<span class="footer-title">Muualla</span>
+					<span class="footer-title">{_g.elsewhere}</span>
 					<div class="grid grid-flow-col gap-4">
 
 						<a href="https://github.com/Gorhug"
@@ -78,8 +86,8 @@
 
 		</div>
 		<div class="drawer-side">
-			<label for="my-drawer-3" class="drawer-overlay"></label>
-			<menu class="menu p-4 w-80 bg-base-100">
+			<label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
+			<menu class="menu p-4 w-80 bg-base-100 min-h-full">
 				<!-- Sidebar content here -->
 				{include links}
 			</menu>

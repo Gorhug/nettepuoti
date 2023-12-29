@@ -46,3 +46,7 @@ translation:
 	returnOriginalMessage: true # to not translate undefined messages, default is true
 	localeResolvers:
 		- Contributte\Translation\LocalesResolvers\Router
+
+forms:
+	messages:
+		Email: g.form.upEmailInvalid

@@ -6,7 +6,8 @@ namespace App\Forms;
 
 use App\Model;
 use Nette\Application\UI\Form;
-
+use Nette\Localization\Translator;
+use Contributte\Translation\Wrappers\Message;
 
 /**
  * Factory for creating user sign-up forms with registration logic.
@@ -17,6 +18,7 @@ final class SignUpFormFactory
 	public function __construct(
 		private FormFactory $factory,
 		private Model\UserFacade $userFacade,
+		private Translator $translator,
 	) {
 	}
 
@@ -28,19 +30,20 @@ final class SignUpFormFactory
 	public function create(callable $onSuccess): Form
 	{
 		$form = $this->factory->create();
-		$form->addText('username', 'Pick a username:')
-			->setRequired('Please pick a username.');
+		$form->setTranslator($this->translator);
+		$form->addText('username', 'g.form.upUsername')
+			->setRequired('g.form.upUsernameRequired');
 
-		$form->addEmail('email', 'Your e-mail:')
-			->setRequired('Please enter your e-mail.');
+		$form->addEmail('email', 'g.form.upEmail')
+			->setRequired('g.form.upEmailRequired');
 
-		$form->addPassword('password', 'Create a password:')
-			->setOption('description', sprintf('at least %d characters', $this->userFacade::PasswordMinLength))
-			->setRequired('Please create a password.')
+		$form->addPassword('password', 'g.form.upPassword')
+			->setOption('description', sprintf($this->translator->translate('g.form.upPasswordDescription'), $this->userFacade::PasswordMinLength))
+			->setRequired('g.form.upPasswordRequired')
 			->setHtmlAttribute('minLength', $this->userFacade::PasswordMinLength)
-			->addRule($form::MIN_LENGTH, null, $this->userFacade::PasswordMinLength);
+			->addRule($form::MIN_LENGTH, 'g.form.upPassLength', $this->userFacade::PasswordMinLength);
 
-		$form->addSubmit('send', 'Sign up');
+		$form->addSubmit('send', 'g.form.sendSignUp');
 
 		// Handle form submission
 		$form->onSuccess[] = function (Form $form, \stdClass $data) use ($onSuccess): void {
@@ -49,7 +52,7 @@ final class SignUpFormFactory
 				$this->userFacade->add($data->username, $data->email, $data->password);
 			} catch (Model\DuplicateNameException $e) {
 				// Handle the case where the username is already taken
-				$form['username']->addError('Username is already taken.');
+				$form['username']->addError('g.form.upTaken');
 				return;
 			}
 			$onSuccess();

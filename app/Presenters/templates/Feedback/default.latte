@@ -1,10 +1,10 @@
 {block content}
 <div class="flex-col">
 <div class="text-center mb-4">
-    <h1 class="text-5xl font-bold" n:block="title">Feedback</h1>
+    <h1 class="text-5xl font-bold" n:block="title">{_g.feedback.title}</h1>
 </div>
 
-<div class="my-8">Feedback, suggestions and bug reports are welcome.</div>
+<div class="my-8">{_g.feedback.explain}</div>
 
 <div class="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
 {embed basic-form, form: contactForm}
