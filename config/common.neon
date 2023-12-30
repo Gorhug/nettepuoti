@@ -50,3 +50,4 @@ translation:
 forms:
 	messages:
 		Email: g.form.upEmailInvalid
+		Float: g.edit.floatValid

@@ -4,12 +4,14 @@ namespace App\Presenters;
 use Naja\Guide\Application\UI\Presenters\BasePresenter;
 use Nette;
 use Nette\Application\UI\Form;
+use Nette\Localization\Translator;
 
 final class EditPresenter extends BasePresenter
 {
     public function __construct(
         private Nette\Database\Explorer $database,
         private \App\Forms\FormFactory $factory,
+        private Translator $translator,
     ) {
     }
 
@@ -17,7 +19,7 @@ final class EditPresenter extends BasePresenter
     {
         parent::startup();
         if (!$this->getUser()->isAllowed('product')) {
-            $this->error('You do not have the right to edit products', 403);
+            $this->error($this->translator->translate('g.edit.noRights'), 403);
         }
     }
 
@@ -25,17 +27,18 @@ final class EditPresenter extends BasePresenter
     protected function createComponentProductForm(): Form
     {
         $form = $this->factory->create();
-        $form->addText('name', 'Name:')
-            ->setRequired('A name for the product is required');
-        $form->addTextArea('description', 'Description:')
-            ->setRequired('A description of the product is required');
+        $form->setTranslator($this->translator);
+        $form->addText('name', 'g.edit.name')
+            ->setRequired('g.edit.nameRequired');
+        $form->addTextArea('description', 'g.edit.description')
+            ->setRequired('g.edit.descriptionRequired');
             // ->setHtmlAttribute('hx-trigger', 'change, keyup delay:200ms changed');
-        $form->addFloat('price', 'Price (€):')
-            ->setRequired('A price for the product is required')
+        $form->addFloat('price', 'g.edit.price')
+            ->setRequired('g.edit.priceRequired')
             ->setHtmlAttribute('step', 0.01)
             // ->addRule($form::Float, 'Price must be a decimal number')
-            ->addRule($form::Min, 'Price may not be negative', 0);
-        $form->addSubmit('send', 'Save and publish');
+            ->addRule($form::Min, 'g.edit.priceLimit', 0);
+        $form->addSubmit('send', 'g.edit.save');
 
         // $form->addProtection();
 
@@ -60,7 +63,7 @@ final class EditPresenter extends BasePresenter
                 ->table('products')
                 ->insert($data);
         }
-        $this->flashMessage('Product was published', 'alert-success');
+        $this->flashMessage($this->translator->translate('g.edit.success'), 'alert-success');
         $this->redirect('Product:show', $product->id);
     }
 
@@ -71,7 +74,7 @@ final class EditPresenter extends BasePresenter
             ->get($id);
 
         if (!$product) {
-            $this->error('Product not found');
+            $this->error($this->translator->translate('g.edit.notFound'));
         }
 
         $this->getComponent('productForm')

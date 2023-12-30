@@ -7,7 +7,6 @@ namespace App\Forms;
 use App\Model;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
-use Contributte\Translation\Wrappers\Message;
 
 /**
  * Factory for creating user sign-up forms with registration logic.

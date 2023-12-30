@@ -1,6 +1,7 @@
 {block content}
-<h1 n:block="title">Add a new product</h1>
+<div class="flex flex-col space-y-4">
+<h1 n:block="title" class="text-4xl font-bold">{_g.edit.addTitle}</h1>
 
 {embed basic-form, form: productForm}
 {/embed}
-
+</div>

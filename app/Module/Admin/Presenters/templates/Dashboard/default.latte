@@ -1,14 +1,14 @@
 {block content}
 
 <div class="flex flex-col space-y-8">
-<h1 class="text-5xl" n:block=title>Dashboard</h1>
+<h1 class="text-5xl" n:block=title>{_g.dashboard.title}</h1>
 
-<p>You have successfully logged in.</p>
+<p>{_g.dashboard.message}</p>
 
 {if $user->isAllowed('product')}
-    <p>You can add and edit products.</p>
+    <p>{_g.dashboard.editAllowed}</p>
 {else}
-    <p>You do not have permissions on this site.</p>
+    <p>{_g.dashboard.noPermissions}</p>
 {/if}
 
 {if $user->isAllowed('user')}
@@ -18,5 +18,5 @@
 {* <script src="{='src/js/dg.js'|asset}" type="module"></script> *}
 {/if}
 
-<p><a n:href="Sign:out" class="link link-primary">Sign out</a></p>
+<p><a n:href="Sign:out" class="link link-primary">{_g.dashboard.signOut}</a></p>
 </div>
