@@ -32,7 +32,13 @@ final class EditPresenter extends BasePresenter
             ->setRequired('g.edit.nameRequired');
         $form->addTextArea('description', 'g.edit.description')
             ->setRequired('g.edit.descriptionRequired');
-            // ->setHtmlAttribute('hx-trigger', 'change, keyup delay:200ms changed');
+
+        $form->addText('name_fi', 'g.edit.name_fi')
+            ->setRequired('g.edit.name_fiRequired');
+        $form->addTextArea('description_fi', 'g.edit.description_fi')
+            ->setRequired('g.edit.description_fiRequired');
+
+        // ->setHtmlAttribute('hx-trigger', 'change, keyup delay:200ms changed');
         $form->addFloat('price', 'g.edit.price')
             ->setRequired('g.edit.priceRequired')
             ->setHtmlAttribute('step', 0.01)
@@ -50,12 +56,12 @@ final class EditPresenter extends BasePresenter
 
     private function productFormSucceeded(array $data): void
     {
-        $productId = $this->getParameter('productId');
+        $id = $this->getParameter('id');
 
-        if ($productId) {
+        if ($id) {
             $product = $this->database
                 ->table('products')
-                ->get($productId);
+                ->get($id);
             $product->update($data);
 
         } else {

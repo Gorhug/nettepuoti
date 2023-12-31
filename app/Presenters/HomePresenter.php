@@ -18,9 +18,16 @@ final class HomePresenter extends BasePresenter
 
     public function renderDefault(): void
     {
+        $name = 'name';
+        $description = 'description';
+        if ($this->locale === 'fi') {
+            $name = 'name_fi';
+            $description = 'description_fi';
+        }
         $this->template->products = $this->facade
             ->getPublicProducts()
-            ->limit(5);
+            ->limit(5)
+            ->select('id, ?name AS name, ?name AS description, created_at', $name, $description);
     }
 
 }

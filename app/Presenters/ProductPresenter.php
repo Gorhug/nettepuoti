@@ -14,8 +14,15 @@ final class ProductPresenter extends BasePresenter
 
 	public function renderShow(int $id): void
 	{
+		$name = 'name';
+        $description = 'description';
+        if ($this->locale === 'fi') {
+            $name = 'name_fi';
+            $description = 'description_fi';
+		}
 		$product = $this->database
 			->table('products')
+			->select('id, ?name AS name, ?name AS description, created_at', $name, $description)
 			->get($id);
 
 		if (!$product) {
