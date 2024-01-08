@@ -19,7 +19,6 @@
 	<meta name="viewport" content="width=device-width">
 	<link rel="icon" type="image/svg+xml" href="/img/catlogo.svg" />
 	<link rel="icon" type="image/png" href="/img/catlogo.png">
-	{Tracy\Debugger::renderLoader()|noescape}
 {$vite->printTags('src/js/app.js')|noescape}
 	<title n:snippet="title">{ifset title}{include title|stripHtml} | {/ifset}gorhug.fi</title>
 </head>
@@ -51,7 +50,7 @@
 				</details>
 				<div class="flex-none hidden lg:block">
 					<menu class="menu menu-horizontal">
-						<!-- Navbar menu content here -->
+						{* Navbar menu content here *}
 						{include links}
 					</menu>
 				</div>
@@ -68,7 +67,7 @@
 			{block footer}
 			<footer class="footer p-10">
 				<div>
-					<!-- LOGO TÄHÄN, käytin lataus-ikonia -->
+					{* LOGO TÄHÄN, käytin lataus-ikonia *}
 					<img src="/img/catlogo.svg" class="w-16 rounded-lg shadow-2xl" /> 
 					<p>gorhug.fi<br />&copy; Ilkka Forsblom</p>
 				</div>
@@ -88,7 +87,7 @@
 		<div class="drawer-side">
 			<label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
 			<menu class="menu p-4 w-80 bg-base-100 min-h-full">
-				<!-- Sidebar content here -->
+				{* Sidebar content here *}
 				{include links}
 			</menu>
 		</div>

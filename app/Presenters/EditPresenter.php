@@ -57,20 +57,21 @@ final class EditPresenter extends BasePresenter
     private function productFormSucceeded(array $data): void
     {
         $id = $this->getParameter('id');
-
+        $redirect = 0;
         if ($id) {
             $product = $this->database
                 ->table('products')
                 ->get($id);
             $product->update($data);
-
+            $redirect = $id;
         } else {
             $product = $this->database
                 ->table('products')
                 ->insert($data);
+            $redirect = $this->database->getInsertId();
         }
         $this->flashMessage($this->translator->translate('g.edit.success'), 'alert-success');
-        $this->redirect('Product:show', $product->id);
+        $this->redirect('Product:show', $redirect);
     }
 
     public function renderEdit(int $id): void

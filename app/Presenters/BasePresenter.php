@@ -26,5 +26,11 @@ abstract class BasePresenter extends Presenter
             'Europe/Helsinki',
             IntlDateFormatter::GREGORIAN);
         $this->template->addFilter('intlDay', fn($date) => $dater->format($date));
+        $hourer = new IntlDateFormatter($fullLoc,
+        IntlDateFormatter::FULL,
+        IntlDateFormatter::FULL,
+        'Europe/Helsinki',
+        IntlDateFormatter::GREGORIAN, 'HH');
+        $this->template->addFilter('intlHour', fn($date) => $hourer->format($date));
     }
 }
