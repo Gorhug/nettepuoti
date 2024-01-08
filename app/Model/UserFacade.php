@@ -6,12 +6,13 @@ namespace App\Model;
 
 use Nette;
 use Nette\Security\Passwords;
-
+use Nette\Security\SimpleIdentity;
+use Nette\Security\IIdentity;
 
 /**
  * Manages user-related operations such as authentication and adding new users.
  */
-final class UserFacade implements Nette\Security\Authenticator
+final class UserFacade implements Nette\Security\Authenticator, Nette\Security\IdentityHandler
 {
 	// Minimum password length requirement for users
 	public const PasswordMinLength = 7;
@@ -23,7 +24,8 @@ final class UserFacade implements Nette\Security\Authenticator
 		ColumnName = 'username',
 		ColumnPasswordHash = 'password',
 		ColumnEmail = 'email',
-		ColumnRole = 'role';
+		ColumnRole = 'role',
+		ColumnToken = 'authtoken';
 
 	// Dependency injection of database explorer and password utilities
 	public function __construct(
@@ -79,6 +81,7 @@ final class UserFacade implements Nette\Security\Authenticator
 				self::ColumnName => $username,
 				self::ColumnPasswordHash => $this->passwords->hash($password),
 				self::ColumnEmail => $email,
+				self::ColumnToken => Nette\Utils\Random::generate(16),
 			]);
 		} catch (Nette\Database\UniqueConstraintViolationException $e) {
 			throw new DuplicateNameException;
@@ -95,6 +98,25 @@ final class UserFacade implements Nette\Security\Authenticator
 	public function getDataSource(): Nette\Database\Table\Selection
 	{
 		return $this->database->table(self::TableName);
+	}
+
+	public function sleepIdentity(IIdentity $identity): SimpleIdentity
+	{
+		// we return a proxy identity, where in the ID is authtoken
+		return new SimpleIdentity(($identity->getData())[self::ColumnToken]);
+	}
+
+	public function wakeupIdentity(IIdentity $identity): ?SimpleIdentity
+	{
+		// replace the proxy identity with a full identity, as in authenticate()
+		// $row = $this->database->fetch('SELECT * FROM user WHERE authtoken = ?', $identity->getId());
+		$row = $this->database->table(self::TableName)
+		->where(self::ColumnToken, $identity->getId())
+		->select(join(',', [self::ColumnId, self::ColumnName, self::ColumnEmail, self::ColumnRole, self::ColumnToken]))
+		->fetch();
+		return $row
+			? new SimpleIdentity($row[self::ColumnId], $row[self::ColumnRole], $row->toArray())
+			: null;
 	}
 }
 

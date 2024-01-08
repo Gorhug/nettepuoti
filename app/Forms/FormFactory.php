@@ -6,7 +6,7 @@ namespace App\Forms;
 
 use Nette;
 use Nette\Application\UI\Form;
-
+use Nette\Http\Session;
 
 /**
  * Factory for creating general forms with optional CSRF protection.
@@ -15,7 +15,8 @@ final class FormFactory
 {
 	// Dependency injection of the current user session
 	public function __construct(
-		private Nette\Security\User $user,
+		// private Nette\Security\User $user,
+		private Session $session,
 	) {
 	}
 
@@ -26,7 +27,8 @@ final class FormFactory
 	public function create(): Form
 	{
 		$form = new Form;
-		if ($this->user->isLoggedIn()) {
+		if ($this->session->isStarted()) {
+		// if ($this->user->isLoggedIn()) {
 			$form->addProtection();
 		}
 		return $form;
