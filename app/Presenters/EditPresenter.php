@@ -5,6 +5,7 @@ use Naja\Guide\Application\UI\Presenters\BasePresenter;
 use Nette;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
+use Nette\Caching\Cache;
 
 final class EditPresenter extends BasePresenter
 {
@@ -12,6 +13,7 @@ final class EditPresenter extends BasePresenter
         private Nette\Database\Explorer $database,
         private \App\Forms\FormFactory $factory,
         private Translator $translator,
+        private Nette\Caching\Storage $storage,
     ) {
     }
 
@@ -58,11 +60,17 @@ final class EditPresenter extends BasePresenter
     {
         $id = $this->getParameter('id');
         $redirect = 0;
+        $dirty = ['home'];
+        // $cache->clean([
+        //     $cache::Tags => ["article/$articleId"],
+        // ]);
+        
         if ($id) {
             $product = $this->database
                 ->table('products')
                 ->get($id);
             $product->update($data);
+            $dirty[] = "product/$id";
             $redirect = $id;
         } else {
             $product = $this->database
@@ -71,6 +79,8 @@ final class EditPresenter extends BasePresenter
             $redirect = $this->database->getInsertId();
         }
         $this->flashMessage($this->translator->translate('g.edit.success'), 'alert-success');
+        $cache = new Cache($this->storage, 'Nette.Templating.Cache');
+        $cache->clean([$cache::Tags => $dirty]);
         $this->redirect('Product:show', $redirect);
     }
 

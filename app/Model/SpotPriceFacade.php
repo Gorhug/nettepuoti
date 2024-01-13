@@ -8,6 +8,7 @@ final class SpotPriceFacade
     public function __construct(
         private Nette\Database\Explorer $database,
         private \App\Settings $settings,
+        private Nette\Caching\Storage $storage,
     ) {
     }
 
@@ -108,7 +109,8 @@ final class SpotPriceFacade
             // var_dump($database->log());
 
         }
-
+        $cache = new Nette\Caching\Cache($this->storage, 'Nette.Templating.Cache');
+        $cache->clean([$cache::Tags => ['spot']]);
 
         // $this->database->table('spot_prices')->insert($data);
     }

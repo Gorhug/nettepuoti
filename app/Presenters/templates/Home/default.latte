@@ -1,6 +1,5 @@
-{* This is the welcome page, you can delete it *}
-
 {block content}
+{cache $locale, tags: [home]}
 <div class="max-w-md">
       {define title}{_g.home}{/define}
 
@@ -29,7 +28,4 @@
   		</div>
 	</div>
 </div>
-
-<style>
-
-</style>
+{/cache}
