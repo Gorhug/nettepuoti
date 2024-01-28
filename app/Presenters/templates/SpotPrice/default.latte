@@ -8,6 +8,7 @@
 <br>
 <h2 class="text-2xl">{_g.spot.heading}</h2>
 <p>{_g.spot.explain}</p>
+  {_g.spot.today, [day => (time()|intlFullDay)]}
   <div class="overflow-x-auto h-96">
     <table class="table table-zebra table-pin-rows font-mono">
 
@@ -19,14 +20,14 @@
       </thead>
     <tbody>
           <tr class="text-orange-500">
-              <td class="text-base-content">{$price->hour|intlHour} - {$iterator->last ? '01' : ($iterator->nextValue->hour|intlHour)}</td>
+              <td class="text-base-content">{$price->hour|intlHour}&ndash;{$iterator->last ? '01' : ($iterator->nextValue->hour|intlHour)}</td>
               {var $p = $price->euro_mwh}
               {var $pr = $p > 0 ? $p/10*$VAT : $p/10}
               <td n:class="text-right, font-bold, $pr > $warn ? text-error, $pr < $green ? text-lime-300">{$pr|number:2,',',' '}</td>
           </tr>
       {iterateWhile ($price->hour|intlDay) === ($iterator->nextValue->hour|intlDay)}
           <tr class="text-orange-500">
-              <td class="text-base-content">{$price->hour|intlHour} - {$iterator->last ? '01' : ($iterator->nextValue->hour|intlHour)}</td>
+              <td class="text-base-content">{$price->hour|intlHour}&ndash;{$iterator->last ? '01' : ($iterator->nextValue->hour|intlHour)}</td>
               {var $p = $price->euro_mwh}
               {var $pr = $p > 0 ? $p/10*$VAT : $p/10}
               <td n:class="text-right, font-bold, $pr > $warn ? text-error, $pr < $green ? text-lime-300">{$pr|number:2,',',' '}</td>

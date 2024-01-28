@@ -20,6 +20,7 @@ spot:
     title: 'SPOT prices'
     heading: 'Day-ahead prices for electricity in Finland'
     explain: 'Prices listed in eurocent / kWh, including VAT'
+    today: 'Today is %day%.'
 sign:
     outTitle: 'You have been signed out'
     another: 'Sign in to another account'

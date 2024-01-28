@@ -20,6 +20,7 @@ spot:
     title: 'SPOT hinnat'
     heading: 'Sähkön markkinahinnat Suomessa'
     explain: 'Hinnat eurosenteissä /kWh, sisältäen ALV:n'
+    today: 'Tänään on %day%.'
 sign:
     outTitle: 'Olet kirjautunut ulos.'
     another: 'Kirjaudu toiselle tilille'

@@ -1,5 +1,15 @@
 {import basic-form.latte}
 <!DOCTYPE html>
+{capture $here}{link //this}{/capture}
+{var $ogDefaults = [
+	"og:title" => gorhug.fi, 
+	"og:type" => website, 
+	"og:image" => 'https://gorhug.fi/img/catlogo.png', 
+	"og:url" => $here,
+	"og:description" => "Personal blog of some silly guy.",
+	"og:site_name" => gorhug.fi,
+	]
+}
 {define links}
 
     {if $user->isLoggedIn()}
@@ -17,6 +27,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
+	<meta n:foreach="$ogDefaults as $prop => $content" property={$prop} content={$content}>
 	<link rel="icon" type="image/svg+xml" href="/img/catlogo.svg" />
 	<link rel="icon" type="image/png" href="/img/catlogo.png">
 {$vite->printTags('src/js/app.js')|noescape}
@@ -44,8 +55,8 @@
 				<details class="dropdown">
 					<summary class="m-1 btn">{svgIcon 'fill/svg/globe.svg', class: 'fill-current stroke-none w-8 h-8'} {$locale}</summary>
 					<ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
-						<li><a n:href="this, locale: en" lang="en">English</a></li>
-						<li><a n:href="this, locale: fi" lang="fi">suomi</a></li>
+						<li><a n:href="this, locale: en" lang="en" n:class="isLinkCurrent() ? 'bg-accent text-accent-content'">English</a></li>
+						<li><a n:href="this, locale: fi" lang="fi" n:class="isLinkCurrent() ? 'bg-accent text-accent-content'">suomi</a></li>
 					</ul>
 				</details>
 				<div class="flex-none hidden lg:block">
