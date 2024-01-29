@@ -83,3 +83,7 @@ edit:
     addTitle: 'Add a new product'
     editTitle: 'Edit product'
     floatValid: 'Please enter a valid number.'
+    brief: 'Brief description (English):'
+    briefRequired: 'Brief is required.'
+    brief_fi: 'Brief description (Finnish):'
+    brief_fiRequired: 'Brief is required.'

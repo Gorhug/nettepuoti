@@ -5,7 +5,8 @@
   <div class="card-body">
 {cache "$locale/$product->id", tags: ["product/$product->id"]}
     <h2 class="card-title" n:block="title">{$product->name}</h2>
-    <div class="date">{$product->created_at|intlDay}</div>
+    <div class="italic">{$product->created_at|intlDay}</div>
+    <div class="font-serif text-justify hyphens-auto italic">{$product->brief}</div>
     <div class="prose text-justify hyphens-auto">{block|trim|parsedown}{$product->description}{/block}</div>
 {/cache}
     <div class="card-actions justify-end">

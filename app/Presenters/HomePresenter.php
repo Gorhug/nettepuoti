@@ -20,14 +20,16 @@ final class HomePresenter extends BasePresenter
     {
         $name = 'name';
         $description = 'description';
+        $brief = 'brief';
         if ($this->locale === 'fi') {
             $name = 'name_fi';
             $description = 'description_fi';
+            $brief = 'brief_fi';
         }
         $this->template->products = $this->facade
             ->getPublicProducts()
             ->limit(5)
-            ->select('id, ?name AS name, ?name AS description, created_at', $name, $description);
+            ->select('id, ?name AS name, ?name AS brief, ?name AS description, created_at', $name, $brief, $description);
     }
 
 }

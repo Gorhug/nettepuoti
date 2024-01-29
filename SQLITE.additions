@@ -1,0 +1,2 @@
+ALTER TABLE products ADD COLUMN brief TEXT NOT NULL DEFAULT 'A silly blog post that should have a brief added.';
+ALTER TABLE products ADD COLUMN brief_fi TEXT NOT NULL DEFAULT 'Plokiteksti, johon lyhyt kuvaus olisi kiva lisä'; 

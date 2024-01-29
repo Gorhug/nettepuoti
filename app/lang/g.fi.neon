@@ -83,3 +83,7 @@ edit:
     addTitle: 'Lisää tuote'
     editTitle: 'Muokkaa tuotetta'
     floatValid: 'Syötä numero.'
+    brief: 'Lyhyt kuvaus (englanninkielinen):'
+    briefRequired: 'Anna lyhyt kuvaus.'
+    brief_fi: 'Lyhyt kuvaus (suomenkielinen):'
+    brief_fiRequired: 'Anna lyhyt kuvaus.'

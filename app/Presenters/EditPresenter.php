@@ -9,6 +9,8 @@ use Nette\Caching\Cache;
 
 final class EditPresenter extends BasePresenter
 {
+    private const MaxBrief = 150;
+
     public function __construct(
         private Nette\Database\Explorer $database,
         private \App\Forms\FormFactory $factory,
@@ -32,11 +34,19 @@ final class EditPresenter extends BasePresenter
         $form->setTranslator($this->translator);
         $form->addText('name', 'g.edit.name')
             ->setRequired('g.edit.nameRequired');
+        
+        $form->addTextArea('brief', 'g.edit.brief')
+            ->setRequired('g.edit.briefRequired')
+            ->setMaxLength(self::MaxBrief);
+
         $form->addTextArea('description', 'g.edit.description')
             ->setRequired('g.edit.descriptionRequired');
 
         $form->addText('name_fi', 'g.edit.name_fi')
             ->setRequired('g.edit.name_fiRequired');
+        $form->addTextArea('brief_fi', 'g.edit.brief_fi')
+            ->setRequired('g.edit.brief_fiRequired')
+            ->setMaxLength(self::MaxBrief);
         $form->addTextArea('description_fi', 'g.edit.description_fi')
             ->setRequired('g.edit.description_fiRequired');
 
@@ -64,7 +74,7 @@ final class EditPresenter extends BasePresenter
         // $cache->clean([
         //     $cache::Tags => ["article/$articleId"],
         // ]);
-        
+
         if ($id) {
             $product = $this->database
                 ->table('products')
