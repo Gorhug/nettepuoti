@@ -5,6 +5,7 @@ Welcome to my homepage. This is a mixture of blog (for now) and demo, as I am, *
 '''
 elsewhere: 'Elsewhere'
 home: 'Home'
+ogDescription: "Personal blog of some silly webdeveloper guy who plays videogames."
 link:
     addproduct: 'Add a product'
     logout: "Log out"

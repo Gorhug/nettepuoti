@@ -4,12 +4,19 @@
 {var $ogDefaults = [
 	"og:title" => gorhug.fi, 
 	"og:type" => website, 
-	"og:image" => 'https://gorhug.fi/img/catlogo.png', 
+	"og:image" => 'https://gorhug.fi/img/catlogo_wide.png', 
 	"og:url" => $here,
-	"og:description" => "Personal blog of some silly guy.",
+	"og:description" => (g.ogDescription|translate),
 	"og:site_name" => gorhug.fi,
+	"og:locale" => $locale === 'en'? 'en_FI' : 'fi_FI',
+	"og:locale:alternate" => $locale === 'en'? 'fi_FI' : 'en_FI'
 	]
 }
+{ifset $ogAdds}
+{var $openGraph = array_replace($ogDefaults, $ogAdds)}
+{else}
+{var $openGraph = $ogDefaults}
+{/ifset}
 {define links}
 
     {if $user->isLoggedIn()}
@@ -27,7 +34,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<meta n:foreach="$ogDefaults as $prop => $content" property={$prop} content={$content}>
+	<meta n:foreach="$openGraph as $prop => $content" property={$prop} content={$content}>
+	<link rel="me" href="https://masto.ai/@gorhug" />
 	<link rel="icon" type="image/svg+xml" href="/img/catlogo.svg" />
 	<link rel="icon" type="image/png" href="/img/catlogo.png">
 {$vite->printTags('src/js/app.js')|noescape}

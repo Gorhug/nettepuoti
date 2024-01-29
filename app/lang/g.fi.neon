@@ -5,6 +5,7 @@ Tervetuloa kotisivuilleni. Tämä on blogin ja demon yhdistelmää, olenhan - *p
 '''
 elsewhere: 'Muualla'
 home: 'Etusivu'
+ogDescription: 'Henkilökohtainen blogi jota väsää videopeleihin hurahtanut verkkokehittäjä'
 link:
     addproduct: 'Lisää tuote'
     logout: "Kirjaudu ulos"

@@ -1,3 +1,9 @@
+{var $ogAdds = [
+  "og:title" => $product->name, 
+	"og:type" => article, 
+	"og:description" => $product->brief,
+	"article:published_time" => ($product->created_at|date:'c')
+]}
 {block content}
 
 {* <p><a n:href="Home:default" class="link link-primary link-hover ajax">← back to homepage</a></p> *}
