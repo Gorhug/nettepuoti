@@ -32,4 +32,11 @@ final class HomePresenter extends BasePresenter
             ->select('id, ?name AS name, ?name AS brief, ?name AS description, created_at', $name, $brief, $description);
     }
 
+    public function renderRss(): void
+    {
+        $this->renderDefault();
+        $this->setLayout(false);
+        $httpResponse = $this->getHttpResponse();
+        $httpResponse->setContentType("application/rss+xml", "utf-8");
+    }
 }
