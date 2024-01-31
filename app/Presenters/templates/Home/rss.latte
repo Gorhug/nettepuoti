@@ -4,13 +4,20 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
    <channel>
       <title>gorhug.fi</title>
-      <link>https://www.gorhug.fi/</link>
+      <link>https://gorhug.fi/</link>
       <description>{_g.ogDescription}</description>
       <language>{$locale}</language>
       <lastBuildDate>{time()|date:'r'}</lastBuildDate>
       <docs>https://www.rssboard.org/rss-specification</docs>
       <generator>nettepuoti 1.0</generator>   
       <atom:link n:href='//this' rel="self" type="application/rss+xml" />
+      <image>
+         <url>https://gorhug.fi/img/catlogo_wide_rss.png</url>
+         <width>144</width>
+         <height>76</height>
+         <title>gorhug.fi</title>
+         <link>https://gorhug.fi</link>
+      </image>
       <item n:foreach="$products as $product">
          <title>{$product->name}</title>
          <link>{link //Product:show $product->id}</link>
