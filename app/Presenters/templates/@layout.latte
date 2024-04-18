@@ -42,7 +42,7 @@
 	<title n:snippet="title">{ifset title}{include title|stripHtml} | {/ifset}gorhug.fi</title>
 </head>
 
-<body hx-boost="true" hx-indicator="#indicator">
+<body hx-boost="false" hx-indicator="#indicator">
 	<div class="drawer">
 		<input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
 		<div class="drawer-content flex flex-col">
@@ -115,5 +115,6 @@
 	{block scripts}
 	{* <script src="https://unpkg.com/nette-forms@3/src/assets/netteForms.js"></script> *}
 	{/block}
+	{dump apcu_cache_info()}
 </body>
 </html>

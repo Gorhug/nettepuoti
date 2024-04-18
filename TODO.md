@@ -2,5 +2,5 @@
 - valikko varjo? (vaivaa iPhonessa mutta vain etusivulla?)
 - kuvalataus
 - mobiilimenuihin isommat TEKSTIT että voi jopa osua niihin 🔍😵
-- RSS / OpenGraph
-
+- RSS / OpenGraph: tehty
+- APCu: lisää expire sivumalleihin, muuta kovakoodatut sleep-ajat
