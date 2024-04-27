@@ -3,4 +3,4 @@
 - kuvalataus
 - mobiilimenuihin isommat TEKSTIT että voi jopa osua niihin 🔍😵
 - RSS / OpenGraph: tehty
-- APCu: lisää expire sivumalleihin, muuta kovakoodatut sleep-ajat
+- APCu: lisää expire sivumalleihin, muuta kovakoodatut sleep-ajat, register_shutdown_function
