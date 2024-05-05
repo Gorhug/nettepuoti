@@ -22,7 +22,7 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
 
 	private \PDO $pdo;
     private const SleepLength = 250000;
-
+	private $staleLocks = [];
 
 	public function __construct(string $path)
 	{
@@ -40,7 +40,9 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
 				data BLOB NOT NULL,
 				expire INTEGER,
 				slide INTEGER,
-                priority INTEGER
+                priority INTEGER,
+                callbacks BLOB,
+                created_at INTEGER NOT NULL
 			);
 			CREATE TABLE IF NOT EXISTS tags (
 				key BLOB NOT NULL REFERENCES cache ON DELETE CASCADE,
@@ -49,13 +51,29 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
             CREATE TABLE IF NOT EXISTS locks (
                 key BLOB NOT NULL PRIMARY KEY
             );
+            CREATE TABLE IF NOT EXISTS items (
+				key BLOB NOT NULL REFERENCES cache ON DELETE CASCADE,
+				item BLOB NOT NULL,
+                created_at INTEGER
+			);
 			CREATE INDEX IF NOT EXISTS cache_expire ON cache(expire);
+			CREATE INDEX IF NOT EXISTS cache_priority ON cache(priority);
 			CREATE INDEX IF NOT EXISTS tags_key ON tags(key);
 			CREATE INDEX IF NOT EXISTS tags_tag ON tags(tag);
+            CREATE INDEX IF NOT EXISTS items_key ON items(key);
 			PRAGMA synchronous = NORMAL;
 		');
+		register_shutdown_function([$this, 'processTerminatorHandler']);
 	}
 
+	public function processTerminatorHandler(): void
+    {
+        // this logic will be called by Terminator.
+		if (!empty($this->staleLocks)) {
+			$this->pdo->prepare('DELETE FROM locks WHERE key IN (?' . str_repeat(', ?', count($this->staleLocks) - 1) . ')')->execute(array_keys($this->staleLocks));
+		}
+		$this->pdo->exec('PRAGMA optimize');
+    }
 
 	public function read(string $key): mixed
 	{
@@ -67,12 +85,15 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
             $readLock->execute([$key]);
             $locked = $readLock->fetchColumn();
         }
-		$stmt = $this->pdo->prepare('SELECT data, slide FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
+		$stmt = $this->pdo->prepare('SELECT data, slide, callbacks FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
 		$stmt->execute([$key, time()]);
 		if (!$row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 			return null;
 		}
-
+		if (!$this->verify($key, $row['callbacks'])) {
+			$this->pdo->prepare('DELETE FROM cache WHERE key = ?')->execute([$key]);
+			return null;
+		}
 		if ($row['slide'] !== null) {
 			$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute([time(), $key]);
 		}
@@ -91,18 +112,24 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
             $readLock->execute($keys);
             $locked = $readLock->fetchColumn();
         }
-		$stmt = $this->pdo->prepare('SELECT key, data, slide FROM cache WHERE key IN (?' . str_repeat(',?', count($keys) - 1) . ') AND (expire IS NULL OR expire >= ?)');
+		$stmt = $this->pdo->prepare('SELECT key, data, slide, callbacks FROM cache WHERE key IN (?' . str_repeat(',?', count($keys) - 1) . ') AND (expire IS NULL OR expire >= ?)');
 		$stmt->execute(array_merge($keys, [time()]));
 		$result = [];
 		$updateSlide = [];
+		$deleteKeys = [];
 		foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+			if (!$this->verify($row['key'], $row['callbacks'])) {
+				$deleteKeys[] = $row['key'];
+				continue;
+			}
 			if ($row['slide'] !== null) {
 				$updateSlide[] = $row['key'];
 			}
-
 			$result[$row['key']] = unserialize($row['data']);
 		}
-
+		if (!empty($deleteKeys)) {
+			$this->pdo->prepare('DELETE FROM cache WHERE key IN (?' . str_repeat(', ?', count($deleteKeys) - 1) . ')')->execute($deleteKeys);
+		}
 		if (!empty($updateSlide)) {
 			$stmt = $this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key IN(?' . str_repeat(',?', count($updateSlide) - 1) . ')');
 			$stmt->execute(array_merge([time()], $updateSlide));
@@ -124,6 +151,7 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
                 usleep(self::SleepLength);
             }
         }
+		$this->staleLocks[$key] = true;
 	}
 
 	public function write(string $key, $data, array $dependencies): void
@@ -137,9 +165,13 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
         $priority = isset($dependencies[Cache::Priority])
             ? $dependencies[Cache::Priority]
             : null;
+        $callbacks = isset($dependencies[Cache::Callbacks])
+            ? serialize($dependencies[Cache::Callbacks])
+            : null;
+        $created_at = hrtime(true);
 		$this->pdo->exec('BEGIN TRANSACTION');
-		$this->pdo->prepare('REPLACE INTO cache (key, data, expire, slide) VALUES (?, ?, ?, ?, ?)')
-			->execute([$key, serialize($data), $expire, $slide, $priority]);
+		$this->pdo->prepare('REPLACE INTO cache (key, data, expire, slide, priority, callbacks, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+			->execute([$key, serialize($data), $expire, $slide, $priority, $callbacks, $created_at]);
 
 		if (!empty($dependencies[Cache::Tags])) {
 			foreach ($dependencies[Cache::Tags] as $tag) {
@@ -150,16 +182,64 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
 			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', count($arr) / 2 - 1))
 				->execute($arr);
 		}
+        if (!empty($dependencies[Cache::Items])) {
+            $items = $dependencies[Cache::Items];
+            $stmt = $this->pdo->prepare('SELECT key, created_at FROM cache WHERE key IN (?' . str_repeat(',?', count($items) - 1) . ')');
+            $stmt->execute($items);
+            $arr = [];
+            $stmt->fetchAll(\PDO::FETCH_FUNC, function ($item, $created_at) use (&$arr, $key, &$items) {
+                $arr[] = $key;
+                $arr[] = $item;
+                $arr[] = $created_at;
+                unset($items[$item]);
+            });
+            foreach ($items as $item) {
+                $arr[] = $key;
+                $arr[] = $item;
+                $arr[] = null;
+            }
+
+            $this->pdo->prepare('INSERT INTO items (key, item, created_at) SELECT ?, ?, ?' . str_repeat('UNION SELECT ?, ?, ?', count($arr) / 3 - 1))
+                ->execute($arr);
+        }
         $this->pdo->prepare('DELETE FROM locks WHERE key = ?')->execute([$key]);
 		$this->pdo->exec('COMMIT');
+		unset($this->staleLocks[$key]);
 	}
 
-
+	private function verify(string $key, $callbacks): bool {
+		if (!empty($callbacks) && !Cache::checkCallbacks(unserialize($callbacks))) {
+			return false;
+		}
+		$stmt = $this->pdo->prepare('SELECT item, created_at FROM items WHERE key = ?');
+		$stmt->execute([$key]);
+		$items = [];
+		$stmt->fetchAll(\PDO::FETCH_FUNC, function ($item, $created_at) use (&$items) {
+			$items[$item] = $created_at;
+		});
+		if (!empty($items)) {
+			$stmt = $this->pdo->prepare('SELECT callbacks, created_at FROM cache WHERE key = ? AND (expire IS NULL OR expire >= ?)');
+			$wallClock = time();
+			foreach ($items as $depItem => $created_at) {
+				$stmt->execute([$depItem, $wallClock]);
+				$meta = $stmt->fetch(\PDO::FETCH_ASSOC);
+				$time = $meta['created_at'] ?? null;
+				$callbacks = $meta['callbacks'] ?? null;
+				if ($created_at !== $time || !$this->verify($depItem, $callbacks)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	public function remove(string $key): void
 	{
+		$this->pdo->exec('BEGIN TRANSACTION');
 		$this->pdo->prepare('DELETE FROM cache WHERE key=?')
 			->execute([$key]);
         $this->pdo->prepare('DELETE FROM locks WHERE key = ?')->execute([$key]);
+		$this->pdo->exec('COMMIT');
+		unset($this->staleLocks[$key]);
 	}
 
 
