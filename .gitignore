@@ -4,4 +4,4 @@ config/local.neon.*
 vendor
 node_modules
 scrap.md
-
+app/Model/simple_parse.txt

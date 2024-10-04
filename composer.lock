@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ab34500987dc9385a78fc911e3527e4",
+    "content-hash": "4b38835de6701f0f771fc04f1b916277",
     "packages": [
         {
             "name": "contributte/application",
@@ -335,6 +335,82 @@
                 "source": "https://github.com/erusev/parsedown-extra/tree/0.8.x"
             },
             "time": "2019-12-30T23:20:37+00:00"
+        },
+        {
+            "name": "kdyby/redis",
+            "version": "v6.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Kdyby/Redis.git",
+                "reference": "1a2412b856ee63de366b8ac55d1b6807209a997b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Kdyby/Redis/zipball/1a2412b856ee63de366b8ac55d1b6807209a997b",
+                "reference": "1a2412b856ee63de366b8ac55d1b6807209a997b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-redis": "*",
+                "nette/caching": "~3.1",
+                "nette/di": "~3.0",
+                "nette/http": "~3.0",
+                "nette/utils": "~3.0 || ^4.0",
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "nette/bootstrap": "~3.0",
+                "nette/deprecated": "~3.0",
+                "nette/php-generator": "~3.3 || ^4.0",
+                "nette/tester": "^2.3.1",
+                "php-coveralls/php-coveralls": "^2.1",
+                "php-parallel-lint/php-parallel-lint": "dev-master",
+                "phpstan/phpstan": "^0.12",
+                "slevomat/coding-standard": "dev-master",
+                "tracy/tracy": "~2.4"
+            },
+            "suggest": {
+                "ext-redis": "The php redis extension https://github.com/nicolasff/phpredis/ is required for connecting to redis server"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kdyby\\Redis\\": "src/Kdyby/Redis"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0",
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Filip Procházka",
+                    "email": "filip@prochazka.su",
+                    "homepage": "http://filip-prochazka.com"
+                }
+            ],
+            "description": "Redis storage for Nette Framework",
+            "homepage": "http://kdyby.org",
+            "keywords": [
+                "cache",
+                "client",
+                "kdyby",
+                "nette",
+                "redis"
+            ],
+            "support": {
+                "email": "filip@prochazka.su",
+                "issues": "https://github.com/kdyby/redis/issues",
+                "source": "https://github.com/Kdyby/Redis/tree/v6.1.4"
+            },
+            "time": "2023-03-14T12:48:04+00:00"
         },
         {
             "name": "latte/latte",

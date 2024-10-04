@@ -2,6 +2,8 @@
 namespace App\Model;
 
 use Nette;
+use DOMDocument;
+use Nette\Utils\FileSystem;
 
 final class SpotPriceFacade
 {
@@ -43,7 +45,22 @@ final class SpotPriceFacade
             exit('Error:' . curl_error($ch));
         }
         // print_r($result);
-        $parsed = new \SimpleXMLElement($result);
+        // $parsed = new \SimpleXMLElement($result);
+        libxml_use_internal_errors(true);
+        $dom = new DOMDocument;
+
+        $dom->loadXML($result);
+        if (!$dom->schemaValidate(FileSystem::joinPaths(__DIR__, 'xsd', 'iec62325-451-3-publication_v7_3.xsd'))) {
+            $errors = libxml_get_errors();
+            foreach ($errors as $error) {
+                print_r($error);
+            }
+            libxml_clear_errors();
+            exit("Invalid document format from ENTSO-E\n");
+        }
+        $parsed = simplexml_import_dom($dom);
+        // FileSystem::write(FileSystem::joinPaths(__DIR__, 'simple_parse.txt'),print_r($parsed, true));
+        // exit;
         return $parsed;
     }
     public function updateSpotPrices()
@@ -63,7 +80,7 @@ final class SpotPriceFacade
         $i_hour = new \DateInterval("PT1H");
         // HUOM: TESTEJÄ VARTEN
         $nextday = $nextday->add($i_hour);
-        $price_release = $time_fi->setTime(14, 30);
+        $price_release = $time_fi->setTime(14, 00);
         $hours = [$midnight, $dayend];
 
 
@@ -77,7 +94,7 @@ final class SpotPriceFacade
         $q_hours = array_map($atomize, $hours);
 
         // if !has midnight, midday, end of day tomorrow
-        if (
+        if (true||
             $this->database->query('SELECT COUNT(*) FROM price WHERE hour IN ?', $q_hours)->fetchField()
             
              != count($q_hours)
@@ -86,17 +103,20 @@ final class SpotPriceFacade
             $entsoe = $this->fetchPrices($time_fi);
             $amount = 'price.amount';
             $new = [];
-            foreach ($entsoe->TimeSeries as $ts) {
-                $time = new \DateTimeImmutable($ts->Period->timeInterval->start);
-                foreach ($ts->Period->Point as $point) {
+            // print_r($entsoe->TimeSeries);
+            foreach ($entsoe->TimeSeries->Period as $period) {
+                $time = new \DateTimeImmutable($period->timeInterval->start);
+                // print_r($time);
+                foreach ($period->Point as $point) {
                     $new[] = [
                         'hour' => $time->format(DATE_ATOM),
                         'euro_mwh' => (string) $point->$amount
                     ];
+                    // print_r($point);
                     $time = $time->add($i_hour);
                 }
             }
-            // var_dump($new);
+            // print_r($new);
             if ($new) {
                 try {
                     $result = $this->database->query('INSERT INTO price ? ON CONFLICT DO NOTHING', $new);
