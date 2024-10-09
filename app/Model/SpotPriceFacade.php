@@ -45,6 +45,7 @@ final class SpotPriceFacade
             exit('Error:' . curl_error($ch));
         }
         // print_r($result);
+        // FileSystem::write(FileSystem::joinPaths(__DIR__, 'result.xml'),$result);
         // $parsed = new \SimpleXMLElement($result);
         libxml_use_internal_errors(true);
         $dom = new DOMDocument;
@@ -106,14 +107,24 @@ final class SpotPriceFacade
             // print_r($entsoe->TimeSeries);
             foreach ($entsoe->TimeSeries->Period as $period) {
                 $time = new \DateTimeImmutable($period->timeInterval->start);
+                $prev_point = $period->Point[0];
                 // print_r($time);
                 foreach ($period->Point as $point) {
+                    $difference = $point->position - $prev_point->position;
+                    for ($i = 1; $i < $difference; $i++) {
+                        $new[] = [
+                            'hour' => $time->format(DATE_ATOM),
+                            'euro_mwh' => (string) $prev_point->$amount
+                        ];
+                        $time = $time->add($i_hour);
+                    }
                     $new[] = [
                         'hour' => $time->format(DATE_ATOM),
                         'euro_mwh' => (string) $point->$amount
                     ];
                     // print_r($point);
                     $time = $time->add($i_hour);
+                    $prev_point = $point;
                 }
             }
             // print_r($new);
