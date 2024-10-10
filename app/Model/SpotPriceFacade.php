@@ -42,7 +42,9 @@ final class SpotPriceFacade
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $result = curl_exec($ch);
         if (curl_errno($ch)) {
-            exit('Error:' . curl_error($ch));
+            exit('Error: ' . curl_error($ch));
+        } else if (curl_getinfo($ch, CURLINFO_HTTP_CODE) != 200) {
+            exit('Error, ENTSO-E responded with http status: ' . curl_getinfo($ch, CURLINFO_HTTP_CODE));
         }
         // print_r($result);
         // FileSystem::write(FileSystem::joinPaths(__DIR__, 'result.xml'),$result);
@@ -105,28 +107,32 @@ final class SpotPriceFacade
             $amount = 'price.amount';
             $new = [];
             // print_r($entsoe->TimeSeries);
-            foreach ($entsoe->TimeSeries->Period as $period) {
-                $time = new \DateTimeImmutable($period->timeInterval->start);
-                $prev_point = $period->Point[0];
-                // print_r($time);
-                foreach ($period->Point as $point) {
-                    $difference = $point->position - $prev_point->position;
-                    for ($i = 1; $i < $difference; $i++) {
+            foreach ($entsoe->TimeSeries as $series) {
+                // print_r($series);
+                foreach ($series->Period as $period) {
+                    $time = new \DateTimeImmutable($period->timeInterval->start);
+                    $prev_point = $period->Point[0];
+                    // print_r($time);
+                    foreach ($period->Point as $point) {
+                        $difference = $point->position - $prev_point->position;
+                        for ($i = 1; $i < $difference; $i++) {
+                            $new[] = [
+                                'hour' => $time->format(DATE_ATOM),
+                                'euro_mwh' => (string) $prev_point->$amount
+                            ];
+                            $time = $time->add($i_hour);
+                        }
                         $new[] = [
                             'hour' => $time->format(DATE_ATOM),
-                            'euro_mwh' => (string) $prev_point->$amount
+                            'euro_mwh' => (string) $point->$amount
                         ];
+                        // print_r($point);
                         $time = $time->add($i_hour);
+                        $prev_point = $point;
                     }
-                    $new[] = [
-                        'hour' => $time->format(DATE_ATOM),
-                        'euro_mwh' => (string) $point->$amount
-                    ];
-                    // print_r($point);
-                    $time = $time->add($i_hour);
-                    $prev_point = $point;
                 }
             }
+ 
             // print_r($new);
             if ($new) {
                 try {
