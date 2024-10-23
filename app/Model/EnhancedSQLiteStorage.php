@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Nette Framework (https://nette.org)
- * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
+ * An attempt at APCu lockin for SQLite cache storage in Nette. 
+ * DO NOT USE. UNTESTED.
  */
 
 declare(strict_types=1);

@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Nette Framework (https://nette.org)
- * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
+ * Based partially on code from other Nette cache storages (SQLiteStorage, MemcachedStorage, Copyright (c) 2004 David Grudl (https://davidgrudl.com))
+ * Rest of the code and any bugs: Copyright Ilkka Forsblom
  */
 
 declare(strict_types=1);
@@ -14,7 +14,8 @@ use Nette\Caching\Cache;
 
 
 /**
- * SQLite storage.
+ * SQLite storage, with locking and (nearly) full functionality in terms of callback support in Nette cache system.
+ * Not tested. Not necessarily even sensible.
  */
 class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 {

@@ -1,8 +1,9 @@
 <?php
 
 /**
- * This file is part of the Nette Framework (https://nette.org)
- * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
+ * APCu storage for Nette cache. Partially based on from MemcacheStorage, Copyright (c) 2004 David Grudl (https://davidgrudl.com). 
+ * Rest of the code and any bugs: Copyright Ilkka Forsblom
+ * DO NOT USE. UNTESTED.
  */
 
 declare(strict_types=1);
@@ -14,7 +15,7 @@ use Nette\Caching\Cache;
 
 
 /**
- * Memcached storage using memcached extension.
+ * APCu storage using apcu extension.
  */
 class APCuStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 {

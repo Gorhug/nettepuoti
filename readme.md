@@ -1,3 +1,48 @@
+
+Yksinkertainen blogialusta: nettepuoti
+======================================
+
+Ensinnäkin,
+
+* miksi nette*puoti*: koska tarkoitukseni oli kirjoittaa yksinkertainen verkkokauppa-alusta. (Siksi hinnat vielä pyörivät tietokannassa).
+* miksi *nette*puoti: koska Nette oli erittäin kevyt järjestelmä, jonka ekosysteemi oli riittävä omiin tarpeisiin.
+
+Mitä sisältää: 
+
+* blogit voi kirjoittaa ja muokata markdown-formaatissa (ei WYSIWYGiä tai esikatselua erikseen)
+* RSS-syötteiden tuottaminen
+* OpenGraph-tiedot
+* palautelomake
+* kielet englanti/suomi
+* käyttäjärekisteröinti
+* oikeuksien hallinta (vain komentorivi)
+
+Mitä ei sisällä:
+
+* kuvien lisääminen verkkokäyttöliittymästä
+* kaikenlainen muu hyödyllinen
+* tekoäly
+
+Kenelle:
+
+* minulle
+
+Mitä opin tämän tekemisestä:
+
+* yhtä sun toista Nette-järjestelmästä
+* yhtä sun toista SQLite-tietokantajärjestelmästä ja SQL:stä muutenkin
+* Nette (ja PHP) -ekosysteemin eri cache-keinot
+* kuinka lähettää hienoja HTML-sähköposteja
+* OpenGraph- ja RSS-tietojen generointi
+* monikielisen sivuston tekemisen 
+
+Mitä kadun:
+
+* Nette, vaikka onkin monin tavoin erinomainen, on API-dokumentaatioltaan varsin puutteellinen (vertaa esim. Symfony)
+* Nette-ekosysteemin rajat
+
+
+
 Nette Web Project
 =================
 
