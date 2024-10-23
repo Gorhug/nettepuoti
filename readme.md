@@ -41,7 +41,11 @@ Mitä kadun:
 * Nette, vaikka onkin monin tavoin erinomainen, on API-dokumentaatioltaan varsin puutteellinen (vertaa esim. Symfony)
 * Nette-ekosysteemin rajat
 
+## Copyright Ilkka Forsblom
 
+
+
+Alkuperäinen Netten mukana tullut readme alla:
 
 Nette Web Project
 =================
