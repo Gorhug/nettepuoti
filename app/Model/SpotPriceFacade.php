@@ -47,7 +47,7 @@ final class SpotPriceFacade
             exit('Error, ENTSO-E responded with http status: ' . curl_getinfo($ch, CURLINFO_HTTP_CODE));
         }
         // print_r($result);
-        // FileSystem::write(FileSystem::joinPaths(__DIR__, 'result.xml'),$result);
+        FileSystem::write(FileSystem::joinPaths(__DIR__, 'result.xml'),$result);
         // $parsed = new \SimpleXMLElement($result);
         libxml_use_internal_errors(true);
         $dom = new DOMDocument;
@@ -130,6 +130,7 @@ final class SpotPriceFacade
                         $time = $time->add($i_hour);
                         $prev_point = $point;
                     }
+                    // TODO: timeinterval->end tarkistettava onko saavutettu
                 }
             }
  
