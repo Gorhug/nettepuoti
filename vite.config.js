@@ -2,13 +2,14 @@ import FastGlob from 'fast-glob'
 import { resolve } from 'path';
 import { defineConfig, loadEnv } from 'vite';
 
-import tailwindcss from 'tailwindcss'
-import tailwindcssNesting from 'tailwindcss/nesting/index.js'
-import autoprefixer from 'autoprefixer'
-import postcssImport from 'postcss-import';
-import postcssNested from 'postcss-nested';
+//import tailwindcss from 'tailwindcss'
+//import tailwindcssNesting from 'tailwindcss/nesting/index.js'
+//import autoprefixer from 'autoprefixer'
+//import postcssImport from 'postcss-import';
+//import postcssNested from 'postcss-nested';
 // import postcssCustomMedia from 'postcss-custom-media';
 // import { svelte } from '@sveltejs/vite-plugin-svelte'
+import tailwindcss from '@tailwindcss/vite'
 
 const reload = {
   name: 'reload',
@@ -27,10 +28,10 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'DEV');
 
   return {
-    plugins: [reload],
+    plugins: [reload, tailwindcss()],
     css: {
       postcss: {
-        plugins: [postcssImport, tailwindcssNesting(postcssNested), tailwindcss, autoprefixer]
+        plugins: []
       }
     },
     server: {

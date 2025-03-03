@@ -1,58 +1,65 @@
 {
-  "__commonjsHelpers-5-cIlDoe.js": {
-    "file": "_commonjsHelpers-5-cIlDoe.js"
+  "__commonjsHelpers-Cpj98o6Y.js": {
+    "file": "_commonjsHelpers-Cpj98o6Y.js",
+    "name": "_commonjsHelpers"
   },
   "src/css/app.css": {
-    "file": "app-dILskNGq.css",
-    "isEntry": true,
-    "src": "src/css/app.css"
+    "file": "app-KDWM9Jjj.css",
+    "src": "src/css/app.css",
+    "isEntry": true
   },
   "src/css/htmx.css": {
-    "file": "htmx-jleTPgU_.css",
-    "isEntry": true,
-    "src": "src/css/htmx.css"
+    "file": "htmx-DI60x0LJ.css",
+    "src": "src/css/htmx.css",
+    "isEntry": true
   },
   "src/js/app.js": {
-    "css": [
-      "app-dILskNGq.css",
-      "htmx-jleTPgU_.css"
-    ],
-    "file": "app-tRDMux3q.js",
-    "imports": [
-      "__commonjsHelpers-5-cIlDoe.js"
-    ],
+    "file": "app-BNPfVTyJ.js",
+    "name": "app",
+    "src": "src/js/app.js",
     "isEntry": true,
-    "src": "src/js/app.js"
+    "imports": [
+      "__commonjsHelpers-Cpj98o6Y.js"
+    ],
+    "css": [
+      "app-KDWM9Jjj.css",
+      "htmx-DI60x0LJ.css"
+    ]
   },
   "src/js/dg.js": {
-    "file": "dg-5kqmejjh.js",
-    "isEntry": true,
-    "src": "src/js/dg.js"
+    "file": "dg-CToLdr9H.js",
+    "name": "dg",
+    "src": "src/js/dg.js",
+    "isEntry": true
   },
   "src/js/liveform.js": {
-    "file": "liveform-zFuqwqNW.js",
-    "imports": [
-      "__commonjsHelpers-5-cIlDoe.js"
-    ],
+    "file": "liveform-D3WAIBcc.js",
+    "name": "liveform",
+    "src": "src/js/liveform.js",
     "isEntry": true,
-    "src": "src/js/liveform.js"
+    "imports": [
+      "__commonjsHelpers-Cpj98o6Y.js"
+    ]
   },
   "src/js/naja.js": {
-    "file": "naja-_nFXy15r.js",
-    "imports": [
-      "__commonjsHelpers-5-cIlDoe.js"
-    ],
+    "file": "naja-BuliOZ8u.js",
+    "name": "naja",
+    "src": "src/js/naja.js",
     "isEntry": true,
-    "src": "src/js/naja.js"
+    "imports": [
+      "__commonjsHelpers-Cpj98o6Y.js"
+    ]
   },
   "src/js/onDomReady.js": {
-    "file": "onDomReady-w40geAFS.js",
-    "isEntry": true,
-    "src": "src/js/onDomReady.js"
+    "file": "onDomReady-l0sNRNKZ.js",
+    "name": "onDomReady",
+    "src": "src/js/onDomReady.js",
+    "isEntry": true
   },
   "src/js/spinner.js": {
-    "file": "spinner-w40geAFS.js",
-    "isEntry": true,
-    "src": "src/js/spinner.js"
+    "file": "spinner-l0sNRNKZ.js",
+    "name": "spinner",
+    "src": "src/js/spinner.js",
+    "isEntry": true
   }
 }

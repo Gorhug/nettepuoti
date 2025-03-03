@@ -10,12 +10,15 @@
     "devDependencies": {
         "@tailwindcss/typography": "^0.5.10",
         "autoprefixer": "^10",
-        "daisyui": "^4.4.20",
-        "postcss": "^8",
-        "tailwindcss": "^3",
+        "daisyui": "^5.0.0",
+        "fast-glob": "^3.3.3",
+        "postcss": "^8.5.3",
+        "tailwindcss": "^4.0.9",
         "vite": "^5.0.10"
     },
     "dependencies": {
+        "@tailwindcss/postcss": "^4.0.9",
+        "@tailwindcss/vite": "^4.0.9",
         "htmx.org": "^1.9.9",
         "live-form-validation": "^1.10.0",
         "naja": "^2.6.1",

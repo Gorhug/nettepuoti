@@ -3,7 +3,7 @@
 <div class="max-w-md">
       {define title}{_g.home}{/define}
 
-<span class="bg-clip-text font-serif text-transparent box-decoration-clone bg-gradient-to-br from-primary via-accent to-secondary text-center text-9xl h-48">gorhug.fi</span>
+<span class="bg-clip-text font-serif text-transparent box-decoration-clone bg-linear-to-br from-primary via-accent to-secondary text-center text-5xl sm:text-9xl h-48">gorhug.fi</span>
 <div class="prose">
 
 {block|parsedown}
@@ -17,7 +17,7 @@
     </button> *}
 
 	{* <h1>Items for sale</h1> *}
-	<div class="card w-96 bg-base-100 shadow-xl my-4" n:foreach="$products as $product">
+	<div class="card bg-base-100 shadow-xl my-4" n:foreach="$products as $product">
 		<div class="card-body">
 			<a class="card-title link ajax link-primary" n:href="Product:show $product->id">{$product->name}</a>
 			<div class="text-left italic">{$product->created_at|intlDay}</div>

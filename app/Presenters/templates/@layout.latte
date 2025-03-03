@@ -62,7 +62,7 @@
 				</div>
 				<details class="dropdown">
 					<summary class="m-1 btn">{svgIcon 'fill/svg/globe.svg', class: 'fill-current stroke-none w-8 h-8'} {$locale}</summary>
-					<ul class="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
+					<ul class="p-2 shadow-sm menu dropdown-content z-1 bg-base-100 rounded-box w-52">
 						<li><a n:href="this, locale: en" lang="en" n:class="isLinkCurrent() ? 'bg-accent text-accent-content'">English</a></li>
 						<li><a n:href="this, locale: fi" lang="fi" n:class="isLinkCurrent() ? 'bg-accent text-accent-content'">suomi</a></li>
 					</ul>
@@ -84,7 +84,7 @@
 				</main>
 			</div>
 			{block footer}
-			<footer class="footer p-10">
+			<footer class="footer sm:footer-horizontal p-10">
 				<div>
 					{* LOGO TÄHÄN, käytin lataus-ikonia *}
 					<img src="/img/catlogo.svg" class="w-16 rounded-lg shadow-2xl" /> 
@@ -111,7 +111,7 @@
 		</div>
 		<div class="drawer-side">
 			<label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
-			<menu class="menu p-4 w-80 bg-base-100 min-h-full">
+			<menu class="menu p-4 bg-base-100 min-h-full text-4xl space-y-8">
 				{* Sidebar content here *}
 				{include links}
 			</menu>
