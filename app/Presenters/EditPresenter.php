@@ -48,7 +48,8 @@ final class EditPresenter extends BasePresenter
             ->setRequired('g.edit.brief_fiRequired')
             ->setMaxLength(self::MaxBrief);
         $form->addTextArea('description_fi', 'g.edit.description_fi')
-            ->setRequired('g.edit.description_fiRequired');
+            ->setRequired('g.edit.description_fiRequired')
+            ->setHtmlAttribute("markdown");
 
         // ->setHtmlAttribute('hx-trigger', 'change, keyup delay:200ms changed');
         $form->addFloat('price', 'g.edit.price')
@@ -108,5 +109,8 @@ final class EditPresenter extends BasePresenter
             ->setDefaults($product->toArray());
     }
 
-
+    public function renderPreview(string $description='', string $description_fi=''): void
+    {
+        $this->template->markdown = $description == '' ? $description_fi : $description;
+    }
 }
