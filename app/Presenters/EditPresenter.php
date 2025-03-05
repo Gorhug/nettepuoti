@@ -25,6 +25,7 @@ final class EditPresenter extends BasePresenter
         if (!$this->getUser()->isAllowed('product')) {
             $this->error($this->translator->translate('g.edit.noRights'), 403);
         }
+        $this->template->preview_link = $this->link('preview');
     }
 
 
@@ -104,7 +105,6 @@ final class EditPresenter extends BasePresenter
         if (!$product) {
             $this->error($this->translator->translate('g.edit.notFound'));
         }
-
         $this->getComponent('productForm')
             ->setDefaults($product->toArray());
     }

@@ -24,7 +24,7 @@
 		n:class="mb-3, row, form-control, $control->required ? required">
 
 		{* Label for the control *}
-		<div class="col-sm-3 label">{label $control /}</div>
+		<div class="col-sm-3 mb-2 label">{label $control /}</div>
 
 		<div class="col-sm-9 form-control">
 			{include control $control}
@@ -47,21 +47,26 @@
 	{* Conditionally render controls based on their type with appropriate Bootstrap classes *}
 	{switch $control->getOption(type)}
 	{case text, select, datetime, file}
-		{input $control class => "input w-72 sm:w-96 invalid:input-error valid:input-success placeholder-shown:border-gray-500", placeholder: ''}
+		{input $control class => "input  invalid:input-error {*valid:input-success*} placeholder-shown:border-info", placeholder: ''}
 
 	{case textarea}
 		{var $parse = $control->name === "description" || $control->name === "description_fi"}
-		{input $control class => "input w-72 sm:w-96 h-96 invalid:input-error valid:input-success placeholder-shown:border-gray-500 text-wrap", placeholder: '', wrap: 'soft',
-		hx-get: "/en/edit/preview",
-		hx-trigger: "keyup changed delay:500ms",
-		hx-target: "#preview-{$control->name}"
+		{var $in_lang = str_ends_with($control->name, "fi") ? 'fi' : 'en'}
+		{var $ta_class = "input h-96 sm:w-96 invalid:input-error placeholder-shown:border-info text-wrap"}
+		<div class="flex flex-col">
+		{input $control class => $ta_class, placeholder: '', wrap: 'soft',
+			hx-get: $preview_link,
+			hx-trigger: "keyup changed delay:500ms",
+			hx-target: "#preview-{$control->name}",
+			lang: $in_lang
    		}
 		{if $parse}
 			
-			<div id="preview-{$control->name}" class="prose">
+			<div id="preview-{$control->name}" class="prose h-96 max-w-96 p-2 overflow-scroll border-accent border-2 text-justify hyphens-auto" lang={$in_lang}>
 				{block|trim|parsedown}{$control->getValue()}{/block}
 			</div>
 		{/if}
+		</div>
 	{case button}
 		{input $control class => "btn btn-primary"}
 
