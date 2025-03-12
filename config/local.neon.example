@@ -3,6 +3,7 @@ parameters:
 	adminEmail: ''
 	adminName: ''
 	botEmail: ''
+	uploadDir: '%wwwDir%/img/upload'
 
 database:
 	# dsn: 'sqlite::memory:'

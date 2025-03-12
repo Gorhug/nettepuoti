@@ -12,5 +12,6 @@ class Settings
 		public string $adminEmail,
 		public string $adminName,
 		public string $botEmail,
+		public string $uploadDir
 	) {}
 }

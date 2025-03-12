@@ -9,6 +9,8 @@ class AuthorizatorFactory
         $acl->addRole('authenticated', 'guest'); // 'registered' inherits from 'guest'
         $acl->addRole('admin', 'authenticated'); // and 'admin' inherits from 'registered'
 		$acl->addResource('product');
+		$acl->addResource('category');
+		$acl->addResource('media');
 		$acl->addResource('user');
         $acl->allow('admin');
 		return $acl;

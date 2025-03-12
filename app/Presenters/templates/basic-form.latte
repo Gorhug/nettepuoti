@@ -46,9 +46,12 @@
 {define control Nette\Forms\Controls\BaseControl $control}
 	{* Conditionally render controls based on their type with appropriate Bootstrap classes *}
 	{switch $control->getOption(type)}
-	{case text, select, datetime, file}
-		{input $control class => "input  invalid:input-error {*valid:input-success*} placeholder-shown:border-info", placeholder: ''}
+	{case text, select, datetime}
+		{input $control class => "input invalid:input-error {*valid:input-success*} placeholder-shown:border-info", placeholder: ''}
 
+	{case file}
+		{input $control class => "file-input"}
+		
 	{case textarea}
 		{var $parse = $control->name === "description" || $control->name === "description_fi"}
 		{var $in_lang = str_ends_with($control->name, "fi") ? 'fi' : 'en'}

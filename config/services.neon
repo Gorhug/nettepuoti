@@ -5,7 +5,8 @@ services:
 		%entsoeToken%,
 		%adminEmail%,
 		%adminName%,
-		%botEmail%
+		%botEmail%,
+		%uploadDir%
 	)
 	cache.storage: App\Model\LockingSQLiteStorage('%tempDir%/cache.db')
 	# cache.storage: Nette\Caching\Storages\SQLiteStorage('%tempDir%/cache.db')
