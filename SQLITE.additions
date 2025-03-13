@@ -1,2 +1,8 @@
 ALTER TABLE products ADD COLUMN brief TEXT NOT NULL DEFAULT 'A silly blog post that should have a brief added.';
 ALTER TABLE products ADD COLUMN brief_fi TEXT NOT NULL DEFAULT 'Plokiteksti, johon lyhyt kuvaus olisi kiva lisä'; 
+# media
+CREATE TABLE images(
+    id INTEGER PRIMARY KEY,
+    filename TEXT NOT NULL UNIQUE,
+    owner INTEGER REFERENCES users (id) ON DELETE SET NULL
+);

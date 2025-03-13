@@ -6,6 +6,7 @@ services:
 		%adminEmail%,
 		%adminName%,
 		%botEmail%,
+		%wwwDir%,
 		%uploadDir%
 	)
 	cache.storage: App\Model\LockingSQLiteStorage('%tempDir%/cache.db')
