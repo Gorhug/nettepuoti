@@ -30,8 +30,8 @@ final class MediaFacade
         ]);
     }
 
-	public function getImages()
+	public function getImages($owner)
 	{
-		
+		return $this->database->table('images')->where('owner', $owner);
 	}
 }

@@ -68,4 +68,12 @@ class MediaPresenter extends BasePresenter
         $this->redirect('this');
     }
 
+    public function renderDefault(): void
+    {
+        $user = $this->getUser();
+        $userId = $user->getId();
+        $images = $this->facade->getImages($userId);
+        $this->template->images = $images;
+        $this->template->uploadDir = $this->settings->uploadDir;
+    }
 }
