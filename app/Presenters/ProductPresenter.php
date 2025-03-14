@@ -1,6 +1,7 @@
 <?php
 namespace App\Presenters;
 
+use App\Settings;
 use Naja\Guide\Application\UI\Presenters\BasePresenter;
 use Nette;
 use Nette\Application\UI\Form;
@@ -11,6 +12,7 @@ final class ProductPresenter extends BasePresenter
 	public function __construct(
 		private Nette\Database\Explorer $database,
 		private Translator $translator,
+		private Settings $settings
 	) {
 	}
 
@@ -34,6 +36,13 @@ final class ProductPresenter extends BasePresenter
 		}
 
 		$this->template->product = $product;
+		$user = $this->getUser();
+		if ($user->isAllowed('media')) {
+			$this->template->images = $this->database
+				->table('images')
+				->where('owner', $user->getId());
+			$this->template->uploadDir = $this->settings->uploadDir;
+		}
 	}
 // 	public function renderShow(string $name): void 
 // 	{

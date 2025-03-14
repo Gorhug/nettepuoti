@@ -7,6 +7,26 @@
 {block content}
 
 {* <p><a n:href="Home:default" class="link link-primary link-hover ajax">← back to homepage</a></p> *}
+{if $user->isAllowed('media')}
+<!-- Open the modal using ID.showModal() method -->
+<button class="btn" onclick="media_modal.showModal()">{_g.media.openModal}</button>
+<dialog id="media_modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">{_g.media.modalTitle}</h3>
+    <p class="py-4">{_g.media.modalInstructions}</p>
+    <div class="modal-action">
+      <form method="dialog">
+      <div n:foreach="$images as $image">
+    <img class="w-96" src="{$uploadDir}/{$image->filename}" alt="not yet">
+    <input type="checkbox" checked="checked" class="checkbox" name="gallery" value="{$image->id}" />
+</div>
+        <!-- if there is a button in form, it will close the modal -->
+        <button class="btn">{_g.media.modalClose}</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+{/if}
 <div class="card w-96 bg-base-100 shadow-xl">
   <div class="card-body">
 {cache "$locale/$product->id", tags: ["product/$product->id"]}
