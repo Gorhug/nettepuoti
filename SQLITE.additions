@@ -6,3 +6,18 @@ CREATE TABLE images(
     filename TEXT NOT NULL UNIQUE,
     owner INTEGER REFERENCES users (id) ON DELETE SET NULL
 );
+
+CREATE TABLE product_gallery(
+    id INTEGER PRIMARY KEY,
+    product INTEGER NOT NULL REFERENCES products (id) ON DELETE CASCADE,
+    image INTEGER NOT NULL REFERENCES images (id) ON DELETE CASCADE,
+    UNIQUE(product,image)
+);
+
+CREATE TABLE messages(
+    rowid INTEGER PRIMARY KEY,
+    id TEXT NOT NULL,
+    locale TEXT NOT NULL,
+    message TEXT NOT NULL,
+    UNIQUE(id, locale)
+);

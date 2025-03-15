@@ -18,7 +18,7 @@
       <form method="dialog">
       <div n:foreach="$images as $image">
     <img class="w-96" src="{$uploadDir}/{$image->filename}" alt="not yet">
-    <input type="checkbox" checked="checked" class="checkbox" name="gallery" value="{$image->id}" />
+    <input type="checkbox" name="gallery" class="checkbox" n:attr="checked: $image->id in $checked,  value: $image->id" />
 </div>
         <!-- if there is a button in form, it will close the modal -->
         <button class="btn">{_g.media.modalClose}</button>

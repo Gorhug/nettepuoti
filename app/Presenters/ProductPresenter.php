@@ -42,6 +42,14 @@ final class ProductPresenter extends BasePresenter
 				->table('images')
 				->where('owner', $user->getId());
 			$this->template->uploadDir = $this->settings->uploadDir;
+			$checked = [];
+			foreach($this->database
+				->table('product_gallery')
+				->where('product', $id) as $row) {
+					$checked[] = $row->image;
+			}
+			$this->template->checked = $checked;
+				
 		}
 	}
 // 	public function renderShow(string $name): void 
