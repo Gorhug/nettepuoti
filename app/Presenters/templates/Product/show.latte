@@ -29,6 +29,23 @@
 {/if}
 <div class="card w-96 bg-base-100 shadow-xl">
   <div class="card-body">
+  <div class="carousel w-full">
+  {foreach $gallery as $img}
+  
+  
+  <div id="item{$img->id}" class="carousel-item w-full">
+    <img
+      src="{$uploadDir}/{$img->filename}"
+      class="w-full" />
+  </div>
+  {/foreach}
+
+</div>
+<div class="flex w-full justify-center gap-2 py-2">
+{for $i = 0; $i < count($checked); $i++}
+  <a href="#item{$checked[$i]}" class="btn btn-xs">{$i+1}</a>
+{/for}
+</div>
 {cache "$locale/$product->id", tags: ["product/$product->id"]}
     <h2 class="card-title" n:block="title">{$product->name}</h2>
     <div class="italic">{$product->created_at|intlDay}</div>
