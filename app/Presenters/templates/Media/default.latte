@@ -1,4 +1,5 @@
 {block content}
+<a n:href="upload">{_g.link.mediaUpload}</a>
 <div n:foreach="$images as $image">
-    <img class="w-96" src="{$uploadDir}/{$image->filename}" alt="not yet">
+    <img class="w-96" src="{$uploadDir}/{$image->filename}" alt="not yet" width={$image->width} height={$image->height}>
 </div>

@@ -27,6 +27,8 @@ final class MediaFacade
         $this->database->table('images')->insert([
             'filename' => $fileName,
             'owner' => $owner,
+            'width' => $image->getWidth(),
+            'height' => $image->getHeight()
         ]);
     }
 

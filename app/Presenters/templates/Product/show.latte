@@ -10,26 +10,30 @@
 {if $user->isAllowed('media')}
 <!-- Open the modal using ID.showModal() method -->
 <button class="btn" onclick="media_modal.showModal()">{_g.product.galleryOpen}</button>
-<dialog id="media_modal" class="modal modal-bottom sm:modal-middle">
-  <div class="modal-box">
+<dialog id="media_modal" class="modal modal-bottom">
+  <div class="modal-box w-full items-center">
     <h3 class="text-lg font-bold">{_g.product.galleryTitle}</h3>
     <p class="py-4">{_g.product.galleryInstructions}</p>
-    <div class="modal-action">
+    <div class="modal-action justify-center">
       <form method="post">
       {* <input type="hidden" name="id" value={$product->id} /> *}
-      <div n:foreach="$images as $image">
-    <img class="w-96" src="{$uploadDir}/{$image->filename}" alt="not yet">
-    <input type="checkbox" name="gallery[]" class="checkbox" n:attr="checked: $image->id in $checked,  value: $image->id" />
-</div>
+      <div class="flex flex-row flex-wrap">
+        <div n:foreach="$images as $image">
+            <img class="w-96" src="{$uploadDir}/{$image->filename}" alt="not yet" width={$image->width} height={$image->height}>
+            <input type="checkbox" name="gallery[]" class="checkbox" n:attr="checked: $image->id in $checked,  value: $image->id" />
+        </div>
+      </div>
         <!-- if there is a button in form, it will close the modal -->
+        <div class="">
         <button formmethod="dialog" class="btn">{_g.product.galleryClose}</button>
         <button class="btn" formmethod="post" formaction={link "gallery!"}>{_g.product.updateGallery}</button>
+        </div>
       </form>
     </div>
   </div>
 </dialog>
 {/if}
-<div class="card w-96 bg-base-100 shadow-xl">
+<div class="card w-full sm:max-w-[64ch] bg-base-100 shadow-xl">
   <div class="card-body">
   <div class="carousel w-full">
   {foreach $gallery as $img}
@@ -38,19 +42,19 @@
   <div id="item{$img->id}" class="carousel-item w-full">
     <img
       src="{$uploadDir}/{$img->filename}"
-      class="w-full" />
+      class="w-full" width={$img->width} height={$img->height}/>
   </div>
   {/foreach}
 
 </div>
-<div class="flex w-full justify-center gap-2 py-2">
+<div class="flex justify-center items-center gap-2 py-2">
 {for $i = 0; $i < count($checked); $i++}
   <a href="#item{$checked[$i]}" class="btn btn-xs">{$i+1}</a>
 {/for}
 </div>
 {cache "$locale/$product->id", tags: ["product/$product->id"]}
     <h2 class="card-title" n:block="title">{$product->name}</h2>
-    <div class="italic">{$product->created_at|intlDay}</div>
+    <div class="italic text-justify">{$product->created_at|intlDay}</div>
     <div class="font-serif text-justify hyphens-auto italic">{$product->brief}</div>
     <div class="prose text-justify hyphens-auto" hx-disable>{block|trim|parsedown}{$product->description}{/block}</div>
 {/cache}
