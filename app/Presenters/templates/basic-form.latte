@@ -60,14 +60,14 @@
 		<div class="flex flex-col">
 		{if $parse}
 			{input $control class => $ta_class, placeholder: '', wrap: 'soft',
-				hx-get: $preview_link,
+				hx-get: $presenter->link('preview'),
 				hx-trigger: "keyup changed delay:500ms",
 				hx-target: "#preview-{$control->name}",
 				lang: $in_lang
 			}
 
 			
-			<div id="preview-{$control->name}" class="prose h-96 max-w-96 p-2 overflow-scroll border-accent border-2 text-justify hyphens-auto" lang={$in_lang}>
+			<div id="preview-{$control->name}" class="prose h-96 max-w-96 p-2 overflow-scroll border-accent border-2 text-justify hyphens-auto" lang={$in_lang} hx-disable>
 				{block|trim|parsedown}{$control->getValue()}{/block}
 			</div>
 		{else}

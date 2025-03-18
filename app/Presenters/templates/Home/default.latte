@@ -23,7 +23,7 @@
 			<div class="text-left italic">{$product->created_at|intlDay}</div>
 			<details class="text-justify hyphens-auto">
   				<summary class="font-serif">{$product->brief}</summary>
-				<div class="prose">{block|trim|parsedown}{$product->description}{/block}</div>
+				<div class="prose" hx-disable>{block|trim|parsedown}{$product->description}{/block}</div>
 			</details>
 			{* <div class="card-actions justify-end">
 				<a n:href="Edit:edit $product->id" class="btn btn-primary ajax">Edit this product</a>

@@ -6,11 +6,12 @@ use Naja\Guide\Application\UI\Presenters\BasePresenter;
 use Nette;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
+use Nette\Database\Explorer;
 
 final class ProductPresenter extends BasePresenter
 {
 	public function __construct(
-		private Nette\Database\Explorer $database,
+		private Explorer $database,
 		private Translator $translator,
 		private Settings $settings
 	) {
@@ -19,11 +20,11 @@ final class ProductPresenter extends BasePresenter
 	public function renderShow(int $id): void
 	{
 		$name = 'name';
-        $description = 'description';
+		$description = 'description';
 		$brief = 'brief';
-        if ($this->locale === 'fi') {
-            $name = 'name_fi';
-            $description = 'description_fi';
+		if ($this->locale === 'fi') {
+			$name = 'name_fi';
+			$description = 'description_fi';
 			$brief = 'brief_fi';
 		}
 		$product = $this->database
@@ -39,10 +40,8 @@ final class ProductPresenter extends BasePresenter
 
 		$this->template->uploadDir = $this->settings->uploadDir;
 		$checked = [];
-		foreach($this->database
-			->table('product_gallery')
-			->where('product', $id) as $row) {
-				$checked[] = $row->image;
+		foreach ($this->database->table('product_gallery')->where('product', $id) as $row) {
+			$checked[] = $row->image;
 		}
 		$this->template->checked = $checked;
 		$this->template->gallery = $this->database
@@ -57,17 +56,75 @@ final class ProductPresenter extends BasePresenter
 				->where('owner', $user->getId());
 		}
 	}
-// 	public function renderShow(string $name): void 
+
+	// public function handleDelete(int $id): void
+	// {
+	// 	$product = $this->database
+	// 		->table('products')
+	// 		->get($id);
+
+	// 	if (!$product) {
+	// 		$this->error($this->translator->translate('g.edit.notFound'));
+	// 	}
+
+	// 	$product->delete();
+
+	// 	$this->flashMessage($this->translator->translate('g.edit.deleted'));
+	// 	$this->redirect('Product:default');
+	// }
+
+	// public function handleDeleteImage(int $id): void
+	// {
+	// 	$image = $this->database
+	// 		->table('images')
+	// 		->get($id);
+
+	// 	if (!$image) {
+	// 		$this->error($this->translator->translate('g.edit.notFound'));
+	// 	}
+
+	// 	$image->delete();
+
+	// 	$this->flashMessage($this->translator->translate('g.edit.deleted'));
+	// 	$this->redirect('Product:default');
+	// }
+
+	public function handleGallery(int $id): void
+	{
+		$user = $this->getUser();
+		if (!$user->isAllowed('media')) {
+			$this->error($this->translator->translate('g.media.notAllowed'), \Nette\Http\IResponse::S403_Forbidden);
+		}
+		$gallery = $this->getHttpRequest()->getPost('gallery') ?? [];
+		// dump($gallery);
+		$images = [];
+		foreach ($gallery as $img) {
+			$images[] = ['product' => $id, 'image' => $img];
+		}
+		$this->database->transaction(function (Explorer $db) use ($id, $images) {
+			$db->table('product_gallery')
+				->where('product', $id)
+				->delete();
+			if (empty($images)) {
+				return; // exit transaction
+			}
+			$db->table('product_gallery')
+				->insert($images);
+		});
+		$this->flashMessage($this->translator->translate('g.product.galleryUpdated'));
+		$this->redirect('Product:show', ['id' => $id]);
+	}
+	// 	public function renderShow(string $name): void 
 // 	{
 // 		$product = $this->database
 // 			->table('products')
 // 			->where('name', $name)
 // 			->fetch();
 
-// 		if (!$product) {
+	// 		if (!$product) {
 // 			$this->error('Product not found');
 // 		}
 
-// 		$this->template->product = $product;
+	// 		$this->template->product = $product;
 // 	}
 }

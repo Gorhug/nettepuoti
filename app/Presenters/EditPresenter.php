@@ -25,7 +25,7 @@ final class EditPresenter extends BasePresenter
         if (!$this->getUser()->isAllowed('product')) {
             $this->error($this->translator->translate('g.edit.noRights'), 403);
         }
-        $this->template->preview_link = $this->link('preview');
+        // $this->template->preview_link = $this->link('preview');
     }
 
 
