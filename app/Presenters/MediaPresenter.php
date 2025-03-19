@@ -67,6 +67,53 @@ class MediaPresenter extends BasePresenter
         }
         $this->redirect('this');
     }
+    protected function createComponentAltForm(): Form
+    {
+        // ...
+        $form = $this->formFactory->create();
+        $form->setTranslator($this->translator);
+        $form->addText('alt', 'g.media.alt')
+            ->setMaxLength(120)
+            ->setRequired('g.media.altRequired');
+        $form->addText('alt_fi', 'g.media.alt_fi')
+            ->setMaxLength(120)
+            ->setRequired('g.media.alt_fiRequired');
+        $form->addSubmit('send', 'g.media.sendAltForm');
+        $form->onSuccess[] = [$this, 'altFormSucceeded'];
+        return $form;
+    }
+
+    public function altFormSucceeded(array $data): void
+    {
+        // $this->facade->sendMessage($data->email, $data->name, $data->message);
+        $success = false;
+        $error = null;
+        $id = $this->getParameter('id');
+        try {
+            $this->facade->updateImage($id, $data);
+            $success = true;
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
+        }
+        if (!$success) {
+            $this->flashMessage($error, 'alert-error');
+        } else {
+            $this->flashMessage('g.media.altUpdated', 'alert-success');
+        }
+        $this->redirect('this');
+    }
+
+    public function renderEdit(int $id): void
+    {
+        $image = $this->facade->getImage($id);
+        $this->template->image = $image;
+        $this->template->uploadDir = $this->settings->uploadDir;
+        if (!$image) {
+            $this->error($this->translator->translate('g.media.notFound'));
+        }
+        $this->getComponent('altForm')
+            ->setDefaults($image->toArray());
+    }
 
     public function renderDefault(): void
     {

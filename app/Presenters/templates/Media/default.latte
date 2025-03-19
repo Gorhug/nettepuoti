@@ -1,5 +1,6 @@
 {block content}
 <a n:href="upload">{_g.link.mediaUpload}</a>
+{var $alt_column = $locale == 'en' ? 'alt' : 'alt_fi'}
 <div n:foreach="$images as $image">
-    <img class="w-96" src="{$uploadDir}/{$image->filename}" alt="not yet" width={$image->width} height={$image->height}>
+    <a n:href="edit $image->id"><img class="w-96" src="{$uploadDir}/{$image->filename}" alt={$image->$alt_column ?? $image->filename} width={$image->width} height={$image->height}></a>
 </div>

@@ -5,6 +5,8 @@ use Exception;
 use Nette;
 use Nette\Http\FileUpload;
 use Nette\Utils\FileSystem;
+use Nette\Database\Table\ActiveRow;
+use Nette\Database\Table\Selection;
 
 final class MediaFacade
 {
@@ -32,7 +34,27 @@ final class MediaFacade
         ]);
     }
 
-	public function getImages($owner)
+    public function getImage($id): ActiveRow
+    {
+        $image = $this->database->table('images')->get($id);
+        if (!$image) {
+            throw new Exception('g.media.fileNotFound');
+        }
+        return $image;
+    }
+
+    public function updateImage($id, $data)
+    {
+        $image = $this->database->table('images')->get($id);
+        if (!$image) {
+            throw new Exception('g.media.fileNotFound');
+        }
+        $image->update($data);
+        
+    }
+
+
+	public function getImages($owner): Selection
 	{
 		return $this->database->table('images')->where('owner', $owner);
 	}

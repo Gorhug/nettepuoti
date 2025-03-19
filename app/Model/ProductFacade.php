@@ -9,7 +9,7 @@ final class ProductFacade
 		private Nette\Database\Explorer $database,
 	) {
 		$database->getConnection()->getPdo()->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-		register_shutdown_function([$this, 'processTerminatorHandler']);
+		// register_shutdown_function([$this, 'processTerminatorHandler']);
 	}
 
 	public function processTerminatorHandler(): void

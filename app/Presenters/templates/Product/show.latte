@@ -5,7 +5,7 @@
 	"article:published_time" => ($product->created_at|date:'c')
 ]}
 {block content}
-
+{var $alt_column = $locale == 'en' ? 'alt' : 'alt_fi'}
 {* <p><a n:href="Home:default" class="link link-primary link-hover ajax">← back to homepage</a></p> *}
 {if $user->isAllowed('media')}
 <!-- Open the modal using ID.showModal() method -->
@@ -19,7 +19,7 @@
       {* <input type="hidden" name="id" value={$product->id} /> *}
       <div class="flex flex-row flex-wrap">
         <div n:foreach="$images as $image">
-            <img class="w-96" src="{$uploadDir}/{$image->filename}" alt="not yet" width={$image->width} height={$image->height}>
+            <img class="w-96" src="{$uploadDir}/{$image->filename}" alt={$image->$alt_column ?? $image->filename} width={$image->width} height={$image->height}>
             <input type="checkbox" name="gallery[]" class="checkbox" n:attr="checked: $image->id in $checked,  value: $image->id" />
         </div>
       </div>
@@ -36,13 +36,13 @@
 <div class="card w-full sm:max-w-[64ch] bg-base-100 shadow-xl">
   <div class="card-body">
   <div class="carousel w-full">
-  {foreach $gallery as $img}
+  {foreach $gallery as $image}
   
   
-  <div id="item{$img->id}" class="carousel-item w-full">
+  <div id="item{$image->id}" class="carousel-item w-full">
     <img
-      src="{$uploadDir}/{$img->filename}"
-      class="w-full" width={$img->width} height={$img->height}/>
+      src="{$uploadDir}/{$image->filename}" alt={$image->$alt_column ?? $image->filename}
+      class="w-full" width={$image->width} height={$image->height}/>
   </div>
   {/foreach}
 

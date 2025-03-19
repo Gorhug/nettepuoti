@@ -12,8 +12,15 @@ final class SpotPriceFacade
         private \App\Settings $settings,
         private Nette\Caching\Storage $storage,
     ) {
+        register_shutdown_function([$this, 'processTerminatorHandler']);
     }
 
+	public function processTerminatorHandler(): void
+    {
+        // this logic will be called by Terminator.
+		$this->database->getConnection()->getPdo()->exec('PRAGMA optimize');
+    }
+    
     private static function p_format(\DateTimeImmutable $date)
     {
         return $date->format("YmdHi");
