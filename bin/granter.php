@@ -7,7 +7,8 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $container = App\Bootstrap::boot()
 	->createContainer();
-
+$conn = $container->getByType(Nette\Database\Connection::class);
+$conn->query('PRAGMA synchronous=NORMAL');
 if (!isset($argv[2])) {
 	echo '
 Manage a users role
