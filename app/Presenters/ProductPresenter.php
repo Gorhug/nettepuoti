@@ -111,7 +111,7 @@ final class ProductPresenter extends BasePresenter
 			$db->table('product_gallery')
 				->insert($images);
 		});
-		$this->flashMessage($this->translator->translate('g.product.galleryUpdated'));
+		$this->flashMessage($this->translator->translate('g.product.galleryUpdated'), 'alert-success');
 		$this->redirect('Product:show', ['id' => $id]);
 	}
 	// 	public function renderShow(string $name): void 

@@ -2,13 +2,16 @@
 
 namespace App\Presenters;
 // use App\Model\ContactFacade;
+use Contributte\Translation\Wrappers\NotTranslate;
 use Nette\Application\UI\Form;
 use Naja\Guide\Application\UI\Presenters\BasePresenter;
 use App\Forms\FormFactory;
+use NumberFormatter;
 use stdClass;
 use Nette\Localization\Translator;
 use Nette\Utils\FileSystem;
 use App\Model\MediaFacade;
+use Contributte\Translation\Wrappers\Message;
 
 class MediaPresenter extends BasePresenter
 {
@@ -24,17 +27,21 @@ class MediaPresenter extends BasePresenter
     {
         parent::startup();
         if (!$this->getUser()->isAllowed('media')) {
-            $this->error($this->translator->translate('g.media.noRights'), 403);
+            $this->error($this->translator->translate('g.media.notAllowed'), 403);
         }
     }
 
     protected function createComponentUploadForm(): Form
     {
         // ...
+        $maxFileSize = 1024*1024;
+        $frm = new NumberFormatter($this->locale, NumberFormatter::DECIMAL);
+        $maxSizeMB = $frm->format($maxFileSize/1024/1024);
+        $maxSizeError = $this->translator->translate('g.upload.fileSize', ['size' => $maxSizeMB]);
         $form = $this->formFactory->create();
         $form->setTranslator($this->translator);
         $form->addUpload('file', 'g.upload.file')
-            ->addRule($form::MAX_FILE_SIZE, 'g.upload.fileSize', 1024 * 1024)
+            ->addRule($form::MAX_FILE_SIZE, new NotTranslate($maxSizeError), $maxFileSize)
             ->addRule($form::IMAGE, 'g.upload.fileImage')
             ->setRequired('g.upload.fileRequired');
  
@@ -98,7 +105,7 @@ class MediaPresenter extends BasePresenter
         if (!$success) {
             $this->flashMessage($error, 'alert-error');
         } else {
-            $this->flashMessage('g.media.altUpdated', 'alert-success');
+            $this->flashMessage($this->translator->translate('g.media.altUpdated'), 'alert-success');
         }
         $this->redirect('this');
     }

@@ -1,6 +1,9 @@
 {block content}
-<a n:href="upload">{_g.link.mediaUpload}</a>
+<a n:href="upload" class="btn btn-primary my-8" >{_g.link.mediaUpload}</a>
+<p>{_g.media.defaultInstructions}</p>
 {var $alt_column = $locale == 'en' ? 'alt' : 'alt_fi'}
+<div class="flex flex-row flex-wrap w-full">
 <div n:foreach="$images as $image">
-    <a n:href="edit $image->id"><img class="w-96" src="{$uploadDir}/{$image->filename}" alt={$image->$alt_column ?? $image->filename} width={$image->width} height={$image->height}></a>
+    <a n:href="edit $image->id"><img n:class="$image->$alt_column == null ? border-error, border-2, w-96, m-4, p-2" src="{$uploadDir}/{$image->filename}" alt={$image->$alt_column ?? $image->filename} width={$image->width} height={$image->height}></a>
+</div>
 </div>

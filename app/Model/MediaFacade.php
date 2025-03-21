@@ -38,7 +38,7 @@ final class MediaFacade
     {
         $image = $this->database->table('images')->get($id);
         if (!$image) {
-            throw new Exception('g.media.fileNotFound');
+            throw new Exception('g.media.notFound');
         }
         return $image;
     }
@@ -47,7 +47,7 @@ final class MediaFacade
     {
         $image = $this->database->table('images')->get($id);
         if (!$image) {
-            throw new Exception('g.media.fileNotFound');
+            throw new Exception('g.media.notFound');
         }
         $image->update($data);
         

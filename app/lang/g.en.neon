@@ -14,6 +14,8 @@ link:
     spot: "SPOT"
     feedback: "Feedback"
     editproduct: 'Edit this product'
+    media: "Media gallery"
+    mediaUpload: "Upload an image"
 spot:
     hour: 'Hour'
     centKwh: 'cent/kWh'
@@ -88,3 +90,28 @@ edit:
     briefRequired: 'Brief is required.'
     brief_fi: 'Brief description (Finnish):'
     brief_fiRequired: 'Brief is required.'
+product:
+    galleryOpen: "Choose images"
+    galleryTitle: "Choose images"
+    galleryInstructions: "Choose product images, recommended max four (4)."
+    galleryClose: "Close without saving"
+    updateGallery: "Save image choices"
+    galleryUpdated: "Image choices saved."
+media:
+    notAllowed: "You don't have media management rights."
+    editTitle: "Edit image alt texts"
+    alt: "Brief description of the image (English)"
+    altRequired: "Description is required"
+    alt_fi: "Brief description of the image (Finnish)"
+    alt_fiRequired: "Description is required"
+    sendAltForm: "Save changes"
+    notFound: "Image not found in database"
+    defaultInstructions: "Images with red border lack descriptive text, edit by clicking image"
+upload:
+    title: "Add an image to your media library"
+    explain: "Please note that uploaded files can be publicly accessed even if you don't add them to a product page. When you open the file picker you will see the supported image formats."
+    file: "Choose a file"
+    fileRequired: "No file selected"
+    fileSize: "Maximum size is %size% MB."
+    fileImage: "File must be a valid image file."
+    send: "Upload file"

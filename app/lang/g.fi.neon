@@ -14,6 +14,8 @@ link:
     spot: "SPOT"
     feedback: "Palaute"
     editproduct: 'Muokkaa tuotetta'
+    media: "Kuvagalleria"
+    mediaUpload: "Lisää kuva"
 spot:
     hour: 'Tunti'
     centKwh: 'snt/kWh'
@@ -88,3 +90,28 @@ edit:
     briefRequired: 'Anna lyhyt kuvaus.'
     brief_fi: 'Lyhyt kuvaus (suomenkielinen):'
     brief_fiRequired: 'Anna lyhyt kuvaus.'
+product:
+    galleryOpen: "Valitse tuotekuvat"
+    galleryTitle: "Valitse kuvat"
+    galleryInstructions: "Valitse tuotekuvat, suositus enintään neljä (4)."
+    galleryClose: "Sulje tallentamatta"
+    updateGallery: "Tallenna valinnat"
+    galleryUpdated: "Kuvavalinnat tallennettu."
+media:
+    notAllowed: "Sinulla ei ole mediahallintaoikeuksia."
+    editTitle: "Muokkaa tekstikuvauksia"
+    alt: "Anna lyhyt kuvaus (englanniksi)"
+    altRequired: "Kuvaus vaaditaan"
+    alt_fi: "Anna lyhyt kuvaus (suomeksi)"
+    alt_fiRequired: "Kuvaus vaaditaan"
+    sendAltForm: "Tallenna muutokset"
+    notFound: "Kuvaa ei löydy tietokannasta"
+    defaultInstructions: "Punaisilla rajatuilla kuvilla ei ole kuvatekstejä, muokkaa klikkaamalla kuvaa"
+upload:
+    title: "Lisää kuva kuvakirjastoosi"
+    explain: "Huom! Lisäämäsi kuvat ovat julkisesti ladattavissa vaikket lisäisi niitä tuotteisiin. Avatessasi tiedostovalitsimen näet tuetut kuvatiedostomuodot."
+    file: "Valitse tiedosto"
+    fileRequired: "Ei tiedostoa"
+    fileSize: "Tiedoston maksimikoko on %size% MB."
+    fileImage: "Tiedoston on oltava kuvatiedosto."
+    send: "Lähetä kuva"

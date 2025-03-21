@@ -9,7 +9,7 @@
 {* <p><a n:href="Home:default" class="link link-primary link-hover ajax">← back to homepage</a></p> *}
 {if $user->isAllowed('media')}
 <!-- Open the modal using ID.showModal() method -->
-<button class="btn" onclick="media_modal.showModal()">{_g.product.galleryOpen}</button>
+<button class="btn btn-primary" onclick="media_modal.showModal()">{_g.product.galleryOpen}</button>
 <dialog id="media_modal" class="modal modal-bottom">
   <div class="modal-box w-full items-center">
     <h3 class="text-lg font-bold">{_g.product.galleryTitle}</h3>
@@ -25,8 +25,8 @@
       </div>
         <!-- if there is a button in form, it will close the modal -->
         <div class="">
-        <button formmethod="dialog" class="btn">{_g.product.galleryClose}</button>
-        <button class="btn" formmethod="post" formaction={link "gallery!"}>{_g.product.updateGallery}</button>
+        <button formmethod="dialog" class="btn btn-secondary">{_g.product.galleryClose}</button>
+        <button class="btn btn-primary" formmethod="post" formaction={link "gallery!"}>{_g.product.updateGallery}</button>
         </div>
       </form>
     </div>

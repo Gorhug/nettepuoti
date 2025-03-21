@@ -1,0 +1,2 @@
+upload:
+    fileSize: "Maximum size is {size, number, decimal} MB."
