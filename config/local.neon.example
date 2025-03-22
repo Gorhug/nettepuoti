@@ -3,6 +3,7 @@ parameters:
 	adminEmail: ''
 	adminName: ''
 	botEmail: ''
+	wwwDir: '%wwwDir%'
 	uploadDir: '%wwwDir%/img/upload'
 
 database:

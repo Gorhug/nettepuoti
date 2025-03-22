@@ -12,6 +12,11 @@ services:
 	cache.storage: App\Model\LockingSQLiteStorage('%tempDir%/cache.db')
 	# cache.storage: Nette\Caching\Storages\SQLiteStorage('%tempDir%/cache.db')
 #	cache.storage: App\Model\APCuStorage
+	database.default.connection:
+		setup:
+			- query('PRAGMA synchronous=NORMAL')
+		alteration: true
+
 
 search:
 	-	in: %appDir%

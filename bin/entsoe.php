@@ -7,18 +7,6 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $container = App\Bootstrap::boot()
 	->createContainer();
-$conn = $container->getByType(Nette\Database\Connection::class);
-$conn->query('PRAGMA synchronous=NORMAL');
-// if (!isset($argv[3])) {
-// 	echo '
-// Add new user to database.
-
-// Usage: create-user.php <name> <email> <password>
-// ';
-// 	exit(1);
-// }
-
-// [, $name, $email, $password] = $argv;
 
 $manager = $container->getByType(App\Model\SpotPriceFacade::class);
 
