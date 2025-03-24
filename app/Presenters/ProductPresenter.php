@@ -15,7 +15,8 @@ final class ProductPresenter extends BasePresenter
 		private Translator $translator,
 		private Settings $settings
 	) {
-		// bdump($database->getConnection()->query('PRAGMA synchronous')->fetchAll(), "synced");
+		// bdump($database->getConnection()->query('PRAGMA synchronous')->fetch()['synchronous'], "sql_synced");
+		// bdump($database->getConnection()->query('PRAGMA busy_timeout')->fetch()["timeout"], "sql_timeout");
 	}
 
 	public function renderShow(int $id): void

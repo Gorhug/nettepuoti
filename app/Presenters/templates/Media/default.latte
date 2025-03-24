@@ -1,9 +1,21 @@
 {block content}
+<h1 n:block=title>{_g.media.galleryTitle}</h1>
 <a n:href="upload" class="btn btn-primary my-8" >{_g.link.mediaUpload}</a>
-<p>{_g.media.defaultInstructions}</p>
+<section id="instructions" class="prose">{block|parsedown}{_g.media.defaultInstructions}{/block}</section>
 {var $alt_column = $locale == 'en' ? 'alt' : 'alt_fi'}
-<div class="flex flex-row flex-wrap w-full">
-<div n:foreach="$images as $image">
-    <a n:href="edit $image->id"><img n:class="$image->$alt_column == null ? border-error, border-2, w-96, m-4, p-2" src="{$uploadDir}/{$image->filename}" alt={$image->$alt_column ?? $image->filename} width={$image->width} height={$image->height}></a>
-</div>
-</div>
+<section id="gallery" class="flex flex-row flex-wrap w-full">
+<figure n:foreach="$images as $image">
+    {var $filepath = $uploadDir . '/' . $image->filename}
+    <a n:href="edit $image->id"><img n:class="$image->$alt_column == null ? border-error, border-2, w-96, m-4, p-2" src={$filepath} alt={$image->$alt_column ?? $image->filename} width={$image->width} height={$image->height}></a>
+    <button class="btn btn-primary" onclick="mdImgCopy({$filepath}, {$image->alt ?? $image->filename})">{svgIcon 'fill/svg/copy.svg', class: 'fill-current stroke-current w-8 h-8'}{_g.media.copyMDEnglishAlt}</button>
+    <button class="btn btn-primary" onclick="mdImgCopy({$filepath}, {$image->alt_fi ?? $image->filename})">{svgIcon 'fill/svg/copy.svg', class: 'fill-current stroke-current w-8 h-8'}{_g.media.copyMDFinnishAlt}</button>
+</figure>
+</section>
+{/block}
+{block scripts}
+<script n:syntax="double">
+function mdImgCopy(src, alt) {
+    const text = `![${alt}](${src} "${alt}")`;
+    navigator.clipboard.writeText(text);
+}
+</script>

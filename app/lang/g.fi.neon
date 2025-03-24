@@ -107,6 +107,9 @@ media:
     sendAltForm: "Tallenna muutokset"
     notFound: "Kuvaa ei löydy tietokannasta"
     defaultInstructions: "Punaisilla rajatuilla kuvilla ei ole kuvatekstejä, muokkaa klikkaamalla kuvaa"
+    altUpdated: "Kuvaustekstit päivitetty."
+    copyMDEnglishAlt: "englanti"
+    copyMDFinnishAlt: "suomi"
 upload:
     title: "Lisää kuva kuvakirjastoosi"
     explain: "Huom! Lisäämäsi kuvat ovat julkisesti ladattavissa vaikket lisäisi niitä tuotteisiin. Avatessasi tiedostovalitsimen näet tuetut kuvatiedostomuodot."
