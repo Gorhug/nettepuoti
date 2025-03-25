@@ -59,38 +59,6 @@ final class ProductPresenter extends BasePresenter
 		}
 	}
 
-	// public function handleDelete(int $id): void
-	// {
-	// 	$product = $this->database
-	// 		->table('products')
-	// 		->get($id);
-
-	// 	if (!$product) {
-	// 		$this->error($this->translator->translate('g.edit.notFound'));
-	// 	}
-
-	// 	$product->delete();
-
-	// 	$this->flashMessage($this->translator->translate('g.edit.deleted'));
-	// 	$this->redirect('Product:default');
-	// }
-
-	// public function handleDeleteImage(int $id): void
-	// {
-	// 	$image = $this->database
-	// 		->table('images')
-	// 		->get($id);
-
-	// 	if (!$image) {
-	// 		$this->error($this->translator->translate('g.edit.notFound'));
-	// 	}
-
-	// 	$image->delete();
-
-	// 	$this->flashMessage($this->translator->translate('g.edit.deleted'));
-	// 	$this->redirect('Product:default');
-	// }
-
 	public function handleGallery(int $id): void
 	{
 		$user = $this->getUser();
@@ -116,17 +84,5 @@ final class ProductPresenter extends BasePresenter
 		$this->flashMessage($this->translator->translate('g.product.galleryUpdated'), 'alert-success');
 		$this->redirect('Product:show', ['id' => $id]);
 	}
-	// 	public function renderShow(string $name): void 
-// 	{
-// 		$product = $this->database
-// 			->table('products')
-// 			->where('name', $name)
-// 			->fetch();
 
-	// 		if (!$product) {
-// 			$this->error('Product not found');
-// 		}
-
-	// 		$this->template->product = $product;
-// 	}
 }

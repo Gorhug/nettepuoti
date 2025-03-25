@@ -1,6 +1,7 @@
 - server validation test nappi pois julkaisusta (korjattu)
-- valikko varjo? (vaivaa iPhonessa mutta vain etusivulla?)
-- kuvalataus
-- mobiilimenuihin isommat TEKSTIT että voi jopa osua niihin 🔍😵
+- valikko varjo? (vaivaa iPhonessa mutta vain etusivulla?): korjattu vihdoinkin?
+- kuvalataus: tehty
+- mobiilimenuihin isommat TEKSTIT että voi jopa osua niihin 🔍😵 : tehty
 - RSS / OpenGraph: tehty
-- APCu: lisää expire sivumalleihin, muuta kovakoodatut sleep-ajat, register_shutdown_function
+- APCu: lisää expire sivumalleihin, muuta kovakoodatut sleep-ajat, register_shutdown_function: EI KÄYTÖSSÄ
+- korjaa Admin-puolen koodista validointitarkistukset, rekisteröitymislomake ym. 

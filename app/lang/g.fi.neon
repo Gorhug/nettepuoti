@@ -106,10 +106,17 @@ media:
     alt_fiRequired: "Kuvaus vaaditaan"
     sendAltForm: "Tallenna muutokset"
     notFound: "Kuvaa ei löydy tietokannasta"
-    defaultInstructions: "Punaisilla rajatuilla kuvilla ei ole kuvatekstejä, muokkaa klikkaamalla kuvaa"
+    defaultInstructions: 
+        """
+        Punaisilla rajatuilla kuvilla ei ole kuvatekstejä, muokkaa klikkaamalla kuvaa.
+
+        Kuvien alla olevat painikkeet kopioivat leikepöydälle linkin kuvaan **Markdown** muodossa,
+        johon on lisätty kuvausteksti painikkeessa mainitulla kielellä.
+        """
     altUpdated: "Kuvaustekstit päivitetty."
     copyMDEnglishAlt: "englanti"
     copyMDFinnishAlt: "suomi"
+    galleryTitle: "Kuvagalleria"
 upload:
     title: "Lisää kuva kuvakirjastoosi"
     explain: "Huom! Lisäämäsi kuvat ovat julkisesti ladattavissa vaikket lisäisi niitä tuotteisiin. Avatessasi tiedostovalitsimen näet tuetut kuvatiedostomuodot."

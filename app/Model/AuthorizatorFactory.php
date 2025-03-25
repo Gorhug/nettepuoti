@@ -12,6 +12,7 @@ class AuthorizatorFactory
 		$acl->addResource('category');
 		$acl->addResource('media');
 		$acl->addResource('user');
+		$acl->addResource('activitypub');
         $acl->allow('admin');
 		return $acl;
 	}

@@ -39,7 +39,7 @@ final class UserFacade implements Nette\Security\Authenticator, Nette\Security\I
 	 * Authenticate a user based on provided credentials.
 	 * Throws an AuthenticationException if authentication fails.
 	 */
-	public function authenticate(string $username, string $password): Nette\Security\SimpleIdentity
+	public function authenticate(string $username, #[\SensitiveParameter] string $password): Nette\Security\SimpleIdentity
 	{
 		// Fetch the user details from the database by username
 		$row = $this->database->table(self::TableName)
@@ -70,7 +70,7 @@ final class UserFacade implements Nette\Security\Authenticator, Nette\Security\I
 	 * Add a new user to the database.
 	 * Throws a DuplicateNameException if the username is already taken.
 	 */
-	public function add(string $username, string $email, string $password): void
+	public function add(string $username, string $email, #[\SensitiveParameter] string $password): void
 	{
 		// Validate the email format
 		Nette\Utils\Validators::assert($email, 'email');

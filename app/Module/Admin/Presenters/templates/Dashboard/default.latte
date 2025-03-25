@@ -11,6 +11,12 @@
     <p>{_g.dashboard.noPermissions}</p>
 {/if}
 
+{if $user->isAllowed('media')}
+    <p>{_g.dashboard.mediaAllowed}</p>
+{else}
+    <p>{_g.dashboard.mediaNoPermissions}</p>
+{/if}
+
 {if $user->isAllowed('user')}
 <div class="prose">
     {control simpleGrid}
@@ -18,5 +24,14 @@
 {* <script src="{='src/js/dg.js'|asset}" type="module"></script> *}
 {/if}
 
+{if $user->isAllowed('activitypub')}
+    {if $public_key}
+    <pre>
+        {$public_key}
+    </pre>
+    {else}
+        <a n:href="keys!" class="btn btn-primary">{_g.ap.createKeys}</a>
+    {/if}
+{/if}
 <p><a n:href="Sign:out" class="link link-primary">{_g.dashboard.signOut}</a></p>
 </div>

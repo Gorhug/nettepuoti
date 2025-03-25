@@ -110,11 +110,13 @@ media:
         """
         Images with red border lack descriptive text, edit by clicking image. 
 
-        Buttons below the image copy the image link as a **Markdown** image tag, with the description text in the language specified on the button.
+        Buttons below the image copy the image link as a **Markdown** image tag, 
+        with the description text in the language specified on the button.
         """
     altUpdated: "Descriptions updated."
     copyMDEnglishAlt: "English"
     copyMDFinnishAlt: "Finnish"
+    galleryTitle: "Media gallery"
 upload:
     title: "Add an image to your media library"
     explain: "Please note that uploaded files can be publicly accessed even if you don't add them to a product page. When you open the file picker you will see the supported image formats."

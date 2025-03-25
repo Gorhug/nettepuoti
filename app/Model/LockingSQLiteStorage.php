@@ -44,6 +44,7 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
 		$this->pdo->exec('
 			PRAGMA foreign_keys = ON;
             PRAGMA journal_mode = WAL;
+			PRAGMA synchronous = NORMAL;
 			CREATE TABLE IF NOT EXISTS cache (
 				key BLOB NOT NULL PRIMARY KEY,
 				data BLOB NOT NULL,
@@ -69,8 +70,7 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
 			CREATE INDEX IF NOT EXISTS cache_priority ON cache(priority);
 			CREATE INDEX IF NOT EXISTS tags_key ON tags(key);
 			CREATE INDEX IF NOT EXISTS tags_tag ON tags(tag);
-            CREATE INDEX IF NOT EXISTS items_key ON items(key);
-			PRAGMA synchronous = NORMAL;
+            CREATE INDEX IF NOT EXISTS items_key ON items(key);			
 		');
 		register_shutdown_function([$this, 'processTerminatorHandler']);
 	}
