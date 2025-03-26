@@ -54,7 +54,7 @@
 		{input $control class => "file-input"}
 		
 	{case textarea}
-		{var $parse = $control->name === "description" || $control->name === "description_fi"}
+		{var $parse = $control->getOption(markdown)}
 		{var $in_lang = str_ends_with($control->name, "fi") ? 'fi' : 'en'}
 		{var $ta_class = "input h-96 sm:w-96 validator text-wrap"}
 		<div class="flex flex-col">

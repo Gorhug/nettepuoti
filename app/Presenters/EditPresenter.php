@@ -10,7 +10,7 @@ use Nette\Caching\Cache;
 final class EditPresenter extends BasePresenter
 {
     private const MaxBrief = 150;
-
+    private const MaxDescription = 1500;
     public function __construct(
         private Nette\Database\Explorer $database,
         private \App\Forms\FormFactory $factory,
@@ -41,6 +41,8 @@ final class EditPresenter extends BasePresenter
             ->setMaxLength(self::MaxBrief);
 
         $form->addTextArea('description', 'g.edit.description')
+            ->setOption("markdown", true)
+            ->setMaxLength(self::MaxDescription)
             ->setRequired('g.edit.descriptionRequired');
 
         $form->addText('name_fi', 'g.edit.name_fi')
@@ -50,7 +52,8 @@ final class EditPresenter extends BasePresenter
             ->setMaxLength(self::MaxBrief);
         $form->addTextArea('description_fi', 'g.edit.description_fi')
             ->setRequired('g.edit.description_fiRequired')
-            ->setHtmlAttribute("markdown");
+            ->setMaxLength(self::MaxDescription)
+            ->setOption("markdown", true);
 
         // ->setHtmlAttribute('hx-trigger', 'change, keyup delay:200ms changed');
         $form->addFloat('price', 'g.edit.price')

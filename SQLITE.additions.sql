@@ -1,6 +1,9 @@
 ALTER TABLE products ADD COLUMN brief TEXT NOT NULL DEFAULT 'A silly blog post that should have a brief added.';
 ALTER TABLE products ADD COLUMN brief_fi TEXT NOT NULL DEFAULT 'Plokiteksti, johon lyhyt kuvaus olisi kiva lisä'; 
-# media
+
+
+-- MEDIA
+-- old images, newer below
 CREATE TABLE images(
     id INTEGER PRIMARY KEY,
     filename TEXT NOT NULL UNIQUE,
@@ -14,6 +17,7 @@ CREATE TABLE product_gallery(
     UNIQUE(product,image)
 );
 
+-- unused translation table
 CREATE TABLE messages(
     rowid INTEGER PRIMARY KEY,
     id TEXT NOT NULL,
@@ -22,11 +26,22 @@ CREATE TABLE messages(
     UNIQUE(id, locale)
 );
 
+-- new images
 CREATE TABLE images(
     id INTEGER PRIMARY KEY,
     filename TEXT NOT NULL UNIQUE,
     owner INTEGER REFERENCES users (id) ON DELETE SET NULL, 
     width INTEGER NOT NULL, height INTEGER NOT NULL, alt TEXT, alt_fi TEXT);
 
+-- for future ActivityPub usage
 ALTER TABLE users ADD COLUMN private_key TEXT;
 ALTER TABLE users ADD COLUMN public_key TEXT; 
+
+-- user realname, bio, avatar
+ALTER TABLE users ADD COLUMN realname TEXT;
+ALTER TABLE users ADD COLUMN bio TEXT;
+ALTER TABLE users ADD COLUMN bio_fi TEXT;
+ALTER TABLE users ADD COLUMN avatar INTEGER REFERENCES images (id) ON DELETE SET NULL;
+
+-- products have owners
+ALTER TABLE products ADD COLUMN owner INTEGER REFERENCES users (id) ON DELETE SET NULL;

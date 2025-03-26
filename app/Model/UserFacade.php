@@ -118,6 +118,23 @@ final class UserFacade implements Nette\Security\Authenticator, Nette\Security\I
 			? new SimpleIdentity($row[self::ColumnId], $row[self::ColumnRole], $row->toArray())
 			: null;
 	}
+
+	public function updateDetails($id, FormData\Details $details): void
+	{
+		$this->database->table(self::TableName)
+			->get($id)
+			->update([
+				"realname" => $details->realname,
+				"bio" => $details->bio,
+				"bio_fi" => $details->bio_fi
+			]);
+	}
+	public function getDetails($id): FormData\Details
+	{
+		$row = $this->database->table(self::TableName)
+			->get($id);
+		return new FormData\Details($row->realname, $row->bio, $row->bio_fi);
+	}
 }
 
 
