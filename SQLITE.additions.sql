@@ -31,7 +31,10 @@ CREATE TABLE images(
     id INTEGER PRIMARY KEY,
     filename TEXT NOT NULL UNIQUE,
     owner INTEGER REFERENCES users (id) ON DELETE SET NULL, 
-    width INTEGER NOT NULL, height INTEGER NOT NULL, alt TEXT, alt_fi TEXT);
+    width INTEGER NOT NULL, 
+    height INTEGER NOT NULL, 
+    alt TEXT, 
+    alt_fi TEXT);
 
 -- for future ActivityPub usage
 ALTER TABLE users ADD COLUMN private_key TEXT;

@@ -135,6 +135,13 @@ final class UserFacade implements Nette\Security\Authenticator, Nette\Security\I
 			->get($id);
 		return new FormData\Details($row->realname, $row->bio, $row->bio_fi);
 	}
+
+	public function getAvatar($id): Nette\Database\Table\ActiveRow|null
+	{
+		$row = $this->database->table(self::TableName)
+			->get($id)->ref('images', 'avatar');
+		return $row;
+	}
 }
 
 

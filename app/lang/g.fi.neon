@@ -63,7 +63,7 @@ form:
     upPassLength: 'Vähintään %d merkkiä.'
 dashboard:
     title: 'Omat tiedot'
-    message: 'Olet kirjautunut sisään.'
+    message: 'Olet kirjautunut sisään tunnuksella %username%.'
     editAllowed: 'Voit lisätä ja muokata tuotteita.'
     noPermissions: 'Sinulla ei ole oikeuksia tällä sivustolla.'
     signOut: 'Kirjaudu ulos'

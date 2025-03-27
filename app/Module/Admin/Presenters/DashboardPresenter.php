@@ -10,7 +10,7 @@ use Ublaboo\DataGrid\DataGrid;
 use App\Forms\FormFactory;
 use Nette\Application\UI\Form;
 use App\Model\UserFacade;
-
+use App\Settings;
 
 /**
  * Presenter for the dashboard view.
@@ -27,6 +27,7 @@ final class DashboardPresenter extends BasePresenter
 		private \App\Model\ActivityPubFacade $apFacade,
 		private \Nette\Localization\Translator $translator,
 		private FormFactory $formFactory,
+		private Settings $settings
 	) {
 	}
 	public function createComponentSimpleGrid($name)
@@ -60,6 +61,8 @@ final class DashboardPresenter extends BasePresenter
 		$user = $this->getUser();
 		$this->template->public_key = $this->apFacade->getPublicKey($user->getIdentity()->getId());
 		$this->template->details = $this->userFacade->getDetails($user->getIdentity()->getId());
+		$this->template->avatar = $this->userFacade->getAvatar($user->getIdentity()->getId());
+		$this->template->uploadDir = $this->settings->uploadDir;
 	}
 
 	protected function createComponentDetailsForm(): Form

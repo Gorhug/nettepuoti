@@ -63,7 +63,7 @@ form:
     upPassLength: 'Please enter at least %d characters.'
 dashboard:
     title: 'Dashboard'
-    message: 'You have successfully logged in.'
+    message: 'You are logged in as %username%.'
     editAllowed: 'You can add and edit products.'
     noPermissions: 'You do not have permissions on this site.'
     signOut: 'Sign out'

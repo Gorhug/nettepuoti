@@ -2,14 +2,21 @@
 
 <div class="flex flex-col space-y-8">
 <h1 class="text-5xl" n:block=title>{_g.dashboard.title}</h1>
+{var $username = $user->getIdentity()->username}
+{var $alt_column = $locale == 'en' ? 'alt' : 'alt_fi'}
+<p>{_g.dashboard.message, [username => $username]}</p>
 
-<p>{_g.dashboard.message}</p>
-
-<article id="profile" class="my-4">
+<article id="profile" class="space-y-4">
+<section n:class="!$avatar ? avatar-placeholder, avatar">
+  <div class="bg-neutral text-neutral-content w-24">
+    <span n:if="!$avatar" class="text-3xl">{$username|first|upper}</span>
+    <img n:else src="{$uploadDir}/{$avatar->filename}" alt={$avatar->$alt_column ?? $avatar->filename} width={$avatar->width} height={$avatar->height}>
+  </div>
+</section>
 {var $bio_column = $locale == fi ? bio_fi : bio}
 
 <p n:if="$details->realname">{$details->realname}</p>
-<p n:else>{_g.dashboard.detailsNotSet}</p>
+<p n:else>{_g.dashboard.realnameNotSet}</p>
 
 <section n:if="$details->$bio_column" class="prose">{block|parsedown}{$details->$bio_column}{/block}</section>
 <p n:else>{_g.dashboard.bioNotSet}</p>
