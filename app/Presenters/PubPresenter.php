@@ -6,15 +6,17 @@ use App\Model\ActivityPubFacade;
 use App\Model\UserFacade;
 use DateTimeImmutable;
 use Naja\Guide\Application\UI\Presenters\BasePresenter;
+use Nette\Application\UI\Presenter;
 use Nette\Utils\Json;
-use Nette\Application\Responses\TextResponse;
-class PubPresenter extends BasePresenter
+use Nette\Application\Responses\JsonResponse;
+
+class PubPresenter extends Presenter
 {
     public function __construct(
         private ActivityPubFacade $ap,
         private UserFacade $users
     ) {
-        $this->locale = 'en';
+        // $this->locale = 'en';
     }
 
     public function renderWebfinger()
@@ -22,16 +24,21 @@ class PubPresenter extends BasePresenter
         $http_request = $this->getHttpRequest();
         $resource = $http_request->getQuery('resource');
         if (!$resource) {
-            $this->error("No resource in query", 400);
+            $this->error("No resource specified in request.", 400);
         }
-        [$user, $domain] = explode("@", ltrim($resource, "@"));
+        $arr = explode("@", ltrim($resource, "@"));
+        if (count($arr) != 2) {
+            $this->error("Invalid resource in request.", 400);
+        } else {
+            [$user, $domain] = $arr;
+        }
         $url = $http_request->getUrl();
         $server = $url->getHost();
         if ($server != $domain) {
-            $this->error("Domain mismatch", 400);
+            $this->error("Requested resource's domain does not match server domain.", 404);
         }
         if (!$this->users->getId($user)) {
-            $this->error("User not found", 404);
+            $this->error("User not found.", 404);
         }
         $scheme = $url->getScheme();
         $this->sendJson($this->ap->webfinger($user, $domain, $scheme));
@@ -40,16 +47,20 @@ class PubPresenter extends BasePresenter
 
     public function sendActivityJson($data)
     {
-        $this->getHttpResponse()->setHeader('Content-Type', 'application/activity+json');
-        $this->sendResponse(new TextResponse(JSON::encode($data)));
+        $this->sendResponse(new JsonResponse($data, 'application/activity+json'));
     }
-    public function renderUser(string $user)
+    public function renderUser(string $username)
     {
         $http_request = $this->getHttpRequest();
-        $user = ltrim($user, "@");
+        $username = ltrim($username, "@");
         $url = $http_request->getUrl();
         $server = $url->getHost();
-        $this->sendActivityJson( $this->ap->username($user, $server, "not set", "none", "no key", (new DateTimeImmutable())->getTimestamp()));
+        $user_id = $this->users->getId($username);
+        if ($user_id) {
+            $this->sendActivityJson($this->ap->username($user_id, $username, $server ));
+        } else {
+            $this->error("User not found.", 404);
+        }
     }
 
     // public function renderNodeinfo()

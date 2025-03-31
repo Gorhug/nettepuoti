@@ -2,6 +2,7 @@
 
 namespace App\Model;
 
+use Nette\Application\LinkGenerator;
 use Nette\Http\Request;
 
 final class ActivityPubFacade
@@ -9,6 +10,8 @@ final class ActivityPubFacade
     public function __construct(
         private \Nette\Database\Explorer $database,
         private \App\Settings $settings,
+        private LinkGenerator $lg,
+        // private UserFacade $userFacade,
         // private Request $request
     ) {
     }
@@ -54,38 +57,39 @@ final class ActivityPubFacade
                 array(
                     "rel" => "self",
                     "type" => "application/activity+json",
-                    "href" => "{$scheme}://{$server}/user/{$username}"
+                    "href" => $this->lg->link("Pub:user", ["username" => $username]),
                 )
             )
         );
         // header( "Content-Type: application/json" );
         return $webfinger;
     }
-    public function username($username, $server, $realName, $summary, $key_public, $published) {
+    public function username($user_id, $username, $server) {
 		// global $username, $realName, $summary, $server, $key_public;
-
+        $user = $this->database->table('users')->get($user_id);
+        $img = $user->ref('images','avatar')->filename ?? 'avatar.webp';
 		$user = array(
 			"@context" => [
 				"https://www.w3.org/ns/activitystreams",
 				"https://w3id.org/security/v1"
 			],
-			                       "id" => "https://{$server}/{$username}",
+			                       "id" => "https://{$server}/user/{$username}",
 			                     "type" => "Person",
-			                "following" => "https://{$server}/following",
-			                "followers" => "https://{$server}/followers",
-			                    "inbox" => "https://{$server}/inbox",
-			                   "outbox" => "https://{$server}/outbox",
+			                "following" => "https://{$server}/following/{$username}",
+			                "followers" => "https://{$server}/followers/{$username}",
+			                    "inbox" => "https://{$server}/inbox/{$username}",
+			                   "outbox" => "https://{$server}/outbox/{$username}",
 			        "preferredUsername" =>  $username, //rawurldecode( $username ),
-			                     "name" => "{$realName}",
-			                  "summary" => "{$summary}",
-			                      "url" => "https://{$server}/{$username}",
+			                     "name" => "{$user->realname}",
+			                  "summary" => "{$user->bio}", //TODO: Markdown render
+			                      "url" => "https://{$server}/user/{$username}",
 			"manuallyApprovesFollowers" =>  false,
 			             "discoverable" =>  true,
-			                "published" => $published,
+			                "published" => $user->keys_created_at,
 			"icon" => [
 				     "type" => "Image",
 				"mediaType" => "image/png",
-				      "url" => "https://{$server}/icon.png"
+				      "url" => "https://{$server}/{$this->settings->uploadDir}/{$img}"
 			],
 			"image" => [
 				     "type" => "Image",
@@ -94,8 +98,8 @@ final class ActivityPubFacade
 			],
 			"publicKey" => [
 				"id"           => "https://{$server}/{$username}#main-key",
-				"owner"        => "https://{$server}/{$username}",
-				"publicKeyPem" => $key_public
+				"owner"        => "https://{$server}/user/{$username}",
+				"publicKeyPem" => $user->public_key,
 			]
 		);
 		// header( "Content-Type: application/activity+json" );

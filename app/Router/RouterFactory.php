@@ -16,7 +16,9 @@ final class RouterFactory
 	{
 		$router = new RouteList;
 		$router->addRoute('.well-known/webfinger', 'Pub:webfinger');
-		$router->addRoute('user/<user>', 'Pub:user');
+		// $router->addRoute('well-known/nodeinfo', 'Pub:nodeinfo');
+		$router->addRoute('pub/<action>/<username>', 'Pub:default');
+		// $router->addRoute('user/<username>', 'Pub:user');
 		$router->addRoute('<locale=en (fi|en)>/manage/<presenter>/<action>', [
 			'module' => 'Admin',
 		]);
