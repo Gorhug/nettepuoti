@@ -67,6 +67,8 @@ dashboard:
     editAllowed: 'Voit lisätä ja muokata tuotteita.'
     noPermissions: 'Sinulla ei ole oikeuksia tällä sivustolla.'
     signOut: 'Kirjaudu ulos'
+    editDetails: "Muokkaa henkilötietoja"
+    mediaAllowed: "Voit lisätä kuvia galleriaan ja tuotteisiin."
 edit:
     noRights: 'Ei oikeuksia tuotteiden muokkaamiseen'
     name: 'Nimi (englanninkielinen):'
@@ -117,6 +119,7 @@ media:
     copyMDEnglishAlt: "englanti"
     copyMDFinnishAlt: "suomi"
     galleryTitle: "Kuvagalleria"
+    copiedToClipboard: "Kopioitu leikepöydälle"
 upload:
     title: "Lisää kuva kuvakirjastoosi"
     explain: "Huom! Lisäämäsi kuvat ovat julkisesti ladattavissa vaikket lisäisi niitä tuotteisiin. Avatessasi tiedostovalitsimen näet tuetut kuvatiedostomuodot."

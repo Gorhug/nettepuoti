@@ -142,6 +142,13 @@ final class UserFacade implements Nette\Security\Authenticator, Nette\Security\I
 			->get($id)->ref('images', 'avatar');
 		return $row;
 	}
+
+	public function getId($username) {
+		$row = $this->database->table(self::TableName)
+			->where(self::ColumnName, $username)
+			->fetch();
+		return $row?->id;
+	}
 }
 
 

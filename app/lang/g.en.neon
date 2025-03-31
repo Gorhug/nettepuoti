@@ -66,7 +66,9 @@ dashboard:
     message: 'You are logged in as %username%.'
     editAllowed: 'You can add and edit products.'
     noPermissions: 'You do not have permissions on this site.'
-    signOut: 'Sign out'
+    signOut: 'Log out'
+    editDetails: "Edit personal info"
+    mediaAllowed: "You can add images to gallery and products."
 edit:
     noRights: 'You do not have the right to edit products'
     name: 'Name (English):'
@@ -117,6 +119,7 @@ media:
     copyMDEnglishAlt: "English"
     copyMDFinnishAlt: "Finnish"
     galleryTitle: "Media gallery"
+    copiedToClipboard: "Copied to clipboard"
 upload:
     title: "Add an image to your media library"
     explain: "Please note that uploaded files can be publicly accessed even if you don't add them to a product page. When you open the file picker you will see the supported image formats."

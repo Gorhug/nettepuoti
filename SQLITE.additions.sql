@@ -39,6 +39,7 @@ CREATE TABLE images(
 -- for future ActivityPub usage
 ALTER TABLE users ADD COLUMN private_key TEXT;
 ALTER TABLE users ADD COLUMN public_key TEXT; 
+ALTER TABLE users ADD COLUMN keys_created_at DATETIME; 
 
 -- user realname, bio, avatar
 ALTER TABLE users ADD COLUMN realname TEXT;

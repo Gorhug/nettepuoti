@@ -15,6 +15,8 @@ final class RouterFactory
 	public static function createRouter(): RouteList
 	{
 		$router = new RouteList;
+		$router->addRoute('.well-known/webfinger', 'Pub:webfinger');
+		$router->addRoute('user/<user>', 'Pub:user');
 		$router->addRoute('<locale=en (fi|en)>/manage/<presenter>/<action>', [
 			'module' => 'Admin',
 		]);
