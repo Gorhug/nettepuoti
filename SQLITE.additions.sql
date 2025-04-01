@@ -49,3 +49,13 @@ ALTER TABLE users ADD COLUMN avatar INTEGER REFERENCES images (id) ON DELETE SET
 
 -- products have owners
 ALTER TABLE products ADD COLUMN owner INTEGER REFERENCES users (id) ON DELETE SET NULL;
+
+-- activitypub followers
+CREATE TABLE ap_followers(
+    rowid INTEGER PRIMARY KEY,
+    id TEXT NOT NULL,
+    followed_user_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    follower_json BLOB NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(followed_user_id, id)
+);

@@ -3,7 +3,8 @@
 namespace App\Model;
 
 use Nette\Application\LinkGenerator;
-use Nette\Http\Request;
+use Nette\Bridges\ApplicationLatte\LatteFactory;
+
 
 final class ActivityPubFacade
 {
@@ -11,8 +12,7 @@ final class ActivityPubFacade
         private \Nette\Database\Explorer $database,
         private \App\Settings $settings,
         private LinkGenerator $lg,
-        // private UserFacade $userFacade,
-        // private Request $request
+        private LatteFactory $latteFactory,
     ) {
     }
 
@@ -46,7 +46,7 @@ final class ActivityPubFacade
         return $user->public_key;
     }
 
-    public function webfinger($username, $server, $scheme)
+    public function webfinger($username, $server)
     {
         // global $username, $server;
         // $server = $_SERVER["SERVER_NAME"];
@@ -68,21 +68,23 @@ final class ActivityPubFacade
 		// global $username, $realName, $summary, $server, $key_public;
         $user = $this->database->table('users')->get($user_id);
         $img = $user->ref('images','avatar')->filename ?? 'avatar.webp';
+        $params = ["username" => $username];
+        $latte = $this->latteFactory->create();
 		$user = array(
 			"@context" => [
 				"https://www.w3.org/ns/activitystreams",
 				"https://w3id.org/security/v1"
 			],
-			                       "id" => "https://{$server}/user/{$username}",
+			                       "id" => $this->lg->link("Pub:user", $params),
 			                     "type" => "Person",
-			                "following" => "https://{$server}/following/{$username}",
-			                "followers" => "https://{$server}/followers/{$username}",
+			                "following" => $this->lg->link("Pub:following", $params),
+			                "followers" => $this->lg->link("Pub:followers", $params),
 			                    "inbox" => "https://{$server}/inbox/{$username}",
 			                   "outbox" => "https://{$server}/outbox/{$username}",
 			        "preferredUsername" =>  $username, //rawurldecode( $username ),
-			                     "name" => "{$user->realname}",
-			                  "summary" => "{$user->bio}", //TODO: Markdown render
-			                      "url" => "https://{$server}/user/{$username}",
+			                     "name" => $user->realname,
+			                  "summary" => $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $user->bio]), 
+			                      "url" => $this->lg->link("Pub:user", $params),
 			"manuallyApprovesFollowers" =>  false,
 			             "discoverable" =>  true,
 			                "published" => $user->keys_created_at,
@@ -104,6 +106,38 @@ final class ActivityPubFacade
 		);
 		// header( "Content-Type: application/activity+json" );
 		return $user;
+	}
+
+    public function following($username) {
+        // TODO: Maybe actually support following accounts in the future
+
+		$following = array(
+			  "@context" => "https://www.w3.org/ns/activitystreams",
+			        "id" => $this->lg->link("Pub:following", ["username" => $username]),
+			      "type" => "Collection",
+			"totalItems" => 0,
+			     "items" => []
+		);
+		//header( "Content-Type: application/activity+json" );
+		return $following;
+	}
+
+    public function followers($user_id, $username) {
+
+        $followers = $this->database->table('ap_followers')->where('followed_user_id', $user_id)->order('created_at DESC');
+        $items = [];
+        foreach ($followers as $follower) {
+            $items[] = $follower->id;
+        }
+		$followers = array(
+			  "@context" => "https://www.w3.org/ns/activitystreams",
+			        "id" => $this->lg->link("Pub:followers", ["username" => $username]),
+			      "type" => "Collection",
+			"totalItems" => count($items),
+			     "items" => $items
+		);
+		// header( "Content-Type: application/activity+json" );
+		return $followers;
 	}
 
 }

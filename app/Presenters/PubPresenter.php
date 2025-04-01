@@ -40,8 +40,7 @@ class PubPresenter extends Presenter
         if (!$this->users->getId($user)) {
             $this->error("User not found.", 404);
         }
-        $scheme = $url->getScheme();
-        $this->sendJson($this->ap->webfinger($user, $domain, $scheme));
+        $this->sendJson($this->ap->webfinger($user, $domain));
 
     }
 
@@ -63,6 +62,25 @@ class PubPresenter extends Presenter
         }
     }
 
+    public function renderFollowing(string $username) {
+        $username = ltrim($username, "@");
+        $user_id = $this->users->getId($username);
+        if ($user_id) {
+            $this->sendActivityJson($this->ap->following($username));
+        } else {
+            $this->error("User not found.", 404);
+        }
+    }
+
+    public function renderFollowers(string $username) {
+        $username = ltrim($username, "@");
+        $user_id = $this->users->getId($username);
+        if ($user_id) {
+            $this->sendActivityJson($this->ap->followers($user_id,$username));
+        } else {
+            $this->error("User not found.", 404);
+        }
+    }
     // public function renderNodeinfo()
     // {
     //     $this->sendJson($this->ap->nodeinfo());
