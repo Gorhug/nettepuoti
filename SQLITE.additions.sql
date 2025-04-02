@@ -54,8 +54,18 @@ ALTER TABLE products ADD COLUMN owner INTEGER REFERENCES users (id) ON DELETE SE
 CREATE TABLE ap_followers(
     rowid INTEGER PRIMARY KEY,
     id TEXT NOT NULL,
-    followed_user_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-    follower_json BLOB NOT NULL,
+    followed_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    follow_msg_id INTEGER NOT NULL REFERENCES ap_inbox (rowid) ON DELETE CASCADE,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(followed_user_id, id)
+    UNIQUE(followed_id, id)
+);
+
+CREATE TABLE ap_inbox(
+    rowid INTEGER PRIMARY KEY,
+    id TEXT NOT NULL,
+    recipient_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    message_json BLOB NOT NULL,
+    validated BOOLEAN,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(recipient_id, id)
 );

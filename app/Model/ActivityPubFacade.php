@@ -2,12 +2,16 @@
 
 namespace App\Model;
 
+use DateTimeImmutable;
 use Nette\Application\LinkGenerator;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
-
+use Nette\Http\UrlImmutable;
+use Nette\Utils\Json;
+use Nette\Utils\Random;
 
 final class ActivityPubFacade
 {
+    private const USERAGENT = "salakapakka/0.1";
     public function __construct(
         private \Nette\Database\Explorer $database,
         private \App\Settings $settings,
@@ -64,80 +68,282 @@ final class ActivityPubFacade
         // header( "Content-Type: application/json" );
         return $webfinger;
     }
-    public function username($user_id, $username, $server) {
-		// global $username, $realName, $summary, $server, $key_public;
+    public function username($user_id, $username, $server)
+    {
+        // global $username, $realName, $summary, $server, $key_public;
         $user = $this->database->table('users')->get($user_id);
-        $img = $user->ref('images','avatar')->filename ?? 'avatar.webp';
+        $img = $user->ref('images', 'avatar')->filename ?? 'avatar.webp';
         $params = ["username" => $username];
         $latte = $this->latteFactory->create();
-		$user = array(
-			"@context" => [
-				"https://www.w3.org/ns/activitystreams",
-				"https://w3id.org/security/v1"
-			],
-			                       "id" => $this->lg->link("Pub:user", $params),
-			                     "type" => "Person",
-			                "following" => $this->lg->link("Pub:following", $params),
-			                "followers" => $this->lg->link("Pub:followers", $params),
-			                    "inbox" => "https://{$server}/inbox/{$username}",
-			                   "outbox" => "https://{$server}/outbox/{$username}",
-			        "preferredUsername" =>  $username, //rawurldecode( $username ),
-			                     "name" => $user->realname,
-			                  "summary" => $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $user->bio]), 
-			                      "url" => $this->lg->link("Pub:user", $params),
-			"manuallyApprovesFollowers" =>  false,
-			             "discoverable" =>  true,
-			                "published" => $user->keys_created_at,
-			"icon" => [
-				     "type" => "Image",
-				"mediaType" => "image/png",
-				      "url" => "https://{$server}/{$this->settings->uploadDir}/{$img}"
-			],
-			"image" => [
-				     "type" => "Image",
-				"mediaType" => "image/png",
-				      "url" => "https://{$server}/banner.png"
-			],
-			"publicKey" => [
-				"id"           => "https://{$server}/{$username}#main-key",
-				"owner"        => "https://{$server}/user/{$username}",
-				"publicKeyPem" => $user->public_key,
-			]
-		);
-		// header( "Content-Type: application/activity+json" );
-		return $user;
-	}
+        $userLink = $this->lg->link("Pub:user", $params);
+        $user = array(
+            "@context" => [
+                "https://www.w3.org/ns/activitystreams",
+                "https://w3id.org/security/v1"
+            ],
+            "id" => $userLink,
+            "type" => "Person",
+            "following" => $this->lg->link("Pub:following", $params),
+            "followers" => $this->lg->link("Pub:followers", $params),
+            "inbox" => "https://{$server}/inbox/{$username}",
+            "outbox" => "https://{$server}/outbox/{$username}",
+            "preferredUsername" => $username, //rawurldecode( $username ),
+            "name" => $user->realname,
+            "summary" => $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $user->bio]),
+            "url" => $userLink,
+            "manuallyApprovesFollowers" => false,
+            "discoverable" => true,
+            "published" => $user->keys_created_at,
+            "icon" => [
+                "type" => "Image",
+                "mediaType" => "image/png",
+                "url" => "https://{$server}/{$this->settings->uploadDir}/{$img}"
+            ],
+            "image" => [
+                "type" => "Image",
+                "mediaType" => "image/png",
+                "url" => "https://{$server}/banner.png"
+            ],
+            "publicKey" => [
+                "id" => "{$userLink}#main-key",
+                "owner" => $userLink,
+                "publicKeyPem" => $user->public_key,
+            ]
+        );
+        // header( "Content-Type: application/activity+json" );
+        return $user;
+    }
 
-    public function following($username) {
+    public function following($username)
+    {
         // TODO: Maybe actually support following accounts in the future
 
-		$following = array(
-			  "@context" => "https://www.w3.org/ns/activitystreams",
-			        "id" => $this->lg->link("Pub:following", ["username" => $username]),
-			      "type" => "Collection",
-			"totalItems" => 0,
-			     "items" => []
-		);
-		//header( "Content-Type: application/activity+json" );
-		return $following;
-	}
+        $following = array(
+            "@context" => "https://www.w3.org/ns/activitystreams",
+            "id" => $this->lg->link("Pub:following", ["username" => $username]),
+            "type" => "Collection",
+            "totalItems" => 0,
+            "items" => []
+        );
+        //header( "Content-Type: application/activity+json" );
+        return $following;
+    }
 
-    public function followers($user_id, $username) {
+    public function followers($user_id, $username)
+    {
 
         $followers = $this->database->table('ap_followers')->where('followed_user_id', $user_id)->order('created_at DESC');
         $items = [];
         foreach ($followers as $follower) {
             $items[] = $follower->id;
         }
-		$followers = array(
-			  "@context" => "https://www.w3.org/ns/activitystreams",
-			        "id" => $this->lg->link("Pub:followers", ["username" => $username]),
-			      "type" => "Collection",
-			"totalItems" => count($items),
-			     "items" => $items
-		);
-		// header( "Content-Type: application/activity+json" );
-		return $followers;
-	}
+        $followers = array(
+            "@context" => "https://www.w3.org/ns/activitystreams",
+            "id" => $this->lg->link("Pub:followers", ["username" => $username]),
+            "type" => "Collection",
+            "totalItems" => count($items),
+            "items" => $items
+        );
+        // header( "Content-Type: application/activity+json" );
+        return $followers;
+    }
+
+    public function guid()
+    {
+        return Random::generate();
+    }
+
+    public function inbox($user_id, $username, $input, $inbox_message, $server, $validated)
+    {
+        // global $body, $server, $username, $key_private, $directories;
+
+        // $inbox_message = Json::decode($input, true);
+        // if (!$this->verifyHTTPSignature($input, $inbox_message)) {
+        //     return false;
+        // }
+
+        //	Get the message, type, and ID
+        $inbox_id = $inbox_message["id"];
+        $values = [
+            "recipient_id" => $user_id,
+            "id" => $inbox_id,
+            "message_json" => $this->database::literal('jsonb(?)', $input),
+            "validated" => $validated,
+        ];
+        $row = $this->database->table('ap_inbox')->insert($values);
+        if (!$row) {
+            return false;
+        }
+        $inbox_type = $inbox_message["type"];
+        //	This inbox only sends responses to follow requests.
+        //	A remote server sends the inbox a follow request which is a JSON file saying who they are.
+        //	The details of the remote user's server is saved to a file so that future messages can be delivered to the follower.
+        //	An accept request is cryptographically signed and POST'd back to the remote server.
+        switch ($inbox_type) {
+            //	Validate HTTP Message Signature
+            case "Follow":
+
+                //	Get the parameters
+                $follower_id = $inbox_message["id"];    //	E.g. https://mastodon.social/(unique id)
+                $follower_actor = $inbox_message["actor"]; //	E.g. https://mastodon.social/users/Edent
+
+                //	Get the actor's profile as JSON
+                $follower_actor_details = $this->getDataFromUrl($follower_actor, $user_id, $username);
+
+                //	Save the actor's data in `/data/followers/`
+                // $follower_filename = urlencode($follower_actor);
+                // file_put_contents($directories["followers"] . "/{$follower_filename}.json", json_encode($follower_actor_details));
+
+                //	Get the new follower's Inbox
+                $follower_inbox = $follower_actor_details["inbox"];
+
+                //	Response Message ID
+                //	This isn't used for anything important so could just be a random number
+                $guid = $this->guid();
+
+                $params = ["username" => $username];
+                $userLink = $this->lg->link("Pub:user", $params);
+
+                //	Create the Accept message to the new follower
+                $message = [
+                    "@context" => "https://www.w3.org/ns/activitystreams",
+                    "id" => "https://{$server}/{$guid}",
+                    "type" => "Accept",
+                    "actor" => $userLink,
+                    "object" => [
+                        "@context" => "https://www.w3.org/ns/activitystreams",
+                        "id" => $follower_id,
+                        "type" => $inbox_type,
+                        "actor" => $follower_actor,
+                        "object" => $userLink,
+                    ]
+                ];
+
+                //	The Accept is POSTed to the inbox on the server of the user who requested the follow
+                sendMessageToSingle($follower_inbox, $message);
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    public function getDataFromUrl($url, $user_id, $username)
+    {
+        //	Check this is a valid https address
+
+        $parsed = new UrlImmutable($url);
+        if ($parsed->getScheme() != "https") {
+            throw new \Exception("Url scheme not https, {$url}");
+        }
+        //	Split the URL
+        $url_host = $parsed->getHost();
+        $url_path = $parsed->getPath();
+
+        //	Generate signed headers for this request
+        $headers = $this->generate_signed_headers(null, $url_host, $url_path, "GET", $user_id, $username);
+
+        // Set cURL options
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_USERAGENT, self::USERAGENT);
+
+        // Execute the cURL session
+        $urlJSON = curl_exec($ch);
+
+        $status_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+
+        // Check for errors
+        if (curl_errno($ch) || $status_code == 404) {
+            // Handle cURL error
+            // $error_message = curl_error( $ch ) . "\nUrl: {$url}\nHeaders: " . json_encode( $headers );
+            $curl_error = curl_error($ch);
+            $error_message = "Curl error: {$curl_error}, for Url: {$url}";
+            throw new \Exception($error_message);
+        }
+
+        return Json::decode($urlJSON, true);
+    }
+
+    public function generate_signed_headers($message_json, $host, $path, $method, $user_id, $username)
+    {
+        // global $server, $username, $key_private;
+
+        //	Location of the Public Key
+        $userLink = $this->lg->link("Pub:user", ["username" => $username]);
+        $keyId = "{$userLink}#main-key";
+        $key_private = $this->database->table('users')->get($user_id)->private_key;
+        //	Get the Private Key
+        $signer = openssl_get_privatekey($key_private);
+
+        //	Timestamp this message was sent
+        $date = date("D, d M Y H:i:s \G\M\T");
+
+        //	There are subtly different signing requirements for POST and GET.
+        if ("POST" == $method) {
+            //	Encode the message object to JSON. NOT HERE! (we could have parameter mismatch for the encoder)
+            // $message_json = json_encode( $message );
+            //	Generate signing variables
+            $hash = hash("sha256", $message_json, true);
+            $digest = base64_encode($hash);
+
+            //	Sign the path, host, date, and digest
+            $stringToSign = "(request-target): post $path\nhost: $host\ndate: $date\ndigest: SHA-256=$digest";
+
+            //	The signing function returns the variable $signature
+            //	https://www.php.net/manual/en/function.openssl-sign.php
+            openssl_sign(
+                $stringToSign,
+                $signature,
+                $signer,
+                OPENSSL_ALGO_SHA256
+            );
+            //	Encode the signature
+            $signature_b64 = base64_encode($signature);
+
+            //	Full signature header
+            $signature_header = 'keyId="' . $keyId . '",algorithm="rsa-sha256",headers="(request-target) host date digest",signature="' . $signature_b64 . '"';
+
+            //	Header for POST request
+            $headers = array(
+                "Host: {$host}",
+                "Date: {$date}",
+                "Digest: SHA-256={$digest}",
+                "Signature: {$signature_header}",
+                "Content-Type: application/activity+json",
+                "Accept: application/activity+json",
+            );
+        } else if ("GET" == $method) {
+            //	Sign the path, host, date - NO DIGEST because there's no message sent.
+            $stringToSign = "(request-target): get $path\nhost: $host\ndate: $date";
+
+            //	The signing function returns the variable $signature
+            //	https://www.php.net/manual/en/function.openssl-sign.php
+            openssl_sign(
+                $stringToSign,
+                $signature,
+                $signer,
+                OPENSSL_ALGO_SHA256
+            );
+            //	Encode the signature
+            $signature_b64 = base64_encode($signature);
+
+            //	Full signature header
+            $signature_header = 'keyId="' . $keyId . '",algorithm="rsa-sha256",headers="(request-target) host date",signature="' . $signature_b64 . '"';
+
+            //	Header for GET request
+            $headers = array(
+                "Host: {$host}",
+                "Date: {$date}",
+                "Signature: {$signature_header}",
+                "Accept: application/activity+json, application/json",
+            );
+        }
+
+        return $headers;
+    }
+
 
 }
