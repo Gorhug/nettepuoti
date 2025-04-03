@@ -51,15 +51,6 @@ ALTER TABLE users ADD COLUMN avatar INTEGER REFERENCES images (id) ON DELETE SET
 ALTER TABLE products ADD COLUMN owner INTEGER REFERENCES users (id) ON DELETE SET NULL;
 
 -- activitypub followers
-CREATE TABLE ap_followers(
-    rowid INTEGER PRIMARY KEY,
-    id TEXT NOT NULL,
-    followed_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-    follow_msg_id INTEGER NOT NULL REFERENCES ap_inbox (rowid) ON DELETE CASCADE,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(followed_id, id)
-);
-
 CREATE TABLE ap_inbox(
     rowid INTEGER PRIMARY KEY,
     id TEXT NOT NULL,
@@ -69,3 +60,24 @@ CREATE TABLE ap_inbox(
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(recipient_id, id)
 );
+CREATE TABLE ap_outbox(
+    rowid INTEGER PRIMARY KEY,
+    id TEXT NOT NULL,
+    sender_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    message_json BLOB NOT NULL,
+    http_status INTEGER,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(sender_id, id)
+);
+
+CREATE TABLE ap_followers(
+    rowid INTEGER PRIMARY KEY,
+    id TEXT NOT NULL,
+    followed_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    follow_msg_id INTEGER NOT NULL REFERENCES ap_inbox (rowid) ON DELETE SET NULL,
+    accept_msg_id INTEGER REFERENCES ap_outbox (rowid) ON DELETE SET NULL,
+    details_json BLOB NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(followed_id, id)
+);
+

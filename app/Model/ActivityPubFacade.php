@@ -8,6 +8,7 @@ use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Nette\Http\UrlImmutable;
 use Nette\Utils\Json;
 use Nette\Utils\Random;
+use Tracy\Debugger;
 
 final class ActivityPubFacade
 {
@@ -170,8 +171,8 @@ final class ActivityPubFacade
             "message_json" => $this->database::literal('jsonb(?)', $input),
             "validated" => $validated,
         ];
-        $row = $this->database->table('ap_inbox')->insert($values);
-        if (!$row) {
+        $inbox_row = $this->database->table('ap_inbox')->insert($values);
+        if (!$inbox_row) {
             return false;
         }
         $inbox_type = $inbox_message["type"];
@@ -188,7 +189,8 @@ final class ActivityPubFacade
                 $follower_actor = $inbox_message["actor"]; //	E.g. https://mastodon.social/users/Edent
 
                 //	Get the actor's profile as JSON
-                $follower_actor_details = $this->getDataFromUrl($follower_actor, $user_id, $username);
+                $details_json = $this->getDataFromUrl($follower_actor, $user_id, $username);
+                $follower_actor_details = Json::decode($details_json, true);
 
                 //	Save the actor's data in `/data/followers/`
                 // $follower_filename = urlencode($follower_actor);
@@ -218,9 +220,25 @@ final class ActivityPubFacade
                         "object" => $userLink,
                     ]
                 ];
-
+                $message_json = Json::encode($message);
+                // store the message in the database
+                $values = [
+                    "sender_id" => $user_id,
+                    "id" => $guid,
+                    "message_json" => $this->database::literal('jsonb(?)', $message_json),
+                ];
+                $outbox_row = $this->database->table('ap_outbox')->insert($values);
                 //	The Accept is POSTed to the inbox on the server of the user who requested the follow
-                sendMessageToSingle($follower_inbox, $message);
+                $status = $this->sendMessageToSingle($follower_inbox, $message_json, $user_id, $username);
+                $outbox_row->update(['http_status' => $status]);
+                $follower_values = [
+                    "followed_id" => $user_id,
+                    "id" => $follower_actor_details["id"],
+                    "details_json" => $this->database::literal('jsonb(?)', $details_json),
+                    "follow_msg_id" => $inbox_row->rowid,
+                    "accept_msg_id" => $outbox_row->rowid,
+                ];
+                $this->database->table('ap_followers')->insert($follower_values);
                 break;
             default:
                 break;
@@ -264,7 +282,7 @@ final class ActivityPubFacade
             throw new \Exception($error_message);
         }
 
-        return Json::decode($urlJSON, true);
+        return $urlJSON;
     }
 
     public function generate_signed_headers($message_json, $host, $path, $method, $user_id, $username)
@@ -344,6 +362,41 @@ final class ActivityPubFacade
 
         return $headers;
     }
+
+    public function sendMessageToSingle( $inbox, $message_json, $user_id, $username ) {
+		// global $directories;
+        $parsed = new UrlImmutable($inbox);
+		$inbox_host  = $parsed->getHost();
+		$inbox_path  = $parsed->getPath();
+
+		//	Generate the signed headers
+		$headers = $this->generate_signed_headers( $message_json, $inbox_host, $inbox_path, "POST", $user_id, $username );
+
+		//	POST the message and header to the requester's inbox
+		$ch = curl_init( $inbox );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS,     $message_json );
+		curl_setopt( $ch, CURLOPT_HTTPHEADER,     $headers );
+		curl_setopt( $ch, CURLOPT_USERAGENT,      self::USERAGENT );
+		curl_exec( $ch );
+
+		//	Check for errors
+		if( curl_errno( $ch ) ) {
+			// $error_message = curl_error( $ch ) . "\ninbox: {$inbox}\nmessage: " . json_encode($message);
+			// file_put_contents( $directories["logs"] . "/{$timestamp}.Error.txt", $error_message );
+            $curl_error = curl_error($ch);
+            $error_message = "Curl error: {$curl_error}, for inbox: {$inbox}";
+            throw new \Exception($error_message);
+		}
+		$status_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        Debugger::log("Send message to {$inbox} status_code: {$status_code}");
+        // if ($status_code != 200) {
+        //     $error_message = "Send message to {$inbox} status_code: {$status_code}";
+        //     throw new \Exception($error_message);
+        // }
+        return $status_code;
+	}
 
 
 }

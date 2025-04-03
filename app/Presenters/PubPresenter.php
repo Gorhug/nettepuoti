@@ -210,8 +210,10 @@ class PubPresenter extends Presenter
 		//	This is to differentiate if the user has multiple keys
 		//	TODO: Check the actual key
 		try {
-			$userData = $this->ap->getDataFromUrl($publicKeyURL, $user_id, $username);
-			$actorData = $this->ap->getDataFromUrl($body["actor"], $user_id, $username);
+			$userDataJson = $this->ap->getDataFromUrl($publicKeyURL, $user_id, $username);
+			$actorDataJson = $this->ap->getDataFromUrl($body["actor"], $user_id, $username);
+			$userData = Json::decode($userDataJson, true);
+			$actorData = Json::decode($actorDataJson, true);
 		} catch (\Exception $e) {
 			Debugger::log($e, Debugger::ERROR);
 			return false;
