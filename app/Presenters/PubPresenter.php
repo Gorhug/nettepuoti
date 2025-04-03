@@ -6,9 +6,12 @@ use App\Model\ActivityPubFacade;
 use App\Model\UserFacade;
 use DateTimeImmutable;
 use Naja\Guide\Application\UI\Presenters\BasePresenter;
+use Nette\Application\Responses\TextResponse;
 use Nette\Application\UI\Presenter;
 use Nette\Utils\Json;
 use Nette\Application\Responses\JsonResponse;
+use Nette\Application\Responses\VoidResponse;
+use Nette\Http\IResponse;
 use Tracy\Debugger;
 
 class PubPresenter extends Presenter
@@ -47,8 +50,21 @@ class PubPresenter extends Presenter
 
 	public function sendActivityJson($data)
 	{
-		$this->sendResponse(new JsonResponse($data, 'application/activity+json'));
+		if (is_string($data)) {
+			$response = $this->getHttpResponse();
+			$response->setContentType('application/activity+json', 'utf-8');
+			$this->sendResponse(new TextResponse($data));
+		} else {
+			$this->sendResponse(new JsonResponse($data, 'application/activity+json'));
+		}
 	}
+
+	public function sendEmptyResponse($code) {
+		$response = $this->getHttpResponse();
+		$response->setCode($code);
+		$this->sendResponse(new VoidResponse());
+	}
+
 	public function renderUser(string $username)
 	{
 		$http_request = $this->getHttpRequest();
@@ -97,8 +113,35 @@ class PubPresenter extends Presenter
 		$inbox_message = Json::decode($input, true);
 		$headers = $http_request->getHeaders();
 		$verified = $this->verifyHTTPSignature($input, $inbox_message, $headers, $user_id, $username);
+		$status = $this->ap->inbox($user_id, $username, $input,$inbox_message, $verified);
+		if (!$verified) {
+			$this->error("Signature verification failed.", 401);
+		}
+		$code = $status ? IResponse::S204_NoContent : IResponse::S202_Accepted;
+		$this->sendEmptyResponse($code);
 	}
 
+	public function renderOutbox(string $username)
+	{
+		// $username = ltrim($username, "@");
+		$user_id = $this->users->getId($username);
+		if ($user_id) {
+			$this->sendActivityJson($this->ap->outbox($username));
+		} else {
+			$this->error("User not found.", 404);
+		}
+	}
+
+	public function renderGuid(string $username)
+	{
+		// $username is actually GUID in here
+		$msg = $this->ap->getByGuid($username);
+		if ($msg) {
+			$this->sendActivityJson($msg);
+		} else {
+			$this->error("Message not found.", 404);
+		}
+	}
 	public function verifyHTTPSignature($input, $body, $headers, $user_id, $username)
 	{
 		// global $input, $body, $server, $directories;

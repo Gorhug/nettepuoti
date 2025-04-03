@@ -56,10 +56,11 @@ CREATE TABLE ap_inbox(
     id TEXT NOT NULL,
     recipient_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     message_json BLOB NOT NULL,
-    validated BOOLEAN,
+    verified BOOLEAN,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(recipient_id, id)
 );
+
 CREATE TABLE ap_outbox(
     rowid INTEGER PRIMARY KEY,
     id TEXT NOT NULL,
@@ -67,11 +68,12 @@ CREATE TABLE ap_outbox(
     message_json BLOB NOT NULL,
     http_status INTEGER,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(sender_id, id)
+    UNIQUE(id)
 );
 
 CREATE TABLE ap_followers(
     rowid INTEGER PRIMARY KEY,
+    -- short guid, not the full id
     id TEXT NOT NULL,
     followed_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     follow_msg_id INTEGER NOT NULL REFERENCES ap_inbox (rowid) ON DELETE SET NULL,

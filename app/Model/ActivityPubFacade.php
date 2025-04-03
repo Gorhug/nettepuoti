@@ -86,8 +86,8 @@ final class ActivityPubFacade
             "type" => "Person",
             "following" => $this->lg->link("Pub:following", $params),
             "followers" => $this->lg->link("Pub:followers", $params),
-            "inbox" => "https://{$server}/inbox/{$username}",
-            "outbox" => "https://{$server}/outbox/{$username}",
+            "inbox" => $this->lg->link("Pub:inbox", $params),
+            "outbox" => $this->lg->link("Pub:outbox", $params),
             "preferredUsername" => $username, //rawurldecode( $username ),
             "name" => $user->realname,
             "summary" => $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $user->bio]),
@@ -154,7 +154,7 @@ final class ActivityPubFacade
         return Random::generate();
     }
 
-    public function inbox($user_id, $username, $input, $inbox_message, $server, $validated)
+    public function inbox($user_id, $username, $input, $inbox_message, $verified)
     {
         // global $body, $server, $username, $key_private, $directories;
 
@@ -169,10 +169,10 @@ final class ActivityPubFacade
             "recipient_id" => $user_id,
             "id" => $inbox_id,
             "message_json" => $this->database::literal('jsonb(?)', $input),
-            "validated" => $validated,
+            "verified" => $verified,
         ];
         $inbox_row = $this->database->table('ap_inbox')->insert($values);
-        if (!$inbox_row) {
+        if (!$verified) {
             return false;
         }
         $inbox_type = $inbox_message["type"];
@@ -209,7 +209,7 @@ final class ActivityPubFacade
                 //	Create the Accept message to the new follower
                 $message = [
                     "@context" => "https://www.w3.org/ns/activitystreams",
-                    "id" => "https://{$server}/{$guid}",
+                    "id" => $this->lg->link("Pub:guid", ["username" => $guid]),
                     "type" => "Accept",
                     "actor" => $userLink,
                     "object" => [
@@ -239,11 +239,49 @@ final class ActivityPubFacade
                     "accept_msg_id" => $outbox_row->rowid,
                 ];
                 $this->database->table('ap_followers')->insert($follower_values);
-                break;
+                return true;
+                // break;
             default:
                 break;
         }
-        return true;
+        return false;
+    }
+
+    function outbox($username) {
+		// global $server, $username, $directories;
+
+		//	Get all posts
+		// $posts = array_reverse( glob( $directories["posts"] . "/*.json") );
+		//	Number of posts
+		// $totalItems = count( $posts );
+		//	Create an ordered list
+		// $orderedItems = [];
+		// foreach ( $posts as $post ) {
+		// 	$postData = json_decode( file_get_contents( $post ), true );
+		// 	$orderedItems[] = array(
+		// 		"type"   => $postData["type"],
+		// 		"actor"  => "https://{$server}/{$username}",
+		// 		"object" => "https://{$server}/{$post}"
+		// 	);
+		// }
+
+		//	Create User's outbox
+		$outbox = array(
+			"@context"     => "https://www.w3.org/ns/activitystreams",
+			"id"           => $this->lg->link("Pub:outbox", ["username" => $username]),
+			"type"         => "OrderedCollection",
+			"totalItems"   =>  0,
+			"summary"      => "All the user's posts",
+			"orderedItems" =>  []
+		);
+
+		//	Render the page
+		return $outbox;
+	}
+
+    public function getByGuid($guid) {
+        $row = $this->database->table('ap_outbox')->select("json(message_json) AS m_json")->where('id', $guid)->fetch();
+        return $row?->m_json;
     }
 
     public function getDataFromUrl($url, $user_id, $username)
