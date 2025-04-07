@@ -180,8 +180,8 @@ final class ActivityPubFacade
         //	A remote server sends the inbox a follow request which is a JSON file saying who they are.
         //	The details of the remote user's server is saved to a file so that future messages can be delivered to the follower.
         //	An accept request is cryptographically signed and POST'd back to the remote server.
+        $status = false;
         switch ($inbox_type) {
-            //	Validate HTTP Message Signature
             case "Follow":
 
                 //	Get the parameters
@@ -239,12 +239,12 @@ final class ActivityPubFacade
                     "accept_msg_id" => $outbox_row->rowid,
                 ];
                 $this->database->table('ap_followers')->insert($follower_values);
-                return true;
-                // break;
+                $status = true;
+                break;
             default:
                 break;
         }
-        return false;
+        return $status;
     }
 
     function outbox($username) {
@@ -278,6 +278,59 @@ final class ActivityPubFacade
 		//	Render the page
 		return $outbox;
 	}
+
+    function wk_nodeinfo() {
+		// global $server;
+
+		$nodeinfo = array(
+			"links" => array(
+				array(
+					 "rel" => "self",
+					"type" => "http://nodeinfo.diaspora.software/ns/schema/2.1",
+					"href" => $this->lg->link("Pub:nodeinfo"),
+				)
+			)
+		);
+		return $nodeinfo;
+	}
+
+    public function nodeinfo() {
+		
+
+		//	Get all posts
+		// $posts =  glob( $directories["posts"] . "/*.json") ;
+		//	Number of posts
+		// $totalItems = count( $posts );
+        $totalUsers = $this->database->table('users')->where("keys_created_at NOT", null)->count('*');
+		$nodeinfo = array(
+			"version" => "2.1",	//	Version of the schema, not the software
+			"software" => array(
+				"name"       => "nettepuoti ActivityPub limited support",
+				"version"    => "3000", // in the not too distant future
+				"repository" => "https://github.com/Gorhug/nettepuoti"
+			),
+			"protocols" => array( "activitypub"),
+			"services" => array(
+				"inbound"  => array(),
+				"outbound" => array()
+			),
+			"openRegistrations" => false,
+			"usage" => array(
+				"users" => array(
+					"total" => $totalUsers,
+				),
+				"localPosts" => 0
+			),
+			"metadata"=> array(
+				"nodeName" => "nettepuoti",
+				"nodeDescription" => "This is an extremely basic ActivityPub server.",
+				"spdx" => "AGPL-3.0-or-later"
+			)
+		);
+		return $nodeinfo;
+	
+	}
+
 
     public function getByGuid($guid) {
         $row = $this->database->table('ap_outbox')->select("json(message_json) AS m_json")->where('id', $guid)->fetch();

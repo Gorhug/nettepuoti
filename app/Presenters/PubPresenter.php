@@ -121,6 +121,14 @@ class PubPresenter extends Presenter
 		$this->sendEmptyResponse($code);
 	}
 
+	public function renderNodeinfo() {
+		$this->sendJson($this->ap->nodeinfo());
+	}
+
+	public function renderWk() {
+		$this->sendJson($this->ap->wk_nodeinfo());
+	}
+
 	public function renderOutbox(string $username)
 	{
 		// $username = ltrim($username, "@");
@@ -302,7 +310,6 @@ class PubPresenter extends Presenter
 			$verified = null;
 		}
 
-		//	Filename for the log
 		if ($verified) {
 			Debugger::log("Signature verified, {$debug_info}", Debugger::INFO);
 		} else {

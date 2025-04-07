@@ -16,6 +16,8 @@ final class RouterFactory
 	{
 		$router = new RouteList;
 		$router->addRoute('.well-known/webfinger', 'Pub:webfinger');
+		$router->addRoute('.well-known/nodeinfo', 'Pub:wk');
+		$router->addRoute('nodeinfo/2.1', 'Pub:nodeinfo');
 		// $router->addRoute('well-known/nodeinfo', 'Pub:nodeinfo');
 		$router->addRoute('pub/<action>/<username>', 'Pub:default');
 		// $router->addRoute('user/<username>', 'Pub:user');
