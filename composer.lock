@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b38835de6701f0f771fc04f1b916277",
+    "content-hash": "0ab34500987dc9385a78fc911e3527e4",
     "packages": [
         {
             "name": "contributte/application",
@@ -335,82 +335,6 @@
                 "source": "https://github.com/erusev/parsedown-extra/tree/0.8.x"
             },
             "time": "2019-12-30T23:20:37+00:00"
-        },
-        {
-            "name": "kdyby/redis",
-            "version": "v6.1.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Kdyby/Redis.git",
-                "reference": "1a2412b856ee63de366b8ac55d1b6807209a997b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Kdyby/Redis/zipball/1a2412b856ee63de366b8ac55d1b6807209a997b",
-                "reference": "1a2412b856ee63de366b8ac55d1b6807209a997b",
-                "shasum": ""
-            },
-            "require": {
-                "ext-redis": "*",
-                "nette/caching": "~3.1",
-                "nette/di": "~3.0",
-                "nette/http": "~3.0",
-                "nette/utils": "~3.0 || ^4.0",
-                "php": ">=7.4"
-            },
-            "require-dev": {
-                "nette/bootstrap": "~3.0",
-                "nette/deprecated": "~3.0",
-                "nette/php-generator": "~3.3 || ^4.0",
-                "nette/tester": "^2.3.1",
-                "php-coveralls/php-coveralls": "^2.1",
-                "php-parallel-lint/php-parallel-lint": "dev-master",
-                "phpstan/phpstan": "^0.12",
-                "slevomat/coding-standard": "dev-master",
-                "tracy/tracy": "~2.4"
-            },
-            "suggest": {
-                "ext-redis": "The php redis extension https://github.com/nicolasff/phpredis/ is required for connecting to redis server"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Kdyby\\Redis\\": "src/Kdyby/Redis"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause",
-                "GPL-2.0",
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "Filip Procházka",
-                    "email": "filip@prochazka.su",
-                    "homepage": "http://filip-prochazka.com"
-                }
-            ],
-            "description": "Redis storage for Nette Framework",
-            "homepage": "http://kdyby.org",
-            "keywords": [
-                "cache",
-                "client",
-                "kdyby",
-                "nette",
-                "redis"
-            ],
-            "support": {
-                "email": "filip@prochazka.su",
-                "issues": "https://github.com/kdyby/redis/issues",
-                "source": "https://github.com/Kdyby/Redis/tree/v6.1.4"
-            },
-            "time": "2023-03-14T12:48:04+00:00"
         },
         {
             "name": "latte/latte",
@@ -1178,16 +1102,16 @@
         },
         {
             "name": "nette/http",
-            "version": "v3.2.3",
+            "version": "v3.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/http.git",
-                "reference": "54d79711ff3a8dfd86201e3bdbdd6972177ea20b"
+                "reference": "d7cc833ee186d5139cde5aab43b39ee7aedd6f22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/http/zipball/54d79711ff3a8dfd86201e3bdbdd6972177ea20b",
-                "reference": "54d79711ff3a8dfd86201e3bdbdd6972177ea20b",
+                "url": "https://api.github.com/repos/nette/http/zipball/d7cc833ee186d5139cde5aab43b39ee7aedd6f22",
+                "reference": "d7cc833ee186d5139cde5aab43b39ee7aedd6f22",
                 "shasum": ""
             },
             "require": {
@@ -1206,7 +1130,10 @@
                 "tracy/tracy": "^2.8"
             },
             "suggest": {
-                "ext-fileinfo": "to detect type of uploaded files"
+                "ext-fileinfo": "to detect MIME type of uploaded files by Nette\\Http\\FileUpload",
+                "ext-gd": "to use image function in Nette\\Http\\FileUpload",
+                "ext-intl": "to support punycode by Nette\\Http\\Url",
+                "ext-session": "to use Nette\\Http\\Session"
             },
             "type": "library",
             "extra": {
@@ -1250,9 +1177,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/http/issues",
-                "source": "https://github.com/nette/http/tree/v3.2.3"
+                "source": "https://github.com/nette/http/tree/v3.2.4"
             },
-            "time": "2023-11-02T02:43:54+00:00"
+            "time": "2024-01-30T18:13:43+00:00"
         },
         {
             "name": "nette/mail",

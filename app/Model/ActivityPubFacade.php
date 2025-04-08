@@ -90,7 +90,10 @@ final class ActivityPubFacade
             "outbox" => $this->lg->link("Pub:outbox", $params),
             "preferredUsername" => $username, //rawurldecode( $username ),
             "name" => $user->realname,
-            "summary" => $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $user->bio]),
+            "summaryMap" => [
+                'en' => $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $user->bio]),
+                'fi' => $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $user->bio_fi])
+            ],
             "url" => $userLink,
             "manuallyApprovesFollowers" => false,
             "discoverable" => true,
@@ -103,7 +106,7 @@ final class ActivityPubFacade
             "image" => [
                 "type" => "Image",
                 "mediaType" => "image/png",
-                "url" => "https://{$server}/banner.png"
+                "url" => "https://{$server}/img/catlogo_wide.png"
             ],
             "publicKey" => [
                 "id" => "{$userLink}#main-key",
@@ -247,92 +250,96 @@ final class ActivityPubFacade
         return $status;
     }
 
-    function outbox($username) {
-		// global $server, $username, $directories;
+    function outbox($username)
+    {
+        // global $server, $username, $directories;
 
-		//	Get all posts
-		// $posts = array_reverse( glob( $directories["posts"] . "/*.json") );
-		//	Number of posts
-		// $totalItems = count( $posts );
-		//	Create an ordered list
-		// $orderedItems = [];
-		// foreach ( $posts as $post ) {
-		// 	$postData = json_decode( file_get_contents( $post ), true );
-		// 	$orderedItems[] = array(
-		// 		"type"   => $postData["type"],
-		// 		"actor"  => "https://{$server}/{$username}",
-		// 		"object" => "https://{$server}/{$post}"
-		// 	);
-		// }
+        //	Get all posts
+        // $posts = array_reverse( glob( $directories["posts"] . "/*.json") );
+        //	Number of posts
+        // $totalItems = count( $posts );
+        //	Create an ordered list
+        // $orderedItems = [];
+        // foreach ( $posts as $post ) {
+        // 	$postData = json_decode( file_get_contents( $post ), true );
+        // 	$orderedItems[] = array(
+        // 		"type"   => $postData["type"],
+        // 		"actor"  => "https://{$server}/{$username}",
+        // 		"object" => "https://{$server}/{$post}"
+        // 	);
+        // }
 
-		//	Create User's outbox
-		$outbox = array(
-			"@context"     => "https://www.w3.org/ns/activitystreams",
-			"id"           => $this->lg->link("Pub:outbox", ["username" => $username]),
-			"type"         => "OrderedCollection",
-			"totalItems"   =>  0,
-			"summary"      => "All the user's posts",
-			"orderedItems" =>  []
-		);
+        //	Create User's outbox
+        $outbox = array(
+            "@context" => "https://www.w3.org/ns/activitystreams",
+            "id" => $this->lg->link("Pub:outbox", ["username" => $username]),
+            "type" => "OrderedCollection",
+            "totalItems" => 0,
+            "summary" => "All the user's posts",
+            "orderedItems" => []
+        );
 
-		//	Render the page
-		return $outbox;
-	}
+        //	Render the page
+        return $outbox;
+    }
 
-    function wk_nodeinfo() {
-		// global $server;
+    function wk_nodeinfo()
+    {
+        // global $server;
 
-		$nodeinfo = array(
-			"links" => array(
-				array(
-					 "rel" => "self",
-					"type" => "http://nodeinfo.diaspora.software/ns/schema/2.1",
-					"href" => $this->lg->link("Pub:nodeinfo"),
-				)
-			)
-		);
-		return $nodeinfo;
-	}
+        $nodeinfo = array(
+            "links" => array(
+                array(
+                    "rel" => "self",
+                    "type" => "http://nodeinfo.diaspora.software/ns/schema/2.1",
+                    "href" => $this->lg->link("Pub:nodeinfo"),
+                )
+            )
+        );
+        return $nodeinfo;
+    }
 
-    public function nodeinfo() {
-		
+    public function nodeinfo()
+    {
 
-		//	Get all posts
-		// $posts =  glob( $directories["posts"] . "/*.json") ;
-		//	Number of posts
-		// $totalItems = count( $posts );
+
+        //	Get all posts
+        // $posts =  glob( $directories["posts"] . "/*.json") ;
+        //	Number of posts
+        // $totalItems = count( $posts );
         $totalUsers = $this->database->table('users')->where("keys_created_at NOT", null)->count('*');
-		$nodeinfo = array(
-			"version" => "2.1",	//	Version of the schema, not the software
-			"software" => array(
-				"name"       => "nettepuoti ActivityPub limited support",
-				"version"    => "3000", // in the not too distant future
-				"repository" => "https://github.com/Gorhug/nettepuoti"
-			),
-			"protocols" => array( "activitypub"),
-			"services" => array(
-				"inbound"  => array(),
-				"outbound" => array()
-			),
-			"openRegistrations" => false,
-			"usage" => array(
-				"users" => array(
-					"total" => $totalUsers,
-				),
-				"localPosts" => 0
-			),
-			"metadata"=> array(
-				"nodeName" => "nettepuoti",
-				"nodeDescription" => "This is an extremely basic ActivityPub server.",
-				"spdx" => "AGPL-3.0-or-later"
-			)
-		);
-		return $nodeinfo;
-	
-	}
+        $nodeinfo = array(
+            "version" => "2.1",	//	Version of the schema, not the software
+            "software" => array(
+                "name" => "nettepuoti ActivityPub limited support",
+                "version" => "3000", // in the not too distant future
+                "repository" => "https://github.com/Gorhug/nettepuoti"
+            ),
+            "protocols" => array("activitypub"),
+            "services" => array(
+                "inbound" => array(),
+                "outbound" => array()
+            ),
+            "openRegistrations" => false,
+            "usage" => array(
+                "users" => array(
+                    "total" => $totalUsers,
+                ),
+                "localPosts" => 0
+            ),
+            "metadata" => array(
+                "nodeName" => "nettepuoti",
+                "nodeDescription" => "This is an extremely basic ActivityPub server.",
+                "spdx" => "AGPL-3.0-or-later"
+            )
+        );
+        return $nodeinfo;
+
+    }
 
 
-    public function getByGuid($guid) {
+    public function getByGuid($guid)
+    {
         $row = $this->database->table('ap_outbox')->select("json(message_json) AS m_json")->where('id', $guid)->fetch();
         return $row?->m_json;
     }
@@ -454,40 +461,41 @@ final class ActivityPubFacade
         return $headers;
     }
 
-    public function sendMessageToSingle( $inbox, $message_json, $user_id, $username ) {
-		// global $directories;
+    public function sendMessageToSingle($inbox, $message_json, $user_id, $username)
+    {
+        // global $directories;
         $parsed = new UrlImmutable($inbox);
-		$inbox_host  = $parsed->getHost();
-		$inbox_path  = $parsed->getPath();
+        $inbox_host = $parsed->getHost();
+        $inbox_path = $parsed->getPath();
 
-		//	Generate the signed headers
-		$headers = $this->generate_signed_headers( $message_json, $inbox_host, $inbox_path, "POST", $user_id, $username );
+        //	Generate the signed headers
+        $headers = $this->generate_signed_headers($message_json, $inbox_host, $inbox_path, "POST", $user_id, $username);
 
-		//	POST the message and header to the requester's inbox
-		$ch = curl_init( $inbox );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS,     $message_json );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER,     $headers );
-		curl_setopt( $ch, CURLOPT_USERAGENT,      self::USERAGENT );
-		curl_exec( $ch );
+        //	POST the message and header to the requester's inbox
+        $ch = curl_init($inbox);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $message_json);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_USERAGENT, self::USERAGENT);
+        curl_exec($ch);
 
-		//	Check for errors
-		if( curl_errno( $ch ) ) {
-			// $error_message = curl_error( $ch ) . "\ninbox: {$inbox}\nmessage: " . json_encode($message);
-			// file_put_contents( $directories["logs"] . "/{$timestamp}.Error.txt", $error_message );
+        //	Check for errors
+        if (curl_errno($ch)) {
+            // $error_message = curl_error( $ch ) . "\ninbox: {$inbox}\nmessage: " . json_encode($message);
+            // file_put_contents( $directories["logs"] . "/{$timestamp}.Error.txt", $error_message );
             $curl_error = curl_error($ch);
             $error_message = "Curl error: {$curl_error}, for inbox: {$inbox}";
             throw new \Exception($error_message);
-		}
-		$status_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        }
+        $status_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         Debugger::log("Send message to {$inbox} status_code: {$status_code}");
         // if ($status_code != 200) {
         //     $error_message = "Send message to {$inbox} status_code: {$status_code}";
         //     throw new \Exception($error_message);
         // }
         return $status_code;
-	}
+    }
 
 
 }

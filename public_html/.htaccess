@@ -3,12 +3,24 @@
 # Grant all access permissions
 Require all granted
 
-# Disable directory listing for security reasons
+
+#Disable directory listing for security reasons
 <IfModule mod_autoindex.c>
 	Options -Indexes
 </IfModule>
 
 # Enable pretty URLs (removing the need for "index.php" in the URL)
+
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteBase /
+
+#     # Redirect all paths to queries
+#     RewriteCond %{REQUEST_FILENAME} !-f
+#     RewriteCond %{REQUEST_FILENAME} !-d
+#     RewriteRule ^(.*)$ index.php?path=$1 [QSA,L]
+# </IfModule>
+
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 
@@ -19,16 +31,20 @@ Require all granted
 	# RewriteCond %{HTTPS} !on
 	# RewriteRule .? https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
-	# Prevent access to files that start with a dot (like .htaccess or .git)
-	# Exception made for ".well-known" directory used for domain verification and other protocols
-	RewriteCond %{REQUEST_FILENAME} -f
-	RewriteRule /\.|^\.(?!well-known/) - [F]
+	# Permit requests to the '.well-known' directory (used for SSL verification and more)
+	# RewriteRule ^\.well-known/.* - [L]
 
-	# Front controller pattern - All requests are routed through index.php
-	# unless the requested file or directory exists or the request is for a specific filetype
+	# Block access to hidden files (starting with a dot) and URLs resembling WordPress admin paths
+	# RewriteRule /\.|^\.|^wp-(login|admin|includes|content) - [F]
+
+	# Return 404 for missing files with specific extensions (images, scripts, styles, archives)
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule \.(pdf|js|mjs|ico|gif|jpg|jpeg|png|webp|avif|svg|css|rar|zip|7z|tar\.gz|map|eot|ttf|otf|woff|woff2)$ - [L]
+
+	# Front controller pattern - all requests are routed through index.php
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
-	RewriteRule !\.(pdf|js|mjs|ico|gif|jpg|jpeg|png|webp|svg|css|rar|zip|7z|tar\.gz|map|eot|ttf|otf|woff|woff2)$ index.php [L]
+	RewriteRule . index.php [L]
 </IfModule>
 
 # Enable gzip compression for faster load times
