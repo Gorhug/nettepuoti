@@ -36,13 +36,15 @@ class PubPresenter extends Presenter
 		} else {
 			[$user, $domain] = $arr;
 		}
+		// remove acct: from user
+		$user = substr($user, 5);
 		$url = $http_request->getUrl();
 		$server = $url->getHost();
 		if ($server != $domain) {
 			$this->error("Requested resource's domain does not match server domain.", 404);
 		}
 		if (!$this->users->getId($user)) {
-			$this->error("User not found.", 404);
+			$this->error("User {$user} not found.", 404);
 		}
 		$this->sendJson($this->ap->webfinger($user, $domain));
 
@@ -206,9 +208,10 @@ class PubPresenter extends Presenter
 		//	There might be many different hashing algorithms
 		//	TODO: Find a way to transform these automatically
 		//	See https://github.com/superseriousbusiness/gotosocial/issues/1186#issuecomment-1976166659 and https://github.com/snarfed/bridgy-fed/issues/430 for hs2019
-		if ("SHA-256" == $digestAlgorithm || "hs2019" == $digestAlgorithm) {
+		$digestAlgorithm = strtolower($digestAlgorithm);
+		if ("sha-256" == $digestAlgorithm || "hs2019" == $digestAlgorithm) {
 			$digestAlgorithm = "sha256";
-		} else if ("SHA-512" == $digestAlgorithm) {
+		} else if ("sha-512" == $digestAlgorithm) {
 			$digestAlgorithm = "sha512";
 		}
 

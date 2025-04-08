@@ -167,10 +167,9 @@ final class ActivityPubFacade
         // }
 
         //	Get the message, type, and ID
-        $inbox_id = $inbox_message["id"];
+        // $inbox_id = $inbox_message["id"];
         $values = [
             "recipient_id" => $user_id,
-            "id" => $inbox_id,
             "message_json" => $this->database::literal('jsonb(?)', $input),
             "verified" => $verified,
         ];
@@ -242,6 +241,9 @@ final class ActivityPubFacade
                     "accept_msg_id" => $outbox_row->rowid,
                 ];
                 $this->database->table('ap_followers')->insert($follower_values);
+                $status = true;
+                break;
+            case "EchoRequest":
                 $status = true;
                 break;
             default:

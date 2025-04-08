@@ -15,8 +15,12 @@ final class ProductPresenter extends BasePresenter
 		private Translator $translator,
 		private Settings $settings
 	) {
-		// bdump($database->getConnection()->query('PRAGMA synchronous')->fetch()['synchronous'], "sql_synced");
-		// bdump($database->getConnection()->query('PRAGMA busy_timeout')->fetch()["timeout"], "sql_timeout");
+		// bdump($database->query('PRAGMA synchronous')->fetch()['synchronous'], "sql_synced");
+		// bdump($database->query('PRAGMA busy_timeout')->fetch()["timeout"], "sql_timeout");
+// 		$query = <<<QUERY
+// SELECT jsonb('{"id": "ascii stuff" }') AS js;
+// QUERY;
+// 		bdump($database->query($query)->fetch()["js"], "jsonb_test");
 	}
 
 	public function renderShow(int $id): void
