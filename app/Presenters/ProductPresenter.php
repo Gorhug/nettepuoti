@@ -15,12 +15,21 @@ final class ProductPresenter extends BasePresenter
 		private Translator $translator,
 		private Settings $settings
 	) {
+		/** Okay, so a lot of sqlite test code is here. Why? 🤷🏼 */
+		
 		// bdump($database->query('PRAGMA synchronous')->fetch()['synchronous'], "sql_synced");
 		// bdump($database->query('PRAGMA busy_timeout')->fetch()["timeout"], "sql_timeout");
-// 		$query = <<<QUERY
-// SELECT jsonb('{"id": "ascii stuff" }') AS js;
-// QUERY;
-// 		bdump($database->query($query)->fetch()["js"], "jsonb_test");
+		// $query = <<<QUERY
+		// SELECT jsonb('{"id": "ascii stuff" }') AS js;
+		// QUERY;
+		// bdump($database->query($query)->fetch()["js"], "jsonb_test");
+		// $values = [
+		// 	"recipient_id" => 1,
+		// 	"message_json" => $this->database::literal('jsonb(?)', '{"id": "testi"}'),
+		// 	"verified" => false,
+		// ];
+		// bdump($database->table('ap_inbox')->insert($values), "ap_inbox primary");
+		// 
 	}
 
 	public function renderShow(int $id): void

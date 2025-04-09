@@ -166,8 +166,7 @@ final class ActivityPubFacade
         //     return false;
         // }
 
-        //	Get the message, type, and ID
-        // $inbox_id = $inbox_message["id"];
+        // TODO: in the future don't bother saving unverified stuff. currently for debugging
         $values = [
             "recipient_id" => $user_id,
             "message_json" => $this->database::literal('jsonb(?)', $input),
@@ -249,6 +248,7 @@ final class ActivityPubFacade
             default:
                 break;
         }
+        $inbox_row->update(['processed' => $status]);
         return $status;
     }
 
@@ -401,7 +401,7 @@ final class ActivityPubFacade
 
         //	There are subtly different signing requirements for POST and GET.
         if ("POST" == $method) {
-            //	Encode the message object to JSON. NOT HERE! (we could have parameter mismatch for the encoder)
+            //	Encode the message object to JSON. <-- NOT HERE! (we could have parameter mismatch for the encoder)
             // $message_json = json_encode( $message );
             //	Generate signing variables
             $hash = hash("sha256", $message_json, true);

@@ -51,34 +51,35 @@ ALTER TABLE users ADD COLUMN avatar INTEGER REFERENCES images (id) ON DELETE SET
 ALTER TABLE products ADD COLUMN owner INTEGER REFERENCES users (id) ON DELETE SET NULL;
 
 -- activitypub followers
+-- AUTOINCREMENT because nette database explorer won't recognize otherwise
 CREATE TABLE ap_inbox(
-    rowid INTEGER PRIMARY KEY,
+    rowid INTEGER PRIMARY KEY AUTOINCREMENT,
     recipient_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     message_json BLOB NOT NULL,
     verified BOOLEAN,
     processed BOOLEAN,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME NOT NULL DEFAULT (unixepoch())
 );
 
 CREATE TABLE ap_outbox(
-    rowid INTEGER PRIMARY KEY,
+    rowid INTEGER PRIMARY KEY AUTOINCREMENT,
     -- short guid, not the full id
     id TEXT NOT NULL,
     sender_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     message_json BLOB NOT NULL,
     http_status INTEGER,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME NOT NULL DEFAULT (unixepoch()),
     UNIQUE(id)
 );
 
 CREATE TABLE ap_followers(
-    rowid INTEGER PRIMARY KEY,
+    rowid INTEGER PRIMARY KEY AUTOINCREMENT,
     id TEXT NOT NULL,
     followed_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     follow_msg_id INTEGER NOT NULL REFERENCES ap_inbox (rowid) ON DELETE SET NULL,
     accept_msg_id INTEGER REFERENCES ap_outbox (rowid) ON DELETE SET NULL,
     details_json BLOB NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME NOT NULL DEFAULT (unixepoch()),
     UNIQUE(followed_id, id)
 );
 
