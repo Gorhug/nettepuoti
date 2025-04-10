@@ -23,6 +23,11 @@ class PubPresenter extends Presenter
 		// $this->locale = 'en';
 	}
 
+	public function beforeRender() {
+		// setting this here so $this->error() processes as json
+		$this->getHttpResponse()->setContentType('application/json', 'utf-8');
+	}
+
 	public function renderWebfinger()
 	{
 		$http_request = $this->getHttpRequest();
@@ -185,7 +190,7 @@ class PubPresenter extends Presenter
 
 		//	Is there a significant difference between the Date header and the published timestamp?
 		//	Two minutes chosen because Friendica is frequently more than a minute skewed
-		$published = $body["published"];
+		$published = $body["published"] ?? 'now'; // message body might not have published time, should we even make this check?
 		$publishedDatetime = new DateTimeImmutable($published);
 		// Calculate the time difference in seconds
 		$timeDifference = abs($publishedDatetime->getTimestamp() - $headerDatetime->getTimestamp());

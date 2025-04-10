@@ -23,6 +23,10 @@ final class Error4xxPresenter extends Nette\Application\UI\Presenter
 
 	public function renderDefault(Nette\Application\BadRequestException $exception): void
 	{
+		// if the Presenter said it's responding in json, send json
+		if (preg_match('#^application/json(?:;|$)#', (string) $this->getHttpResponse()->getHeader('Content-Type'))) {
+			$this->sendJson(["error" => $exception->getMessage()]);
+		}
 		// renders the appropriate error template based on the HTTP status code
 		$code = $exception->getCode();
 		$file = is_file($file = __DIR__ . "/templates/Error/$code.latte")
