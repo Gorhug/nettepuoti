@@ -234,7 +234,7 @@ final class ActivityPubFacade
                 $outbox_row->update(['http_status' => $status]);
                 $follower_values = [
                     "followed_id" => $user_id,
-                    "id" => $follower_actor_details["id"],
+                    "actor" => $follower_actor,
                     "details_json" => $this->database::literal('jsonb(?)', $details_json),
                     "follow_msg_id" => $inbox_row->rowid,
                     "accept_msg_id" => $outbox_row->rowid,
@@ -244,6 +244,45 @@ final class ActivityPubFacade
                 break;
             case "EchoRequest":
                 $status = true;
+                break;
+            case "Undo":
+            // case "Delete":
+            // case "Update":
+                // $id = $inbox_message["id"];
+                $actor = $inbox_message["actor"];
+                //	The thing being undone
+                $object = $inbox_message["object"];
+
+                //	Does the thing being undone have its own ID or Type?
+                // $object_id = $object["id"] ?? $id;
+                $object_type = $object["type"] ?? $inbox_type;
+                // I don't really care if there is a message in the database about this
+                // since the actor was verified (PubPresenter does that) and requested an unfollow,
+                // that's enough. Delete is for Create activity, Update isn't an unfollow?
+                if ("Follow" == $object_type && $inbox_type == "Undo") {
+                    $this->database->table('ap_followers')->where([
+                        "followed_id" => $user_id,
+                        "actor" => $actor,
+                    ])->delete();
+                    Debugger::log("deleted follower {$actor} for user {$username}");
+                    $status = true;
+                }
+
+                // I could do some updating or deleting, but also, I could just handle stuff when
+                // reading. reading is free. writing is expensive... or so I'll claim while nodding wisely 🥸
+                // or I could just run a cron job...
+
+                // $rows = $this->database->table('ap_inbox')->where([
+                //     "message_json->>'$.actor'" => $actor,
+                //     "recipient_id" => $user_id,
+                // ])->whereOr([
+                //     "message_json->>'$.id'" => $object_id,
+                //     "message_json->>'$.object.id" => $object_id
+                // ]);
+                
+                // foreach ($rows as $row) {
+                //     ...
+                // }
                 break;
             default:
                 break;

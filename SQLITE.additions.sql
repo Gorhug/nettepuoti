@@ -74,12 +74,11 @@ CREATE TABLE ap_outbox(
 
 CREATE TABLE ap_followers(
     rowid INTEGER PRIMARY KEY AUTOINCREMENT,
-    id TEXT NOT NULL,
+    actor TEXT NOT NULL,
     followed_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-    follow_msg_id INTEGER NOT NULL REFERENCES ap_inbox (rowid) ON DELETE SET NULL,
+    follow_msg_id INTEGER NOT NULL REFERENCES ap_inbox (rowid) ON DELETE CASCADE,
     accept_msg_id INTEGER REFERENCES ap_outbox (rowid) ON DELETE SET NULL,
     details_json BLOB NOT NULL,
     created_at DATETIME NOT NULL DEFAULT (unixepoch()),
-    UNIQUE(followed_id, id)
+    UNIQUE(followed_id, actor)
 );
-
