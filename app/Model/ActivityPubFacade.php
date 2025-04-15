@@ -38,7 +38,7 @@ final class ActivityPubFacade
         $user->update([
             'public_key' => $public_key_pem,
             'private_key' => $private_key_pem,
-            'keys_created_at' => new \DateTimeImmutable(),
+            'keys_created_at' => new DateTimeImmutable,
         ]);
     }
 
@@ -136,10 +136,10 @@ final class ActivityPubFacade
     public function followers($user_id, $username)
     {
 
-        $followers = $this->database->table('ap_followers')->where('followed_user_id', $user_id)->order('created_at DESC');
+        $followers = $this->database->table('ap_followers')->where('followed_user_id', $user_id)->select("details_json->>'$.id' AS follower_id")->order('created_at DESC');
         $items = [];
         foreach ($followers as $follower) {
-            $items[] = $follower->id;
+            $items[] = $follower->follower_id;
         }
         $followers = array(
             "@context" => "https://www.w3.org/ns/activitystreams",
@@ -246,8 +246,8 @@ final class ActivityPubFacade
                 $status = true;
                 break;
             case "Undo":
-            // case "Delete":
-            // case "Update":
+                // case "Delete":
+                // case "Update":
                 // $id = $inbox_message["id"];
                 $actor = $inbox_message["actor"];
                 //	The thing being undone
@@ -279,7 +279,7 @@ final class ActivityPubFacade
                 //     "message_json->>'$.id'" => $object_id,
                 //     "message_json->>'$.object.id" => $object_id
                 // ]);
-                
+
                 // foreach ($rows as $row) {
                 //     ...
                 // }
@@ -291,7 +291,74 @@ final class ActivityPubFacade
         return $status;
     }
 
-    function outbox($username)
+    public function createFromProduct($product, $user_id, $username)
+    {
+        $latte = $this->latteFactory->create();
+        $contentMap = [
+            "en" => $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $product->description]),
+            "fi" => $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $product->description_fi]),
+
+        ];
+        $summaryMap = [
+            "en" => $product->brief,
+            "fi" => $product->brief_fi,
+        ];
+        $nameMap = [
+            "en" => $product->name,
+            "fi" => $product->name_fi,
+        ];
+        $sourceMap = [
+            "en" => [
+                "content" => $product->description,
+                "mediaType" => "text/markdown",
+            ],
+            "fi" => [
+                "content" => $product->description_fi,
+                "mediaType" => "text/markdown",
+            ],
+        ];
+        $attachment = [];
+        $tags = [];
+        $timestamp = date("c");
+        $create_guid = $this->guid();
+        $article_guid = $this->guid();
+        $userLink = $this->lg->link("Pub:user", ["username" => $username]);
+
+        $note = [
+            "@context" => array(
+                "https://www.w3.org/ns/activitystreams"
+            ),
+            "id" => $this->lg->link("Pub:guid", ["username" => $article_guid]),
+            "type" => "Article",
+            "published" => $timestamp,
+            "attributedTo" => $userLink,
+            "inReplyTo" => null,
+            "nameMap" => $nameMap,
+            "contentMap" => $contentMap,
+            "summaryMap" => $summaryMap,
+            "sourceMap" => $sourceMap,
+            "to" => ["https://www.w3.org/ns/activitystreams#Public"],
+            "tag" => $tags,
+            "attachment" => $attachment
+        ];
+        $message = [
+            "@context" => "https://www.w3.org/ns/activitystreams",
+            "id"       => $this->lg->link("Pub:guid", ["username" => $create_guid]),
+            "type"     => "Create",
+            "actor"    => $userLink,
+            "to"       => [
+                "https://www.w3.org/ns/activitystreams#Public"
+            ],
+            "cc"       => [
+                $this->lg->link("Pub:followers", ["username" => $username]),
+            ],
+            "object"   => $note
+        ];
+
+
+    }
+
+    public function outbox($username)
     {
         // global $server, $username, $directories;
 
@@ -324,7 +391,7 @@ final class ActivityPubFacade
         return $outbox;
     }
 
-    function wk_nodeinfo()
+    public function wk_nodeinfo()
     {
         // global $server;
 
@@ -384,6 +451,36 @@ final class ActivityPubFacade
         $row = $this->database->table('ap_outbox')->select("json(message_json) AS m_json")->where('id', $guid)->fetch();
         return $row?->m_json;
     }
+
+
+    public function isLocalNetworkAddress($host)
+    {
+        
+        // Define the private IP address ranges
+        $privateRanges = [
+            '10.0.0.0/8',   // 10.0.0.0 - 10.255.255.255
+            '172.16.0.0/12',// 172.16.0.0 - 172.31.255.255
+            '192.168.0.0/16'// 192.168.0.0 - 192.168.255.255
+        ];
+
+        // Convert the host to an IP address if it's a hostname
+        $ip = gethostbyname($host);
+
+        // Check if the IP address falls within any of the private ranges
+        foreach ($privateRanges as $range) {
+            list($base, $mask) = explode('/', $range);
+            $baseIp = ip2long($base);
+            $maskIp = ~((1 << (32 - $mask)) - 1);
+            $ipLong = ip2long($ip);
+
+            if (($ipLong & $maskIp) == ($baseIp & $maskIp)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     public function getDataFromUrl($url, $user_id, $username)
     {

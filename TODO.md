@@ -5,3 +5,5 @@
 - RSS / OpenGraph: tehty
 - APCu: lisää expire sivumalleihin, muuta kovakoodatut sleep-ajat, register_shutdown_function: EI KÄYTÖSSÄ
 - korjaa Admin-puolen koodista validointitarkistukset, rekisteröitymislomake ym. 
+- omistajatarkistukset editointeihin
+- activitypub avainluonti tilin luontiin?
