@@ -10,6 +10,7 @@ use DateTimeImmutable;
 use Naja\Guide\Application\UI\Presenters\BasePresenter;
 use Nette\Application\Responses\TextResponse;
 use Nette\Application\UI\Presenter;
+use Nette\Http\UrlImmutable;
 use Nette\Utils\Json;
 use Nette\Application\Responses\JsonResponse;
 use Nette\Application\Responses\VoidResponse;
@@ -283,8 +284,9 @@ class PubPresenter extends Presenter
 			// $actorDataJson = $this->ap->getDataFromUrl($body["actor"], $user_id, $username);
 			// $userData = Json::decode($userDataJson, true);
 			// $actorData = Json::decode($actorDataJson, true);
-			$userData = ($this->ap->getCachedJson)($publicKeyURL, $user_id, $username);
-			$actorData = ($this->ap->getCachedJson)($body["actor"], $user_id, $username);
+
+			$userData = $this->ap->getJsonFromUrl($publicKeyURL, $user_id, $username);
+			$actorData = $this->ap->getJsonFromUrl($body["actor"], $user_id, $username);
 		} catch (\Exception $e) {
 			Debugger::log($e, Debugger::ERROR);
 			return false;

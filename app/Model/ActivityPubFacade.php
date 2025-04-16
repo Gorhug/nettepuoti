@@ -19,7 +19,7 @@ final class ActivityPubFacade
 {
     private const USERAGENT = "salakapakka/0.1";
     private Cache $cache;
-    public \Closure $getCachedJson;
+    // public \Closure $getCachedJson;
     public function __construct(
         private \Nette\Database\Explorer $database,
         private \App\Settings $settings,
@@ -28,7 +28,7 @@ final class ActivityPubFacade
         \Nette\Caching\Storage $storage,
     ) {
         $this->cache = new Cache($storage, 'activitypub');
-        $this->getCachedJson = $this->cache->wrap([$this, 'getJsonFromUrl'], [Cache::Expire => '20 minutes']);
+        // $this->getCachedJson = $this->cache->wrap([$this, 'getJsonFromUrl'], [Cache::Expire => '20 minutes']);
     }
 
     public function createKeys($id)
@@ -482,8 +482,12 @@ final class ActivityPubFacade
     }
 
     public function getJsonFromUrl($url, $user_id, $username) {
-        $json = $this->getDataFromUrl($url, $user_id, $username);
-        return Json::decode($json, true);
+        $fixedUrl = (new UrlImmutable($url))->withFragment('')->getAbsoluteUrl();
+        return $this->cache->load("{$fixedUrl}#{$user_id}_{$username}", function (&$dependencies) use ($fixedUrl, $user_id, $username) {
+            $dependencies[Cache::Expire] = '20 minutes';
+            $json = $this->getDataFromUrl($fixedUrl, $user_id, $username);
+            return Json::decode($json, true);
+        });   
     }
     public function getDataFromUrl($url, $user_id, $username)
     {
