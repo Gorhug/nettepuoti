@@ -5,6 +5,7 @@ namespace App\Model;
 use DateTimeImmutable;
 use Nette\Application\LinkGenerator;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
+use Nette\Caching\Cache;
 use Nette\Database\Table\ActiveRow;
 use Nette\Http\UrlImmutable;
 use Nette\Http\UrlScript;
@@ -17,12 +18,17 @@ use Tracy\Debugger;
 final class ActivityPubFacade
 {
     private const USERAGENT = "salakapakka/0.1";
+    private Cache $cache;
+    public \Closure $getCachedJson;
     public function __construct(
         private \Nette\Database\Explorer $database,
         private \App\Settings $settings,
         private LinkGenerator $lg,
         private LatteFactory $latteFactory,
+        \Nette\Caching\Storage $storage,
     ) {
+        $this->cache = new Cache($storage, 'activitypub');
+        $this->getCachedJson = $this->cache->wrap([$this, 'getJsonFromUrl'], [Cache::Expire => '20 minutes']);
     }
 
     public function createKeys($id)
@@ -73,7 +79,7 @@ final class ActivityPubFacade
         // header( "Content-Type: application/json" );
         return $webfinger;
     }
-    public function username($user_id, $username, $server)
+    public function username($user_id, $username, UrlScript $url)
     {
         // global $username, $realName, $summary, $server, $key_public;
         $user = $this->database->table('users')->get($user_id);
@@ -105,12 +111,12 @@ final class ActivityPubFacade
             "icon" => [
                 "type" => "Image",
                 "mediaType" => "image/png",
-                "url" => "https://{$server}/{$this->settings->uploadDir}/{$img}"
+                "url" => $url->resolve("{$this->settings->uploadDir}/{$img}"),
             ],
             "image" => [
                 "type" => "Image",
                 "mediaType" => "image/png",
-                "url" => "https://{$server}/img/catlogo_wide.png"
+                "url" => $url->resolve("/img/catlogo_wide.png"),
             ],
             "publicKey" => [
                 "id" => "{$userLink}#main-key",
@@ -333,7 +339,7 @@ final class ActivityPubFacade
             $attachment[] = [
                 "type" => "Image",
                 "mediaType" => $mimetype,
-                "url" => $url_string, //TODO: FIX!
+                "url" => $url_string, 
                 "nameMap" => [
                     "en" => $image->alt ?? $image->filename,
                     "fi" => $image->alt_fi ?? $image->filename,
@@ -475,6 +481,10 @@ final class ActivityPubFacade
         return $row?->m_json;
     }
 
+    public function getJsonFromUrl($url, $user_id, $username) {
+        $json = $this->getDataFromUrl($url, $user_id, $username);
+        return Json::decode($json, true);
+    }
     public function getDataFromUrl($url, $user_id, $username)
     {
         //	Check this is a valid https address
@@ -526,7 +536,7 @@ final class ActivityPubFacade
         $signer = openssl_get_privatekey($key_private);
 
         //	Timestamp this message was sent
-        $date = date("D, d M Y H:i:s \G\M\T");
+        $date = date(DATE_RFC7231); // "D, d M Y H:i:s \G\M\T"
 
         //	There are subtly different signing requirements for POST and GET.
         if ("POST" == $method) {

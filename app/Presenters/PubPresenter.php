@@ -81,10 +81,9 @@ class PubPresenter extends Presenter
 		$http_request = $this->getHttpRequest();
 		// $username = ltrim($username, "@");
 		$url = $http_request->getUrl();
-		$server = $url->getHost();
 		$user_id = $this->users->getId($username);
 		if ($user_id) {
-			$this->sendActivityJson($this->ap->username($user_id, $username, $server));
+			$this->sendActivityJson($this->ap->username($user_id, $username, $url));
 		} else {
 			$this->error("User not found.", 404);
 		}
@@ -280,10 +279,12 @@ class PubPresenter extends Presenter
 		//	This is to differentiate if the user has multiple keys
 		//	TODO: Check the actual key
 		try {
-			$userDataJson = $this->ap->getDataFromUrl($publicKeyURL, $user_id, $username);
-			$actorDataJson = $this->ap->getDataFromUrl($body["actor"], $user_id, $username);
-			$userData = Json::decode($userDataJson, true);
-			$actorData = Json::decode($actorDataJson, true);
+			// $userDataJson = $this->ap->getDataFromUrl($publicKeyURL, $user_id, $username);
+			// $actorDataJson = $this->ap->getDataFromUrl($body["actor"], $user_id, $username);
+			// $userData = Json::decode($userDataJson, true);
+			// $actorData = Json::decode($actorDataJson, true);
+			$userData = ($this->ap->getCachedJson)($publicKeyURL, $user_id, $username);
+			$actorData = ($this->ap->getCachedJson)($body["actor"], $user_id, $username);
 		} catch (\Exception $e) {
 			Debugger::log($e, Debugger::ERROR);
 			return false;
