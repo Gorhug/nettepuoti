@@ -5,7 +5,11 @@ namespace App\Model;
 use DateTimeImmutable;
 use Nette\Application\LinkGenerator;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
+use Nette\Database\Table\ActiveRow;
 use Nette\Http\UrlImmutable;
+use Nette\Http\UrlScript;
+use Nette\Utils\FileSystem;
+use Nette\Utils\Image;
 use Nette\Utils\Json;
 use Nette\Utils\Random;
 use Tracy\Debugger;
@@ -291,7 +295,7 @@ final class ActivityPubFacade
         return $status;
     }
 
-    public function createFromProduct($product, $user_id, $username)
+    public function createFromProduct(ActiveRow $product, $user_id, $username, UrlScript $url)
     {
         $latte = $this->latteFactory->create();
         $contentMap = [
@@ -318,6 +322,25 @@ final class ActivityPubFacade
             ],
         ];
         $attachment = [];
+
+        foreach ($product->related("product_gallery") as $product_image) {
+            $image = $product_image->ref("images", "image");
+            $filename = $image->filename;
+            $filepath = "{$this->settings->uploadDir}/{$filename}";
+            $url_string = $url->resolve($filepath);
+            $extension = pathinfo($filename, PATHINFO_EXTENSION);
+            $mimetype = Image::typeToMimeType(Image::extensionToType($extension));
+            $attachment[] = [
+                "type" => "Image",
+                "mediaType" => $mimetype,
+                "url" => $url_string, //TODO: FIX!
+                "nameMap" => [
+                    "en" => $image->alt ?? $image->filename,
+                    "fi" => $image->alt_fi ?? $image->filename,
+                ]
+            ];
+        }
+
         $tags = [];
         $timestamp = date("c");
         $create_guid = $this->guid();
@@ -355,7 +378,7 @@ final class ActivityPubFacade
             "object"   => $note
         ];
 
-
+        return $message;
     }
 
     public function outbox($username)
@@ -451,36 +474,6 @@ final class ActivityPubFacade
         $row = $this->database->table('ap_outbox')->select("json(message_json) AS m_json")->where('id', $guid)->fetch();
         return $row?->m_json;
     }
-
-
-    public function isLocalNetworkAddress($host)
-    {
-        
-        // Define the private IP address ranges
-        $privateRanges = [
-            '10.0.0.0/8',   // 10.0.0.0 - 10.255.255.255
-            '172.16.0.0/12',// 172.16.0.0 - 172.31.255.255
-            '192.168.0.0/16'// 192.168.0.0 - 192.168.255.255
-        ];
-
-        // Convert the host to an IP address if it's a hostname
-        $ip = gethostbyname($host);
-
-        // Check if the IP address falls within any of the private ranges
-        foreach ($privateRanges as $range) {
-            list($base, $mask) = explode('/', $range);
-            $baseIp = ip2long($base);
-            $maskIp = ~((1 << (32 - $mask)) - 1);
-            $ipLong = ip2long($ip);
-
-            if (($ipLong & $maskIp) == ($baseIp & $maskIp)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
 
     public function getDataFromUrl($url, $user_id, $username)
     {

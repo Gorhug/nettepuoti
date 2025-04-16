@@ -41,8 +41,8 @@ class MediaPresenter extends BasePresenter
         $form = $this->formFactory->create();
         $form->setTranslator($this->translator);
         $form->addUpload('file', 'g.upload.file')
-            ->addRule($form::MAX_FILE_SIZE, new NotTranslate($maxSizeError), $maxFileSize)
-            ->addRule($form::IMAGE, 'g.upload.fileImage')
+            ->addRule($form::MaxFileSize, new NotTranslate($maxSizeError), $maxFileSize)
+            ->addRule($form::Image, 'g.upload.fileImage')
             ->setRequired('g.upload.fileRequired');
  
         $form->addSubmit('send', 'g.upload.send');
@@ -129,5 +129,6 @@ class MediaPresenter extends BasePresenter
         $images = $this->facade->getImages($userId);
         $this->template->images = $images;
         $this->template->uploadDir = $this->settings->uploadDir;
+        bdump($this->template->baseUrl, "baseUrl");
     }
 }

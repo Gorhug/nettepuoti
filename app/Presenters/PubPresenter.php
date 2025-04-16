@@ -3,7 +3,9 @@
 namespace App\Presenters;
 
 use App\Model\ActivityPubFacade;
+use App\Model\ProductFacade;
 use App\Model\UserFacade;
+use App\Settings;
 use DateTimeImmutable;
 use Naja\Guide\Application\UI\Presenters\BasePresenter;
 use Nette\Application\Responses\TextResponse;
@@ -18,14 +20,16 @@ class PubPresenter extends Presenter
 {
 	public function __construct(
 		private ActivityPubFacade $ap,
-		private UserFacade $users
+		private UserFacade $users,
+		private ProductFacade $productFacade,
+		private Settings $settings,
 	) {
 		// $this->locale = 'en';
 	}
 
 	public function beforeRender() {
 		// setting this here so $this->error() processes as json
-		$this->getHttpResponse()->setContentType('application/json', 'utf-8');
+		// $this->getHttpResponse()->setContentType('application/json', 'utf-8');
 	}
 
 	public function renderWebfinger()
@@ -147,6 +151,13 @@ class PubPresenter extends Presenter
 		}
 	}
 
+	public function renderTest(string $username) {
+		$url = $this->getHttpRequest()->getUrl();
+		$product = $this->productFacade->getPublicProducts()->fetchAll()[3];
+		$user_id = $this->users->getId($username);
+		$this->sendJson($this->ap->createFromProduct($product, $user_id,$username, $url));
+	}	
+	
 	public function renderGuid(string $username)
 	{
 		// $username is actually GUID in here
