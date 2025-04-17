@@ -13,7 +13,9 @@ use Nette\Utils\FileSystem;
 use Nette\Utils\Image;
 use Nette\Utils\Json;
 use Nette\Utils\Random;
+use Nette\Utils\Strings;
 use Tracy\Debugger;
+use Tracy\ILogger;
 
 final class ActivityPubFacade
 {
@@ -84,6 +86,8 @@ final class ActivityPubFacade
         // global $username, $realName, $summary, $server, $key_public;
         $user = $this->database->table('users')->get($user_id);
         $img = $user->ref('images', 'avatar')->filename ?? 'avatar.webp';
+        $extension = pathinfo($img, PATHINFO_EXTENSION);
+        $mimetype = Image::typeToMimeType(Image::extensionToType($extension));
         $params = ["username" => $username];
         $latte = $this->latteFactory->create();
         $userLink = $this->lg->link("Pub:user", $params);
@@ -108,9 +112,10 @@ final class ActivityPubFacade
             "manuallyApprovesFollowers" => false,
             "discoverable" => true,
             "published" => $user->keys_created_at,
+
             "icon" => [
                 "type" => "Image",
-                "mediaType" => "image/png",
+                "mediaType" => $mimetype,
                 "url" => $url->resolve("{$this->settings->uploadDir}/{$img}"),
             ],
             "image" => [
@@ -339,15 +344,29 @@ final class ActivityPubFacade
             $attachment[] = [
                 "type" => "Image",
                 "mediaType" => $mimetype,
-                "url" => $url_string, 
+                "url" => $url_string,
                 "nameMap" => [
                     "en" => $image->alt ?? $image->filename,
                     "fi" => $image->alt_fi ?? $image->filename,
                 ]
             ];
         }
+        $hashtags = [];
+        $hashtag_pattern = '/(?:^|\s)\#(\w+)/u';	//	Beginning of string, or whitespace, followed by #
+        preg_match_all($hashtag_pattern, "{$product->description} {$product->description_fi}", $hashtag_matches);
+        foreach ($hashtag_matches[1] as $match) {
+            $hashtags[Strings::lower($match)] = $match;
+        }
 
+        //	Construct the tag value for the note object
         $tags = [];
+        foreach ($hashtags as $key => $value) {
+            $tags[] = array(
+                "type" => "Hashtag",
+                "name" => "#{$value}",
+            );
+        }
+
         $timestamp = date("c");
         $create_guid = $this->guid();
         $article_guid = $this->guid();
@@ -372,20 +391,103 @@ final class ActivityPubFacade
         ];
         $message = [
             "@context" => "https://www.w3.org/ns/activitystreams",
-            "id"       => $this->lg->link("Pub:guid", ["username" => $create_guid]),
-            "type"     => "Create",
-            "actor"    => $userLink,
-            "to"       => [
+            "id" => $this->lg->link("Pub:guid", ["username" => $create_guid]),
+            "type" => "Create",
+            "actor" => $userLink,
+            "to" => [
                 "https://www.w3.org/ns/activitystreams#Public"
             ],
-            "cc"       => [
+            "cc" => [
                 $this->lg->link("Pub:followers", ["username" => $username]),
             ],
-            "object"   => $note
+            "object" => $note
         ];
-
-        return $message;
+        $message_json = Json::encode($message);
+        // store the message in the database
+        $values = [
+            "sender_id" => $user_id,
+            "id" => $create_guid,
+            "message_json" => $this->database::literal('jsonb(?)', $message_json),
+        ];
+        $outbox_row = $this->database->table('ap_outbox')->insert($values);
+        $status = $this->sendMessageToFollowers( $message_json,$user_id, $username );
+        $outbox_row->update(['http_status' => $status]);
+        return $status;
     }
+
+    public function sendMessageToFollowers( $message_json, $user_id, $username ) {
+		// global $directories;
+		//	Read existing followers
+		
+        $followers = $this->database->table('ap_followers')->where("followed_id", $user_id)->select("details_json->>'$.endpoints.sharedInbox' AS shared_inbox, details_json->>'$.inbox' AS inbox");
+		
+		//	Get all the inboxes
+		$inboxes = [];
+		foreach ( $followers as $follower ) {
+			//	Some servers have "Shared inboxes"
+			//	If you have lots of followers on a single server, you only need to send the message once.
+            $inbox = $follower->shared_inbox ?? $follower->inbox;
+			$inboxes[$inbox] = true;
+		}
+
+		//	Prepare to use the multiple cURL handle
+		//	This makes it more efficient to send many simultaneous messages
+		$mh = curl_multi_init();
+
+		//	Loop through all the inboxes of the followers
+		//	Each server needs its own cURL handle
+		//	Each POST to an inbox needs to be signed separately
+		foreach ( $inboxes as $inbox => $value) {
+			
+            $parsed = new UrlImmutable($inbox);
+            $inbox_host = $parsed->getHost();
+            $inbox_path = $parsed->getPath();
+	
+			//	Generate the signed headers
+			$headers = $this->generate_signed_headers( $message_json, $inbox_host, $inbox_path, "POST", $user_id, $username );
+		
+			//	POST the message and header to the requester's inbox
+			$ch = curl_init( $inbox );		
+			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+			curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
+			curl_setopt( $ch, CURLOPT_POSTFIELDS,      $message_json );
+			curl_setopt( $ch, CURLOPT_HTTPHEADER,     $headers );
+			curl_setopt( $ch, CURLOPT_USERAGENT,      self::USERAGENT );
+
+			//	Add the handle to the multi-handle
+			curl_multi_add_handle( $mh, $ch );
+		}
+
+		//	Execute the multi-handle
+		do {
+			$status = curl_multi_exec( $mh, $active );
+			if ( $active ) {
+				curl_multi_select( $mh );
+			}
+		} while ( $active && $status == CURLM_OK );
+
+        $msg = true;
+        $status = -1;
+        while ($msg) {
+            $msg = curl_multi_info_read($mh);
+            if ($msg) {
+                if ($msg['result'] != CURLE_OK) {
+                    Debugger::log("Curl error: " . curl_error($msg['handle']));
+                    $status = 9000 + $msg['result']; // it's over 9000!
+                } else {
+                    $info = curl_getinfo($msg['handle']);
+                    $http_code = $info['http_code'];
+                    $url = $info['url'];
+                    Debugger::log("Curl response for {$url}:  {$http_code}", ILogger::DEBUG);
+                    $status = max($status, $http_code);
+                }
+            }
+        }
+		//	Close the multi-handle
+		// curl_multi_close( $mh );
+
+		return $status;
+	}
 
     public function outbox($username)
     {
@@ -481,13 +583,14 @@ final class ActivityPubFacade
         return $row?->m_json;
     }
 
-    public function getJsonFromUrl($url, $user_id, $username) {
+    public function getJsonFromUrl($url, $user_id, $username)
+    {
         $fixedUrl = (new UrlImmutable($url))->withFragment('')->getAbsoluteUrl();
         return $this->cache->load("{$fixedUrl}#{$user_id}_{$username}", function (&$dependencies) use ($fixedUrl, $user_id, $username) {
             $dependencies[Cache::Expire] = '20 minutes';
             $json = $this->getDataFromUrl($fixedUrl, $user_id, $username);
             return Json::decode($json, true);
-        });   
+        });
     }
     public function getDataFromUrl($url, $user_id, $username)
     {
