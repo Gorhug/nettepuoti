@@ -82,3 +82,11 @@ CREATE TABLE ap_followers(
     created_at DATETIME NOT NULL DEFAULT (unixepoch()),
     UNIQUE(followed_id, actor)
 );
+
+CREATE TABLE ap_delivery(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    outbox_rowid INTEGER NOT NULL REFERENCES ap_outbox (rowid) ON DELETE CASCADE,
+    inbox_url TEXT NOT NULL,
+    status INTEGER
+    created_at DATETIME NOT NULL DEFAULT (unixepoch())
+);

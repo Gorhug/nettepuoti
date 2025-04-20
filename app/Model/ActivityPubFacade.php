@@ -410,12 +410,12 @@ final class ActivityPubFacade
             "message_json" => $this->database::literal('jsonb(?)', $message_json),
         ];
         $outbox_row = $this->database->table('ap_outbox')->insert($values);
-        $status = $this->sendMessageToFollowers( $message_json,$user_id, $username );
+        $status = $this->sendMessageToFollowers( $message_json,$user_id, $username, $outbox_row->rowid );
         $outbox_row->update(['http_status' => $status]);
         return $status;
     }
 
-    public function sendMessageToFollowers( $message_json, $user_id, $username ) {
+    public function sendMessageToFollowers( $message_json, $user_id, $username, $outbox_rowid ) {
 		// global $directories;
 		//	Read existing followers
 		
@@ -429,7 +429,10 @@ final class ActivityPubFacade
             $inbox = $follower->shared_inbox ?? $follower->inbox;
 			$inboxes[$inbox] = true;
 		}
-
+        if (count($inboxes) == 0) {
+            Debugger::log("No followers found for user {$username}");
+            return false;
+        }
 		//	Prepare to use the multiple cURL handle
 		//	This makes it more efficient to send many simultaneous messages
 		$mh = curl_multi_init();
@@ -466,27 +469,30 @@ final class ActivityPubFacade
 			}
 		} while ( $active && $status == CURLM_OK );
 
-        $msg = true;
-        $status = -1;
-        while ($msg) {
+        $deliveries = [];
+        do {
             $msg = curl_multi_info_read($mh);
             if ($msg) {
+                $info = curl_getinfo($msg['handle']);
+                $http_code = $info['http_code'];
+                $url = $info['url'];
                 if ($msg['result'] != CURLE_OK) {
                     Debugger::log("Curl error: " . curl_error($msg['handle']));
-                    $status = 9000 + $msg['result']; // it's over 9000!
+                    $status = 0 - $msg['result']; 
                 } else {
-                    $info = curl_getinfo($msg['handle']);
-                    $http_code = $info['http_code'];
-                    $url = $info['url'];
-                    Debugger::log("Curl response for {$url}:  {$http_code}", ILogger::DEBUG);
-                    $status = max($status, $http_code);
+                    // Debugger::log("Curl response for {$url}:  {$http_code}", ILogger::DEBUG);
+                    $status = $http_code;
                 }
+                $deliveries[] = [
+                    "inbox_url" => $url,
+                    "status" => $status,
+                    "message_rowid" => $outbox_rowid
+                ];
             }
-        }
-		//	Close the multi-handle
-		// curl_multi_close( $mh );
+        } while ($msg);
+        $this->database->table('ap_delivery')->insert($deliveries);
 
-		return $status;
+		return true;
 	}
 
     public function outbox($username)
@@ -547,6 +553,7 @@ final class ActivityPubFacade
         //	Number of posts
         // $totalItems = count( $posts );
         $totalUsers = $this->database->table('users')->where("keys_created_at NOT", null)->count('*');
+        $totalPosts = $this->database->table('ap_outbox')->where("message_json->>'$.type'", "Create")->count('*');
         $nodeinfo = array(
             "version" => "2.1",	//	Version of the schema, not the software
             "software" => array(
@@ -564,7 +571,7 @@ final class ActivityPubFacade
                 "users" => array(
                     "total" => $totalUsers,
                 ),
-                "localPosts" => 0
+                "localPosts" => $totalPosts,
             ),
             "metadata" => array(
                 "nodeName" => "nettepuoti",

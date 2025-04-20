@@ -33,10 +33,8 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
 		}
 
 		if (extension_loaded('igbinary')) {
-			if (function_exists('igbinary_serialize')) {
-				$this->serializer = 'igbinary_serialize';
-				$this->unserializer = 'igbinary_unserialize';
-			}
+			$this->serializer = 'igbinary_serialize';
+			$this->unserializer = 'igbinary_unserialize';
 		}
 
 		$this->pdo = new \PDO('sqlite:' . $path);
