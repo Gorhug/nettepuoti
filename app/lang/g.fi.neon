@@ -64,11 +64,15 @@ form:
 dashboard:
     title: 'Omat tiedot'
     message: 'Olet kirjautunut sisään tunnuksella %username%.'
-    editAllowed: 'Voit lisätä ja muokata tuotteita.'
+    editAllowed: 'Voit kirjoittaa ja muokata julkaisuja.'
     noPermissions: 'Sinulla ei ole oikeuksia tällä sivustolla.'
     signOut: 'Kirjaudu ulos'
     editDetails: "Muokkaa henkilötietoja"
     mediaAllowed: "Voit lisätä kuvia galleriaan ja tuotteisiin."
+    apEnabled: "ActivityPub-ominaisuudet (AP) käytössä. Tilisi näkyy AP-protokollalla, voit vastaanottaa viestejä, ja jos omaat julkaisuoikeudet voit julkaista myös AP-puolelle."
+    apDisabled: "ActivityPub-oikeudet kuuluvat tiliisi. Painamalla alla olevaa nappia AP-ominaisuudet kytketään päälle."
+    createKeys: "Kytke ActivityPub-ominaisuudet päälle"
+    apNotAllowed: "Tililläsi ei ole oikeuksia ActivityPub-ominaisuuksiin."
 edit:
     noRights: 'Ei oikeuksia tuotteiden muokkaamiseen'
     name: 'Nimi (englanninkielinen):'
@@ -128,3 +132,12 @@ upload:
     fileSize: "Tiedoston maksimikoko on %size% MB."
     fileImage: "Tiedoston on oltava kuvatiedosto."
     send: "Lähetä kuva"
+user:
+    detailsTitle: "Muokkaa tietojasi"
+    realname: "Nimi"
+    realnameRequired: "Anna nimesi (oikea nimi, lempinimi...)"
+    bio: "Lyhyt esittely (englanninkielinen)"
+    bioRequired: "Kirjoita esittely"
+    bio_fi: "Lyhyt esittely (suomenkielinen)"
+    bio_fiRequired: "Kirjoita esittely"
+    sendDetailsForm: "Tallenna tiedot"

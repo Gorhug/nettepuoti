@@ -21,15 +21,15 @@
 
     {if $user->isLoggedIn()}
         <li><a n:href=":Admin:Dashboard:default" class="ajax">{$user->getIdentity()->username}</a></li>
-		<li><a n:if="$user->isAllowed('product')" n:href="Edit:create" class="ajax">{_g.link.addproduct}</a></li>
-		<li><a n:if="$user->isAllowed('media')" n:href="Media:" class="ajax">{_g.link.media}</a></li>
+		<li><a n:if="$user->isAllowed('product')" n:href=":Edit:create" class="ajax">{_g.link.addproduct}</a></li>
+		<li><a n:if="$user->isAllowed('media')" n:href=":Media:" class="ajax">{_g.link.media}</a></li>
         <li><a n:href=":Admin:Sign:out" class="text-warning">{_g.link.logout}</a></li>
     {else}
-        <li><a n:href=":Admin:Sign:up" class="ajax">{_g.link.register}</a></li>
-        <li><a n:href=":Admin:Sign:in" class="ajax">{_g.link.login}</a></li>
+        {* <li><a n:href=":Admin:Sign:up" class="ajax">{_g.link.register}</a></li>
+        <li><a n:href=":Admin:Sign:in" class="ajax">{_g.link.login}</a></li> *}
     {/if}
-		<li><a n:href="SpotPrice:">{_g.link.spot}</a></li>
-		<li><a n:href="Feedback:">{_g.link.feedback}</a></li>
+		<li><a n:href=":SpotPrice:">{_g.link.spot}</a></li>
+		<li><a n:href=":Feedback:">{_g.link.feedback}</a></li>
 {/define}
 <html data-theme="gorhug" lang={$locale}>
 <head>
@@ -59,9 +59,9 @@
 					</label>
 				</div>
 				<div class="flex-1 px-2 mx-2">
-					<a n:href="Home:default" class="font-black text-2xl ajax">gorhug.fi</a>
+					<a n:href=":Home:default" class="font-black text-2xl ajax">gorhug.fi</a>
 				</div>
-				<details class="dropdown">
+				<details class="dropdown dropdown-end">
 					<summary class="m-1 btn">{svgIcon 'fill/svg/globe.svg', class: 'fill-current stroke-none w-8 h-8'} {$locale}</summary>
 					<ul class="p-2 shadow-sm menu dropdown-content z-1 bg-base-100 rounded-box w-52">
 						<li><a n:href="this, locale: en" lang="en" n:class="isLinkCurrent() ? 'bg-accent text-accent-content'">English</a></li>
@@ -101,7 +101,7 @@
 						<a href="https://gorhug.itch.io/">
 							{svgIcon 'itchio-logo-textless-white.svg', class: 'fill-current stroke-current w-8 h-8'}
 						</a>
-						<a n:href='Home:rss' hx-boost="false">
+						<a n:href=':Home:rss' hx-boost="false">
 							{svgIcon 'feed-icon.svg', class: 'fill-current stroke-current w-8 h-8'}
 						</a>
 					</div>

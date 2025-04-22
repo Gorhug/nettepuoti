@@ -45,12 +45,17 @@
 
 {if $user->isAllowed('activitypub')}
     {if $public_key}
-    <pre>
-        {$public_key}
-    </pre>
+    <p>
+        {_g.dashboard.apEnabled}
+    </p>
     {else}
-        <a n:href="keys!" class="btn btn-primary">{_g.ap.createKeys}</a>
+    <p>
+        {_g.dashboard.apDisabled}
+    </p>
+        <a n:href="keys!" class="btn btn-primary">{_g.dashboard.createKeys}</a>
     {/if}
+{else} 
+    {_g.dashboard.apNotAllowed}
 {/if}
 <p><a n:href="Sign:out" class="link link-primary">{_g.dashboard.signOut}</a></p>
 </div>

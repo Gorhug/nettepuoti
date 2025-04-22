@@ -4,7 +4,7 @@
     "name": "_commonjsHelpers"
   },
   "src/css/app.css": {
-    "file": "app-DVmnDwtb.css",
+    "file": "app-DfsUKSdr.css",
     "src": "src/css/app.css",
     "isEntry": true
   },
@@ -14,12 +14,12 @@
     "isEntry": true
   },
   "src/js/app.js": {
-    "file": "app-BOKS2Ndt.js",
+    "file": "app-CojlBlrc.js",
     "name": "app",
     "src": "src/js/app.js",
     "isEntry": true,
     "css": [
-      "app-DVmnDwtb.css",
+      "app-DfsUKSdr.css",
       "htmx-DI60x0LJ.css"
     ]
   },

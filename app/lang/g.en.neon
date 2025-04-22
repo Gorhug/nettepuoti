@@ -64,11 +64,15 @@ form:
 dashboard:
     title: 'Dashboard'
     message: 'You are logged in as %username%.'
-    editAllowed: 'You can add and edit products.'
+    editAllowed: 'You can create and edit articles.'
     noPermissions: 'You do not have permissions on this site.'
     signOut: 'Log out'
     editDetails: "Edit personal info"
     mediaAllowed: "You can add images to gallery and products."
+    apEnabled: "ActivityPub features are enabled. You can receive messages, and if you have article creation/editing rights, you can post them on ActivityPub."
+    apDisabled: "You can access ActivityPub (AP) features. Clicking the button below makes your account visible on AP."
+    createKeys: "Enable ActivityPub features"
+    apNotAllowed: "Your account does not have rights to ActivityPub features."
 edit:
     noRights: 'You do not have the right to edit products'
     name: 'Name (English):'
@@ -128,3 +132,12 @@ upload:
     fileSize: "Maximum size is %size% MB."
     fileImage: "File must be a valid image file."
     send: "Upload file"
+user:
+    detailsTitle: "Edit profile"
+    realname: "Display name"
+    realnameRequired: "Please enter a display name (real name or nickname)"
+    bio: "Short bio/introduction (English)"
+    bioRequired: "Please write an introduction for yourself"
+    bio_fi: "Short bio/introduction (Finnish)"
+    bio_fiRequired: "Please write an introduction for yourself"
+    sendDetailsForm: "Save profile"
