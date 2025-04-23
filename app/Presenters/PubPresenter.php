@@ -145,7 +145,7 @@ class PubPresenter extends Presenter
 		// $username = ltrim($username, "@");
 		$user_id = $this->users->getId($username);
 		if ($user_id) {
-			$this->sendActivityJson($this->ap->outbox($username));
+			$this->sendActivityJson($this->ap->outbox($user_id, $username));
 		} else {
 			$this->error("User not found.", 404);
 		}

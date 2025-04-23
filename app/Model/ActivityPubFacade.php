@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use Nette\Application\LinkGenerator;
 use Nette\Bridges\ApplicationLatte\LatteFactory;
 use Nette\Caching\Cache;
+use Nette\Database\SqlLiteral;
 use Nette\Database\Table\ActiveRow;
 use Nette\Http\UrlImmutable;
 use Nette\Http\UrlScript;
@@ -151,7 +152,8 @@ final class ActivityPubFacade
     public function followers($user_id, $username)
     {
 
-        $followers = $this->database->table('ap_followers')->where('followed_user_id', $user_id)->select("details_json->>'$.id' AS follower_id")->order('created_at DESC');
+        // $followers = $this->database->table('ap_followers')->where('followed_id', $user_id)->select("details_json->>'$.id' AS follower_id")->order('created_at DESC');
+        $followers = $this->database->query("SELECT details_json->>'$.id' AS follower_id FROM ap_followers WHERE followed_id = ? ORDER BY created_at DESC", $user_id);
         $items = [];
         foreach ($followers as $follower) {
             $items[] = $follower->follower_id;
@@ -410,64 +412,66 @@ final class ActivityPubFacade
             "message_json" => $this->database::literal('jsonb(?)', $message_json),
         ];
         $outbox_row = $this->database->table('ap_outbox')->insert($values);
-        $status = $this->sendMessageToFollowers( $message_json,$user_id, $username, $outbox_row->rowid );
+        $status = $this->sendMessageToFollowers($message_json, $user_id, $username, $outbox_row->rowid);
         $outbox_row->update(['http_status' => $status]);
         return $status;
     }
 
-    public function sendMessageToFollowers( $message_json, $user_id, $username, $outbox_rowid ) {
-		// global $directories;
-		//	Read existing followers
-		
-        $followers = $this->database->table('ap_followers')->where("followed_id", $user_id)->select("details_json->>'$.endpoints.sharedInbox' AS shared_inbox, details_json->>'$.inbox' AS inbox");
-		
-		//	Get all the inboxes
-		$inboxes = [];
-		foreach ( $followers as $follower ) {
-			//	Some servers have "Shared inboxes"
-			//	If you have lots of followers on a single server, you only need to send the message once.
+    public function sendMessageToFollowers($message_json, $user_id, $username, $outbox_rowid)
+    {
+        // global $directories;
+        //	Read existing followers
+
+        // $followers = $this->database->table('ap_followers')->where("followed_id", $user_id)->select("details_json->>'$.endpoints.sharedInbox' AS shared_inbox, details_json->>'$.inbox' AS inbox");
+        $followers = $this->database->query("SELECT details_json->>'$.endpoints.sharedInbox' AS shared_inbox, details_json->>'$.inbox' AS inbox FROM ap_followers WHERE followed_id = ?", $user_id);
+
+        //	Get all the inboxes
+        $inboxes = [];
+        foreach ($followers as $follower) {
+            //	Some servers have "Shared inboxes"
+            //	If you have lots of followers on a single server, you only need to send the message once.
             $inbox = $follower->shared_inbox ?? $follower->inbox;
-			$inboxes[$inbox] = true;
-		}
+            $inboxes[$inbox] = true;
+        }
         if (count($inboxes) == 0) {
             Debugger::log("No followers found for user {$username}");
             return false;
         }
-		//	Prepare to use the multiple cURL handle
-		//	This makes it more efficient to send many simultaneous messages
-		$mh = curl_multi_init();
+        //	Prepare to use the multiple cURL handle
+        //	This makes it more efficient to send many simultaneous messages
+        $mh = curl_multi_init();
 
-		//	Loop through all the inboxes of the followers
-		//	Each server needs its own cURL handle
-		//	Each POST to an inbox needs to be signed separately
-		foreach ( $inboxes as $inbox => $value) {
-			
+        //	Loop through all the inboxes of the followers
+        //	Each server needs its own cURL handle
+        //	Each POST to an inbox needs to be signed separately
+        foreach ($inboxes as $inbox => $value) {
+
             $parsed = new UrlImmutable($inbox);
             $inbox_host = $parsed->getHost();
             $inbox_path = $parsed->getPath();
-	
-			//	Generate the signed headers
-			$headers = $this->generate_signed_headers( $message_json, $inbox_host, $inbox_path, "POST", $user_id, $username );
-		
-			//	POST the message and header to the requester's inbox
-			$ch = curl_init( $inbox );		
-			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-			curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
-			curl_setopt( $ch, CURLOPT_POSTFIELDS,      $message_json );
-			curl_setopt( $ch, CURLOPT_HTTPHEADER,     $headers );
-			curl_setopt( $ch, CURLOPT_USERAGENT,      self::USERAGENT );
 
-			//	Add the handle to the multi-handle
-			curl_multi_add_handle( $mh, $ch );
-		}
+            //	Generate the signed headers
+            $headers = $this->generate_signed_headers($message_json, $inbox_host, $inbox_path, "POST", $user_id, $username);
 
-		//	Execute the multi-handle
-		do {
-			$status = curl_multi_exec( $mh, $active );
-			if ( $active ) {
-				curl_multi_select( $mh );
-			}
-		} while ( $active && $status == CURLM_OK );
+            //	POST the message and header to the requester's inbox
+            $ch = curl_init($inbox);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $message_json);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_USERAGENT, self::USERAGENT);
+
+            //	Add the handle to the multi-handle
+            curl_multi_add_handle($mh, $ch);
+        }
+
+        //	Execute the multi-handle
+        do {
+            $status = curl_multi_exec($mh, $active);
+            if ($active) {
+                curl_multi_select($mh);
+            }
+        } while ($active && $status == CURLM_OK);
 
         $deliveries = [];
         do {
@@ -478,7 +482,7 @@ final class ActivityPubFacade
                 $url = $info['url'];
                 if ($msg['result'] != CURLE_OK) {
                     Debugger::log("Curl error: " . curl_error($msg['handle']));
-                    $status = 0 - $msg['result']; 
+                    $status = 0 - $msg['result'];
                 } else {
                     // Debugger::log("Curl response for {$url}:  {$http_code}", ILogger::DEBUG);
                     $status = $http_code;
@@ -492,10 +496,10 @@ final class ActivityPubFacade
         } while ($msg);
         $this->database->table('ap_delivery')->insert($deliveries);
 
-		return true;
-	}
+        return true;
+    }
 
-    public function outbox($username)
+    public function outbox($user_id, $username)
     {
         // global $server, $username, $directories;
 
@@ -514,14 +518,30 @@ final class ActivityPubFacade
         // 	);
         // }
 
+        $posts = $this->database->query("
+            SELECT message_json->>'$.object.id' AS object_id, message_json->>'$.id' AS id, message_json->>'$.type' AS type 
+            FROM ap_outbox 
+            WHERE sender_id = ? AND message_json->>'$.type' IN ? ORDER BY created_at DESC",
+            $user_id,
+            ['Create', 'Like', 'Announce']
+        );
+        $items = [];
+        foreach ($posts as $post) {
+            $id = $post->object_id ?? $post->id;
+            $items[] = array(
+                "type" => $post->type,
+                "actor" => $this->lg->link("Pub:user", ["username" => $username]),
+                "object" => $this->lg->link("Pub:guid", ["username" => $id])
+            );
+        }
         //	Create User's outbox
         $outbox = array(
             "@context" => "https://www.w3.org/ns/activitystreams",
             "id" => $this->lg->link("Pub:outbox", ["username" => $username]),
             "type" => "OrderedCollection",
-            "totalItems" => 0,
-            "summary" => "All the user's posts",
-            "orderedItems" => []
+            "totalItems" => count($items),
+            "summaryMap" => ["en" => "All the user's posts", "fi" => "Käyttäjän julkaisut"],
+            "orderedItems" => $items,
         );
 
         //	Render the page
@@ -553,7 +573,8 @@ final class ActivityPubFacade
         //	Number of posts
         // $totalItems = count( $posts );
         $totalUsers = $this->database->table('users')->where("keys_created_at NOT", null)->count('*');
-        $totalPosts = $this->database->table('ap_outbox')->where("message_json->>'$.type'", "Create")->count('*');
+        // $totalPosts = $this->database->table('ap_outbox')->where("message_json->>'$.type'", "Create")->count('*');
+        $totalPosts = $this->database->query("SELECT COUNT(*) AS total FROM ap_outbox WHERE message_json->>'$.type' = 'Create'")->fetchField();
         $nodeinfo = array(
             "version" => "2.1",	//	Version of the schema, not the software
             "software" => array(
