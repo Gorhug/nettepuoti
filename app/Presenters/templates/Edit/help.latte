@@ -1,0 +1,17 @@
+<button class="btn" onclick="cheatsheet.showModal()">Ohjeet</button>
+<dialog id="cheatsheet" class="modal">
+  <div class="modal-box w-11/12">
+    <h3 class="text-lg font-bold">Hello!</h3>
+    <p class="py-4">Press ESC key or click on ✕ button to close</p>
+    <div class="tabs tabs-border">
+        <input type="radio" id="markdownMD" name="mdTabs" class="tab hidden" aria-label="Markdown" checked="checked"/>
+        <pre class="tab-content border-base-300 bg-base-100 p-10 text-left text-wrap">{_g.mdCheatSheet}</pre>
+        <input type="radio" id="markdownHTML" name="mdTabs" class="tab hidden" aria-label="HTML" />
+        <div class="tab-content border-base-300 bg-base-100 p-10 prose text-left">{block|parsedown}{_g.mdCheatSheet}{/block}</div>
+    </div>
+  </div>
+  <div class="toast toast-center toast-bottom flex flex-row"><label for="markdownMD" class="btn">Markdown</label><label for="markdownHTML" class="btn">HTML</label></div>
+  <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+</dialog>

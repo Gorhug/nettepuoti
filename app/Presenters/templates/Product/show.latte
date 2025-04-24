@@ -20,7 +20,10 @@
       <div class="flex flex-row flex-wrap">
         <div n:foreach="$images as $image">
             <img class="w-96" src="{$uploadDir}/{$image->filename}" alt={$image->$alt_column ?? $image->filename} width={$image->width} height={$image->height}>
-            <input type="checkbox" name="gallery[]" class="checkbox" n:attr="checked: $image->id in $checked,  value: $image->id" />
+            <label class="label">
+            <input type="checkbox" name="gallery[]" class="checkbox checkbox-primary" n:attr="checked: $image->id in $checked,  value: $image->id" />
+            {$image->filename}
+            </label>
         </div>
       </div>
         <!-- if there is a button in form, it will close the modal -->
