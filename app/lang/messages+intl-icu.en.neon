@@ -1,2 +1,2 @@
 upload:
-    fileSize: "Maximum size is {size, number, decimal} MB."
+    fileSize: "Maximum size is {size, number, :: K unit/megabyte .0}."

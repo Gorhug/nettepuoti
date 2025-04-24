@@ -6,6 +6,7 @@ use Nette;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
 use Nette\Caching\Cache;
+use Nette\Http\IResponse;
 
 final class EditPresenter extends BasePresenter
 {
@@ -23,7 +24,7 @@ final class EditPresenter extends BasePresenter
     {
         parent::startup();
         if (!$this->getUser()->isAllowed('product')) {
-            $this->error($this->translator->translate('g.edit.noRights'), 403);
+            $this->error($this->translator->translate('g.edit.noRights'), IResponse::S403_Forbidden);
         }
         // $this->template->preview_link = $this->link('preview');
     }
@@ -35,7 +36,7 @@ final class EditPresenter extends BasePresenter
         $form->setTranslator($this->translator);
         $form->addText('name', 'g.edit.name')
             ->setRequired('g.edit.nameRequired');
-        
+
         $form->addTextArea('brief', 'g.edit.brief')
             ->setRequired('g.edit.briefRequired')
             ->setMaxLength(self::MaxBrief);
@@ -56,11 +57,11 @@ final class EditPresenter extends BasePresenter
             ->setOption("markdown", true);
 
         // ->setHtmlAttribute('hx-trigger', 'change, keyup delay:200ms changed');
-        $form->addFloat('price', 'g.edit.price')
-            ->setRequired('g.edit.priceRequired')
-            ->setHtmlAttribute('step', 0.01)
-            // ->addRule($form::Float, 'Price must be a decimal number')
-            ->addRule($form::Min, 'g.edit.priceLimit', 0);
+        // $form->addFloat('price', 'g.edit.price')
+        // ->setRequired('g.edit.priceRequired')
+        // ->setHtmlAttribute('step', 0.01)
+        // ->addRule($form::Float, 'Price must be a decimal number')
+        // ->addRule($form::Min, 'g.edit.priceLimit', 0);
         $form->addSubmit('send', 'g.edit.save');
 
         // $form->addProtection();
@@ -79,15 +80,19 @@ final class EditPresenter extends BasePresenter
         // $cache->clean([
         //     $cache::Tags => ["article/$articleId"],
         // ]);
-
+        $user_id = $this->getUser()->getId();
         if ($id) {
             $product = $this->database
                 ->table('products')
                 ->get($id);
+            if ($product->owner != $user_id) {
+                $this->error($this->translator->translate('g.edit.noRights'), IResponse::S403_Forbidden);
+            }
             $product->update($data);
             $dirty[] = "product/$id";
             $redirect = $id;
         } else {
+            $data['owner'] = $user_id;
             $product = $this->database
                 ->table('products')
                 ->insert($data);
@@ -108,11 +113,15 @@ final class EditPresenter extends BasePresenter
         if (!$product) {
             $this->error($this->translator->translate('g.edit.notFound'));
         }
+        $user_id = $this->getUser()->getId();
+        if ($product->owner != $user_id) {
+            $this->error($this->translator->translate('g.edit.notOwner'), IResponse::S403_Forbidden);
+        }
         $this->getComponent('productForm')
             ->setDefaults($product->toArray());
     }
 
-    public function renderPreview(string $description='', string $description_fi=''): void
+    public function renderPreview(string $description = '', string $description_fi = ''): void
     {
         $this->template->markdown = $description == '' ? $description_fi : $description;
     }

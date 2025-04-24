@@ -32,6 +32,7 @@ final class MediaFacade
             'width' => $image->getWidth(),
             'height' => $image->getHeight()
         ]);
+        return $this->database->getInsertId();
     }
 
     public function getImage($id): ActiveRow

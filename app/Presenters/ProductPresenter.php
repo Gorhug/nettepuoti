@@ -7,6 +7,7 @@ use Nette;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
 use Nette\Database\Explorer;
+use Nette\Http\IResponse;
 
 final class ProductPresenter extends BasePresenter
 {
@@ -44,7 +45,7 @@ final class ProductPresenter extends BasePresenter
 		}
 		$product = $this->database
 			->table('products')
-			->select('id, ?name AS name, ?name AS description, ?name AS brief, created_at', $name, $description, $brief)
+			->select('id, ?name AS name, ?name AS description, ?name AS brief, created_at, owner', $name, $description, $brief)
 			->get($id);
 
 		if (!$product) {
@@ -70,13 +71,23 @@ final class ProductPresenter extends BasePresenter
 				->table('images')
 				->where('owner', $user->getId());
 		}
+		$owner = $product->ref('users', 'owner');
+		$owner_name = $owner->realname ?? $owner->username ?? '?';
+		$this->template->owner = $owner_name;
 	}
 
 	public function handleGallery(int $id): void
 	{
 		$user = $this->getUser();
 		if (!$user->isAllowed('media')) {
-			$this->error($this->translator->translate('g.media.notAllowed'), \Nette\Http\IResponse::S403_Forbidden);
+			$this->error($this->translator->translate('g.media.notAllowed'), IResponse::S403_Forbidden);
+		}
+		$user_id = $user->getId();
+		$product = $this->database->table('products')->get($id);
+		if (!$product) {
+			$this->error($this->translator->translate('g.edit.notFound'));
+		} elseif ($product->owner !== $user_id) {
+			$this->error($this->translator->translate('g.edit.notOwner'), IResponse::S403_Forbidden);
 		}
 		$gallery = $this->getHttpRequest()->getPost('gallery') ?? [];
 		// dump($gallery);

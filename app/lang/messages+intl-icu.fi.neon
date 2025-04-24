@@ -1,0 +1,2 @@
+upload:
+    fileSize: "Tiedoston maksimikoko on {size, number, :: K unit/megabyte .0}."

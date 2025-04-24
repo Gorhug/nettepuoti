@@ -46,5 +46,7 @@ abstract class BasePresenter extends Presenter
             IntlDateFormatter::GREGORIAN
         );
         $this->template->addFilter('intlFullDay', fn($date) => $fullDater->format($date));
+        $latte = $this->template->getLatte();
+        $latte->setLocale($fullLoc);
     }
 }

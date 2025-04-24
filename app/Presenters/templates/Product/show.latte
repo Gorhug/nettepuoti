@@ -6,8 +6,9 @@
 ]}
 {block content}
 {var $alt_column = $locale == 'en' ? 'alt' : 'alt_fi'}
+{var $user_id = $user->getId()}
 {* <p><a n:href="Home:default" class="link link-primary link-hover ajax">← back to homepage</a></p> *}
-{if $user->isAllowed('media')}
+{if $user->isAllowed('media') && $user_id == $product->owner}
 <!-- Open the modal using ID.showModal() method -->
 <button class="btn btn-primary" onclick="media_modal.showModal()">{_g.product.galleryOpen}</button>
 <dialog id="media_modal" class="modal modal-bottom">
@@ -57,12 +58,13 @@
 </div>
 {cache "$locale/$product->id", tags: ["product/$product->id"]}
     <h2 class="card-title" n:block="title">{$product->name}</h2>
-    <div class="italic text-justify">{$product->created_at|intlDay}</div>
+    <div class="font-extrabold text-justify">{$owner}</div>
+    <div class="italic text-justify">{$product->created_at|localDate: date: full}</div>
     <div class="font-serif text-justify hyphens-auto italic">{$product->brief}</div>
     <div class="prose text-justify hyphens-auto" hx-disable>{block|trim|parsedown}{$product->description}{/block}</div>
 {/cache}
     <div class="card-actions justify-end">
-      <a n:if="$user->isAllowed('product')" n:href="Edit:edit $product->id" class="btn btn-primary ajax">{_g.link.editproduct}</a>
+      <a n:if="$user->isAllowed('product') && $user_id == $product->owner" n:href="Edit:edit $product->id" class="btn btn-primary ajax">{_g.link.editproduct}</a>
     </div>
   </div>
 </div>

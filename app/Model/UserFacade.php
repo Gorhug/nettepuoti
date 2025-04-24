@@ -112,7 +112,7 @@ final class UserFacade implements Nette\Security\Authenticator, Nette\Security\I
 		// $row = $this->database->fetch('SELECT * FROM user WHERE authtoken = ?', $identity->getId());
 		$row = $this->database->table(self::TableName)
 		->where(self::ColumnToken, $identity->getId())
-		->select(join(',', [self::ColumnId, self::ColumnName, self::ColumnEmail, self::ColumnRole, self::ColumnToken]))
+		->select(join(',', [self::ColumnId, self::ColumnName, self::ColumnEmail, self::ColumnRole, self::ColumnToken, 'realname', 'bio', 'bio_fi']))
 		->fetch();
 		return $row
 			? new SimpleIdentity($row[self::ColumnId], $row[self::ColumnRole], $row->toArray())
@@ -148,6 +148,16 @@ final class UserFacade implements Nette\Security\Authenticator, Nette\Security\I
 			->where(self::ColumnName, $username)
 			->fetch();
 		return $row?->id;
+	}
+
+	public function getApId($username) {
+		$row = $this->database->table(self::TableName)
+			->where(self::ColumnName, $username)
+			->fetch();
+		if (!$row || !$row->keys_created_at) {
+			return null;
+		}
+		return $row->id;
 	}
 }
 

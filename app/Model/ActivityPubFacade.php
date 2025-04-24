@@ -242,7 +242,6 @@ final class ActivityPubFacade
                 // store the message in the database
                 $values = [
                     "sender_id" => $user_id,
-                    "id" => $guid,
                     "message_json" => $this->database::literal('jsonb(?)', $message_json),
                 ];
                 $outbox_row = $this->database->table('ap_outbox')->insert($values);
@@ -408,7 +407,6 @@ final class ActivityPubFacade
         // store the message in the database
         $values = [
             "sender_id" => $user_id,
-            "id" => $create_guid,
             "message_json" => $this->database::literal('jsonb(?)', $message_json),
         ];
         $outbox_row = $this->database->table('ap_outbox')->insert($values);

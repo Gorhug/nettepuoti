@@ -68,13 +68,14 @@ dashboard:
     noPermissions: 'You do not have permissions on this site.'
     signOut: 'Log out'
     editDetails: "Edit personal info"
-    mediaAllowed: "You can add images to gallery and products."
+    mediaAllowed: "You can add images to gallery and articles."
     apEnabled: "ActivityPub features are enabled. You can receive messages, and if you have article creation/editing rights, you can post them on ActivityPub."
     apDisabled: "You can access ActivityPub (AP) features. Clicking the button below makes your account visible on AP."
     createKeys: "Enable ActivityPub features"
     apNotAllowed: "Your account does not have rights to ActivityPub features."
 edit:
-    noRights: 'You do not have the right to edit products'
+    noRights: 'You do not have the right to edit articles.'
+    notOwner: 'You are not the author of this article.'
     name: 'Name (English):'
     nameRequired: 'A name for the product is required'
     description: '[Markdown] Description (English):'
@@ -126,12 +127,13 @@ media:
     copiedToClipboard: "Copied to clipboard"
 upload:
     title: "Add an image to your media library"
-    explain: "Please note that uploaded files can be publicly accessed even if you don't add them to a product page. When you open the file picker you will see the supported image formats."
+    explain: "Please note that uploaded files can be publicly accessed even if you don't add them to a product page. Supported formats: %formats%."
     file: "Choose a file"
     fileRequired: "No file selected"
-    fileSize: "Maximum size is %size% MB."
+    fileSize: "Maximum file size is %size%."
     fileImage: "File must be a valid image file."
     send: "Upload file"
+    sent: "Image stored successfully."
 user:
     detailsTitle: "Edit profile"
     realname: "Display name"

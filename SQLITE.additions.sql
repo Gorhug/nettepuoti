@@ -63,13 +63,10 @@ CREATE TABLE ap_inbox(
 
 CREATE TABLE ap_outbox(
     rowid INTEGER PRIMARY KEY AUTOINCREMENT,
-    -- short guid, not the full id
-    id TEXT NOT NULL,
     sender_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     message_json BLOB NOT NULL,
     http_status INTEGER,
-    created_at DATETIME NOT NULL DEFAULT (unixepoch()),
-    UNIQUE(id)
+    created_at DATETIME NOT NULL DEFAULT (unixepoch())
 );
 
 CREATE TABLE ap_followers(
@@ -90,3 +87,12 @@ CREATE TABLE ap_delivery(
     status INTEGER
     created_at DATETIME NOT NULL DEFAULT (unixepoch())
 );
+
+-- let's face it, I'm not doing shopping cart functionality for a while
+-- besides, prices might need a table of their own anyway, for start-end date info
+ALTER TABLE products DROP COLUMN price;
+
+-- a publishing date, what are we, millionaires? or rather, not everything needs to be published NOW
+ALTER TABLE products ADD COLUMN published_at DATETIME;
+-- for giving old things a published date
+UPDATE products SET published_at = created_at;

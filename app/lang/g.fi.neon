@@ -74,7 +74,8 @@ dashboard:
     createKeys: "Kytke ActivityPub-ominaisuudet päälle"
     apNotAllowed: "Tililläsi ei ole oikeuksia ActivityPub-ominaisuuksiin."
 edit:
-    noRights: 'Ei oikeuksia tuotteiden muokkaamiseen'
+    noRights: 'Ei oikeuksia tuotteiden muokkaamiseen.'
+    notOwner: 'Et ole julkaisun omistaja.'
     name: 'Nimi (englanninkielinen):'
     nameRequired: 'Syötä tuotenimi'
     description: '[Markdown] Kuvaus (englanninkielinen):'
@@ -126,12 +127,13 @@ media:
     copiedToClipboard: "Kopioitu leikepöydälle"
 upload:
     title: "Lisää kuva kuvakirjastoosi"
-    explain: "Huom! Lisäämäsi kuvat ovat julkisesti ladattavissa vaikket lisäisi niitä tuotteisiin. Avatessasi tiedostovalitsimen näet tuetut kuvatiedostomuodot."
+    explain: "Huom! Lisäämäsi kuvat ovat julkisesti ladattavissa vaikket lisäisi niitä tuotteisiin. Tuetut kuvatiedostomuodot %formats%."
     file: "Valitse tiedosto"
     fileRequired: "Ei tiedostoa"
-    fileSize: "Tiedoston maksimikoko on %size% MB."
+    fileSize: "Tiedoston maksimikoko on %size%."
     fileImage: "Tiedoston on oltava kuvatiedosto."
     send: "Lähetä kuva"
+    sent: "Kuvan tallennus onnistui."
 user:
     detailsTitle: "Muokkaa tietojasi"
     realname: "Nimi"

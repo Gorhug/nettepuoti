@@ -38,11 +38,11 @@ class PubPresenter extends Presenter
 		$http_request = $this->getHttpRequest();
 		$resource = $http_request->getQuery('resource');
 		if (!$resource) {
-			$this->error("No resource specified in request.", 400);
+			$this->error("No resource specified in request.", IResponse::S400_BadRequest);
 		}
 		$arr = explode("@", ltrim($resource, "@"));
 		if (count($arr) != 2) {
-			$this->error("Invalid resource in request.", 400);
+			$this->error("Invalid resource in request.", IResponse::S400_BadRequest);
 		} else {
 			[$user, $domain] = $arr;
 		}
@@ -51,11 +51,9 @@ class PubPresenter extends Presenter
 		$url = $http_request->getUrl();
 		$server = $url->getHost();
 		if ($server != $domain) {
-			$this->error("Requested resource's domain does not match server domain.", 404);
+			$this->error("Requested resource's domain does not match server domain.");
 		}
-		if (!$this->users->getId($user)) {
-			$this->error("User {$user} not found.", 404);
-		}
+		$this->checkForApUser($user);
 		$this->sendJson($this->ap->webfinger($user, $domain));
 
 	}
@@ -80,45 +78,35 @@ class PubPresenter extends Presenter
 	public function renderUser(string $username)
 	{
 		$http_request = $this->getHttpRequest();
-		// $username = ltrim($username, "@");
+		
 		$url = $http_request->getUrl();
-		$user_id = $this->users->getId($username);
-		if ($user_id) {
-			$this->sendActivityJson($this->ap->username($user_id, $username, $url));
-		} else {
-			$this->error("User not found.", 404);
-		}
+		$user_id = $this->checkForApUser($username);
+		$this->sendActivityJson($this->ap->username($user_id, $username, $url));
 	}
 
+	public function checkForApUser(string $username) {
+		$user_id = $this->users->getApId($username);
+		if (!$user_id) {
+			$this->error("User not found.");
+		}
+		return $user_id;
+	}
 	public function renderFollowing(string $username)
 	{
-		// $username = ltrim($username, "@");
-		$user_id = $this->users->getId($username);
-		if ($user_id) {
-			$this->sendActivityJson($this->ap->following($username));
-		} else {
-			$this->error("User not found.", 404);
-		}
+		$user_id = $this->checkForApUser($username);
+		$this->sendActivityJson($this->ap->following($username));
 	}
 
 	public function renderFollowers(string $username)
 	{
-		// $username = ltrim($username, "@");
-		$user_id = $this->users->getId($username);
-		if ($user_id) {
-			$this->sendActivityJson($this->ap->followers($user_id, $username));
-		} else {
-			$this->error("User not found.", 404);
-		}
+		
+		$user_id = $this->checkForApUser($username);
+		$this->sendActivityJson($this->ap->followers($user_id, $username));
 	}
 
 	public function renderInbox(string $username)
 	{
-		// $username = ltrim($username, "@");
-		$user_id = $this->users->getId($username);
-		if (!$user_id) {
-			$this->error("User not found.", 404);
-		}
+		$user_id = $this->checkForApUser($username);
 		$http_request = $this->getHttpRequest();
 		$input = $http_request->getRawBody();
 		$inbox_message = Json::decode($input, true);
@@ -126,7 +114,7 @@ class PubPresenter extends Presenter
 		$verified = $this->verifyHTTPSignature($input, $inbox_message, $headers, $user_id, $username);
 		$status = $this->ap->inbox($user_id, $username, $input,$inbox_message, $verified);
 		if (!$verified) {
-			$this->error("Signature verification failed.", 401);
+			$this->error("Signature verification failed.", IResponse::S401_Unauthorized);
 		}
 		$code = $status ? IResponse::S204_NoContent : IResponse::S202_Accepted;
 		$this->sendEmptyResponse($code);
@@ -142,13 +130,8 @@ class PubPresenter extends Presenter
 
 	public function renderOutbox(string $username)
 	{
-		// $username = ltrim($username, "@");
-		$user_id = $this->users->getId($username);
-		if ($user_id) {
-			$this->sendActivityJson($this->ap->outbox($user_id, $username));
-		} else {
-			$this->error("User not found.", 404);
-		}
+		$user_id = $this->checkForApUser($username);
+		$this->sendActivityJson($this->ap->outbox($user_id, $username));
 	}
 
 	public function renderTest(string $username) {
