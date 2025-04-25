@@ -59,15 +59,18 @@
 		{var $ta_class = "input validator text-wrap"}
 		<div class="flex flex-col md:flex-row">
 		{if $parse}
-			{input $control class => "{$ta_class} w-auto sm:w-96 h-96", placeholder: '', wrap: 'soft',
-				hx-get: $presenter->link('preview'),
-				hx-trigger: "keyup changed delay:900ms",
-				hx-target: "#preview-{$control->name}",
-				hx-indicator: "#indicator-{$control->name}",
-				lang: $in_lang
-			}
-
-			<div class="relative">
+			<div class="indicator mt-4">
+				<span class="indicator-item indicator-center badge">{_g.form.mdEditor}</span>
+				{input $control class => "{$ta_class} w-auto sm:w-96 h-96 pt-2", placeholder: '', wrap: 'soft',
+					hx-get: $presenter->link('preview'),
+					hx-trigger: "keyup changed delay:900ms",
+					hx-target: "#preview-{$control->name}",
+					hx-indicator: "#indicator-{$control->name}",
+					lang: $in_lang
+				}
+			</div>
+			<div class="relative indicator mt-4">
+				<span class="indicator-item indicator-center badge">{_g.form.mdPreview}</span>
 				<span id="indicator-{$control->name}" class="loading loading-bars text-primary loading-xl absolute top-2/4 left-2/4 htmx-indicator"></span>
 				<div id="preview-{$control->name}" class="prose h-96 w-auto sm:w-96 p-2 overflow-scroll border-accent border-2 text-justify hyphens-auto" lang={$in_lang} hx-disable>
 					{block|trim|parsedown}{$control->getValue()}{/block}

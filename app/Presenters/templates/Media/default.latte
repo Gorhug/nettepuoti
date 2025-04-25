@@ -1,7 +1,9 @@
 {block content}
-<h1 n:block=title class="text-2xl">{_g.media.galleryTitle}</h1>
-<a n:href="upload" class="btn btn-primary my-8" >{_g.link.mediaUpload}</a>
-<section id="instructions" class="prose">{block|parsedown}{_g.media.defaultInstructions}{/block}</section>
+
+<h1 n:block=title class="text-2xl font-bold">{_g.media.galleryTitle}</h1>
+
+<section id="instructions" class="prose m-8">{block|parsedown}{_g.media.defaultInstructions}{/block}</section>
+<a n:href="upload" class="btn btn-primary m-8" >{_g.link.mediaUpload}</a>
 {var $alt_column = $locale == 'en' ? 'alt' : 'alt_fi'}
 <section id="gallery" class="flex flex-row flex-wrap w-full">
 <figure n:foreach="$images as $image">

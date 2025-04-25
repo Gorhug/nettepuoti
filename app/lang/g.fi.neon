@@ -61,6 +61,8 @@ form:
     sendSignUp: 'Rekisteröidy'
     upTaken: 'Valitsemasi käyttäjätunnus ei ole saatavilla.'
     upPassLength: 'Vähintään %d merkkiä.'
+    mdEditor: "Editori"
+    mdPreview: "Esikatselu"
 dashboard:
     title: 'Omat tiedot'
     message: 'Olet kirjautunut sisään tunnuksella %username%.'

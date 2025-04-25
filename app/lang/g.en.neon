@@ -61,6 +61,8 @@ form:
     sendSignUp: 'Sign up'
     upTaken: 'Username is already taken.'
     upPassLength: 'Please enter at least %d characters.'
+    mdEditor: "Editor"
+    mdPreview: "Preview"
 dashboard:
     title: 'Dashboard'
     message: 'You are logged in as %username%.'
@@ -106,7 +108,7 @@ product:
     galleryUpdated: "Image choices saved."
 media:
     notAllowed: "You don't have media management rights."
-    editTitle: "Edit image alt texts"
+    editTitle: "Edit image descriptions"
     alt: "Brief description of the image (English)"
     altRequired: "Description is required"
     alt_fi: "Brief description of the image (Finnish)"
