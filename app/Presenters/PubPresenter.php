@@ -1,5 +1,24 @@
 <?php
+/*
+This file contains some code from https://gitlab.com/edent/activitypub-single-php-file, Copyright Terence Eden.
 
+Copyright Ilkka Forsblom.
+
+This file is part of Nettepuoti.
+
+Nettepuoti is free software: you can redistribute it and/or modify 
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the 
+License, or (at your option) any later version.
+
+Nettepuoti is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License 
+along with Nettepuoti. If not, see <https://www.gnu.org/licenses/>. 
+*/
 namespace App\Presenters;
 
 use App\Model\ActivityPubFacade;
@@ -28,7 +47,8 @@ class PubPresenter extends Presenter
 		// $this->locale = 'en';
 	}
 
-	public function beforeRender() {
+	public function beforeRender()
+	{
 		// setting this here so $this->error() processes as json
 		// $this->getHttpResponse()->setContentType('application/json', 'utf-8');
 	}
@@ -69,7 +89,8 @@ class PubPresenter extends Presenter
 		}
 	}
 
-	public function sendEmptyResponse($code) {
+	public function sendEmptyResponse($code)
+	{
 		$response = $this->getHttpResponse();
 		$response->setCode($code);
 		$this->sendResponse(new VoidResponse());
@@ -78,13 +99,14 @@ class PubPresenter extends Presenter
 	public function renderUser(string $username)
 	{
 		$http_request = $this->getHttpRequest();
-		
+
 		$url = $http_request->getUrl();
 		$user_id = $this->checkForApUser($username);
 		$this->sendActivityJson($this->ap->username($user_id, $username, $url));
 	}
 
-	public function checkForApUser(string $username) {
+	public function checkForApUser(string $username)
+	{
 		$user_id = $this->users->getApId($username);
 		if (!$user_id) {
 			$this->error("User not found.");
@@ -99,7 +121,7 @@ class PubPresenter extends Presenter
 
 	public function renderFollowers(string $username)
 	{
-		
+
 		$user_id = $this->checkForApUser($username);
 		$this->sendActivityJson($this->ap->followers($user_id, $username));
 	}
@@ -112,7 +134,7 @@ class PubPresenter extends Presenter
 		$inbox_message = Json::decode($input, true);
 		$headers = $http_request->getHeaders();
 		$verified = $this->verifyHTTPSignature($input, $inbox_message, $headers, $user_id, $username);
-		$status = $this->ap->inbox($user_id, $username, $input,$inbox_message, $verified);
+		$status = $this->ap->inbox($user_id, $username, $input, $inbox_message, $verified);
 		if (!$verified) {
 			$this->error("Signature verification failed.", IResponse::S401_Unauthorized);
 		}
@@ -120,11 +142,13 @@ class PubPresenter extends Presenter
 		$this->sendEmptyResponse($code);
 	}
 
-	public function renderNodeinfo() {
+	public function renderNodeinfo()
+	{
 		$this->sendJson($this->ap->nodeinfo());
 	}
 
-	public function renderWk() {
+	public function renderWk()
+	{
 		$this->sendJson($this->ap->wk_nodeinfo());
 	}
 
@@ -134,13 +158,14 @@ class PubPresenter extends Presenter
 		$this->sendActivityJson($this->ap->outbox($user_id, $username));
 	}
 
-	public function renderTest(string $username) {
+	public function renderTest(string $username)
+	{
 		$url = $this->getHttpRequest()->getUrl();
 		$product = $this->productFacade->getPublicProducts()->fetchAll()[3];
 		$user_id = $this->users->getId($username);
-		$this->sendJson($this->ap->createFromProduct($product, $user_id,$username, $url));
-	}	
-	
+		$this->sendJson($this->ap->createFromProduct($product, $user_id, $username, $url));
+	}
+
 	public function renderGuid(string $username)
 	{
 		// $username is actually GUID in here

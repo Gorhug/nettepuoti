@@ -43,8 +43,6 @@ Mitä kadun:
 
 ## Copyright Ilkka Forsblom
 
-
-
 Alkuperäinen Netten mukana tullut readme alla:
 
 Nette Web Project
