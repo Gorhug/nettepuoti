@@ -407,7 +407,8 @@ final class ActivityPubFacade
             "sourceMap" => $sourceMap,
             "to" => ["https://www.w3.org/ns/activitystreams#Public"],
             "tag" => $tags,
-            "attachment" => $attachment
+            "attachment" => $attachment,
+            "replies" => $this->lg->link("Pub:replies", ["username" => $article_guid]),
         ];
         $message = [
             "@context" => "https://www.w3.org/ns/activitystreams",
@@ -434,6 +435,24 @@ final class ActivityPubFacade
         return $status;
     }
 
+    public function replies($replies_guid) {
+        $username = $this->database->fetchField("SELECT message_json->>'$.actor' AS actor FROM ap_outbox WHERE message_json->>'$.object.replies' = ?", $replies_guid);
+        if (!$username) {
+            return null;
+        }
+        $message = [
+            "@context" => "https://www.w3.org/ns/activitystreams",
+            "id" => $replies_guid,
+            "type" => "OrderedCollection",
+            "attributedTo" => $this->lg->link("Pub:user", ["username" => $username]),
+            "to" => [
+                $this->lg->link("Pub:followers", ["username" => $username]),
+            ],
+            "totalItems" => 0,
+            "items" => [],
+        ];
+        return $message;
+    }
     public function sendMessageToFollowers($message_json, $user_id, $username, $outbox_rowid)
     {
         // global $directories;
@@ -624,8 +643,18 @@ final class ActivityPubFacade
 
     public function getByGuid($guid)
     {
-        $row = $this->database->table('ap_outbox')->select("json(message_json) AS m_json")->where('id', $guid)->fetch();
-        return $row?->m_json;
+        $row = $this->database->fetch("SELECT message_json->>'$.id' AS id, message_json->>'$.object.id' AS object_id, 
+            message_json->'$' AS full_json, message_json->'$.object' as object_json 
+            FROM ap_outbox WHERE ? IN (message_json->>'$.object.id', message_json->>$'.id')
+            ORDER BY created_at DESC", $guid);
+        if (!$row) {
+            return null;
+        }
+        if ($row->object_id == $guid) {
+            return $row->object_json;
+        } else {
+            return $row->full_json;
+        }
     }
 
     public function getJsonFromUrl($url, $user_id, $username)

@@ -169,7 +169,16 @@ class PubPresenter extends Presenter
 	public function renderGuid(string $username)
 	{
 		// $username is actually GUID in here
-		$msg = $this->ap->getByGuid($username);
+		$msg = $this->ap->getByGuid($this->getHttpRequest()->getUrl()->getAbsoluteUrl());
+		if ($msg) {
+			$this->sendActivityJson($msg);
+		} else {
+			$this->error("Message not found.", 404);
+		}
+	}
+
+	public function renderReplies(string $username) {
+		$msg = $this->ap->replies($this->getHttpRequest()->getUrl()->getAbsoluteUrl());
 		if ($msg) {
 			$this->sendActivityJson($msg);
 		} else {
