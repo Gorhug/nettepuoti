@@ -48,7 +48,7 @@
 	{* Conditionally render controls based on their type with appropriate DaisyUI classes *}
 	{switch $control->getOption(type)}
 	{case text, select, datetime}
-		{input $control class => "input validator", placeholder: ''}
+		{input $control class => "input validator w-auto sm:w-96", placeholder: ''}
 
 	{case file}
 		{input $control class => "file-input"}

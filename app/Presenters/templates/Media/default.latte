@@ -9,7 +9,7 @@
 <figure n:foreach="$images as $image">
     {var $filepath = $baseUrl . $uploadDir . '/' . $image->filename}
     <a n:href="edit $image->id"><img n:class="$image->$alt_column == null ? border-error, border-2, w-96, m-4, p-2" src={$filepath} alt={$image->$alt_column ?? $image->filename} width={$image->width} height={$image->height}></a>
-    <button id=btn_en_{$image->id} class="btn btn-primary" onclick="mdImgCopy({$filepath}, {$image->alt ?? $image->filename}, btn_en_{$image->id})">{svgIcon 'fill/svg/copy.svg', class: 'fill-current stroke-current w-8 h-8'}{_g.media.copyMDEnglishAlt}</button>
+    <button id=btn_en_{$image->id} class="btn btn-primary ml-4" onclick="mdImgCopy({$filepath}, {$image->alt ?? $image->filename}, btn_en_{$image->id})">{svgIcon 'fill/svg/copy.svg', class: 'fill-current stroke-current w-8 h-8'}{_g.media.copyMDEnglishAlt}</button>
     <button id=btn_fi_{$image->id} class="btn btn-primary" onclick="mdImgCopy({$filepath}, {$image->alt_fi ?? $image->filename}, btn_fi_{$image->id})">{svgIcon 'fill/svg/copy.svg', class: 'fill-current stroke-current w-8 h-8'}{_g.media.copyMDFinnishAlt}</button>
 </figure>
 </section>
