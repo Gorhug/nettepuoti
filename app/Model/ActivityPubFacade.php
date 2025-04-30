@@ -85,9 +85,31 @@ final class ActivityPubFacade
 
     public function webfinger($username, $server)
     {
-        // global $username, $server;
-        // $server = $_SERVER["SERVER_NAME"];
-
+  
+        // {
+        //     "subject": "acct:gorhug@masto.ai",
+        //     "aliases": [
+        //       "https://masto.ai/@gorhug",
+        //       "https://masto.ai/users/gorhug"
+        //     ],
+        //     "links": [
+        //        {
+        //         "rel": "http://webfinger.net/rel/profile-page",
+        //         "type": "text/html",
+        //         "href": "https://masto.ai/@gorhug"
+        //       },
+        //       {
+        //         "rel": "self",
+        //         "type": "application/activity+json",
+        //         "href": "https://masto.ai/users/gorhug"
+        //       },
+        //       {
+        //         "rel": "http://ostatus.org/schema/1.0/subscribe",
+        //         "template": "https://masto.ai/authorize_interaction?uri={uri}"
+        //       }
+        //     ]
+        //   }
+          
         $webfinger = array(
             "subject" => "acct:{$username}@{$server}",
             "links" => array(
@@ -431,6 +453,7 @@ final class ActivityPubFacade
         ];
         $outbox_row = $this->database->table('ap_outbox')->insert($values);
         $status = $this->sendMessageToFollowers($message_json, $user_id, $username, $outbox_row->rowid);
+        $product->update(['ap_guid' => $article_guid, 'published_at' => new DateTimeImmutable($timestamp)]);
         $outbox_row->update(['http_status' => $status]);
         return $status;
     }

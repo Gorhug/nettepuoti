@@ -94,5 +94,6 @@ ALTER TABLE products DROP COLUMN price;
 
 -- a publishing date, what are we, millionaires? or rather, not everything needs to be published NOW
 ALTER TABLE products ADD COLUMN published_at DATETIME;
+ALTER TABLE products ADD COLUMN ap_guid TEXT;
 -- for giving old things a published date
 UPDATE products SET published_at = created_at;

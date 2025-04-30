@@ -45,24 +45,26 @@
 
 <body hx-boost="false" hx-indicator="#indicator">
 	<div class="drawer">
-		<input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
+		<input id="my-drawer-3" type="checkbox" class="drawer-toggle"/>
 		<div class="drawer-content flex flex-col">
 			{* Navbar  *}
 			<header class="w-full navbar bg-base-100">
 				<div class="flex-none lg:hidden">
 					<label
+						id="navbar-hamburger-label"
 						for="my-drawer-3"
-						aria-label="open sidebar"
+						aria-label={_g.layout.openSidebar}
 						class="btn btn-square btn-ghost hover:animate-ping"
 					>
-						{svgIcon 'fill/svg/menu.svg', fill: currentColor, height: '100%', width: '100%' }
+						{svgIcon 'fill/svg/menu.svg', fill: currentColor, height: '100%', width: '100%', aria-labelledby:  navbar-hamburger-label}
 					</label>
 				</div>
 				<div class="flex-1 px-2 mx-2">
-					<a n:href=":Home:default" class="font-black text-2xl ajax">gorhug.fi</a>
+					<a n:href=":Home:default" class="font-black text-2xl ajax font-[Segoe_UI]">gorhug.fi</a>
 				</div>
 				<details class="dropdown dropdown-end">
-					<summary class="m-1 btn">{svgIcon 'fill/svg/globe.svg', class: 'fill-current stroke-none w-8 h-8'} {$locale}</summary>
+					<span class="hidden" id="globe-label">{_g.layout.labelGlobeMenu}</span>
+					<summary class="m-1 btn">{svgIcon 'fill/svg/globe.svg', class: 'fill-current stroke-none w-8 h-8', aria-labelledby: globe-label } {$locale}</summary>
 					<ul class="p-2 shadow-sm menu dropdown-content z-1 bg-base-100 rounded-box w-52">
 						<li><a n:href="this, locale: en" lang="en" n:class="isLinkCurrent() ? 'bg-accent text-accent-content'">English</a></li>
 						<li><a n:href="this, locale: fi" lang="fi" n:class="isLinkCurrent() ? 'bg-accent text-accent-content'">suomi</a></li>
@@ -77,7 +79,7 @@
 			</header>
 			<div id="indicator" class="htmx-indicator toast toast-center toast-middle z-50 mainContent"><span class="loading loading-bars text-primary loading-lg"></span></div>
 			<div class="hero min-h-screen bg-base-200">
-				<main class="sm:w-11/12" n:snippet="content">
+				<main class="sm:w-11/12 font-[Lora]" n:snippet="content">
 				<div n:ifcontent class="toast toast-end toast-bottom">
 					<div n:foreach="$flashes as $flash" n:class="alert, $flash->type"><span>{$flash->message}</span></div>
 				</div>
@@ -88,21 +90,24 @@
 			<footer class="footer sm:footer-horizontal p-10">
 				<div>
 					{* LOGO TÄHÄN, käytin lataus-ikonia *}
-					<img src="/img/catlogo.svg" class="w-16 rounded-lg shadow-2xl" /> 
+					<img src="/img/catlogo.svg" alt={_g.footer.labelCatlogo} class="w-16 rounded-lg shadow-2xl" /> 
 					<p>gorhug.fi<br />&copy; Ilkka Forsblom</p>
 				</div>
 				<div>
 					<span class="footer-title">{_g.elsewhere}</span>
 					<div class="grid grid-flow-col gap-4">
 
-						<a href="https://github.com/Gorhug"
-							>{svgIcon 'fill/svg/github.svg', class: 'fill-current stroke-current w-8 h-8'}</a
+						<a href="https://github.com/Gorhug" aria-label="Github">
+						<span class="hidden" id="github-label">{_g.layout.labelGithub}</span>
+						{svgIcon 'fill/svg/github.svg', class: 'fill-current stroke-current w-8 h-8', aria-labelledby: github-label}</a
 						>
-						<a href="https://gorhug.itch.io/">
-							{svgIcon 'itchio-logo-textless-white.svg', class: 'fill-current stroke-current w-8 h-8'}
+						<a href="https://gorhug.itch.io/" aria-label="itch.io">
+						<span class="hidden" id="itchio-label">{_g.layout.labelItchio}</span>
+							{svgIcon 'itchio-logo-textless-white.svg', class: 'fill-current stroke-current w-8 h-8', aria-labelledby: itchio-label}
 						</a>
-						<a n:href=':Home:rss' hx-boost="false">
-							{svgIcon 'feed-icon.svg', class: 'fill-current stroke-current w-8 h-8'}
+						<a n:href=':Home:rss' hx-boost="false" aria-label="RSS">
+						<span class="hidden" id="rss-label">{_g.layout.labelRSS}</span>
+							{svgIcon 'feed-icon.svg', class: 'fill-current stroke-current w-8 h-8', aria-labelledby: rss-label}
 						</a>
 					</div>
 				</div>

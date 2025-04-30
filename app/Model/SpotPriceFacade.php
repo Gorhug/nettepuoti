@@ -142,13 +142,13 @@ final class SpotPriceFacade
                         $difference = $point->position - $prev_point->position;
                         for ($i = 1; $i < $difference; $i++) {
                             $new[] = [
-                                'hour' => $time->format(DATE_ATOM),
+                                'hour' => $time,
                                 'euro_mwh' => (string) $prev_point->$amount
                             ];
                             $time = $time->add($i_hour);
                         }
                         $new[] = [
-                            'hour' => $time->format(DATE_ATOM),
+                            'hour' => $time,
                             'euro_mwh' => (string) $point->$amount
                         ];
                         // print_r($point);
@@ -185,7 +185,7 @@ final class SpotPriceFacade
         $start = $now->sub($i_hour);
         return $this->database
             ->table('price')
-            ->where('hour > ', $start->format(DATE_ATOM))
+            ->where('hour > ', $start)
             ->order('hour ASC');
     }
 }
