@@ -1,6 +1,6 @@
 {define basic-form, $form}
 {var $testing=false}
-<form n:name=$form class="ajax">
+<form n:name=$form class="ajax font-[Raleway]">
 	{* List for form-level error messages *}
 	<ul class="alert alert-error" n:ifcontent>
 		<li n:foreach="$form->ownErrors as $error">{$error}</li>
@@ -72,7 +72,7 @@
 			<div class="relative indicator mt-4">
 				<span class="indicator-item indicator-center badge">{_g.form.mdPreview}</span>
 				<span id="indicator-{$control->name}" class="loading loading-bars text-primary loading-xl absolute top-2/4 left-2/4 htmx-indicator"></span>
-				<div id="preview-{$control->name}" class="prose h-96 w-auto sm:w-96 p-2 overflow-scroll border-accent border-2 text-justify hyphens-auto" lang={$in_lang} hx-disable>
+				<div id="preview-{$control->name}" class="prose h-96 w-auto sm:w-96 p-2 overflow-scroll border-accent border-2 text-justify hyphens-auto {$proseFonts}" lang={$in_lang} hx-disable>
 					{block|trim|parsedown}{$control->getValue()}{/block}
 				</div>
 			</div>

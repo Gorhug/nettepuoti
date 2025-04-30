@@ -148,6 +148,14 @@ user:
     bio_fi: "Short bio/introduction (Finnish)"
     bio_fiRequired: "Please write an introduction for yourself"
     sendDetailsForm: "Save profile"
+layout:
+    openSidebar: "open side bar navigation menu"
+    closeSidebar: "close side bar navigation menu"
+    labelGlobeMenu: "open language choice menu"
+    labelCatlogo: "cat logo"
+    labelGithub: "Github"
+    labelItchio: "itch.io"
+    labelRSS: "RSS feed"
 mdCheatSheet: '''
 # Markdown Cheat Sheet
 

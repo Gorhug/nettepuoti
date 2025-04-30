@@ -6,11 +6,11 @@
 {cache $locale, tags: [spot]}
 <h1 n:block=title class="text-5xl hidden">{_g.spot.title}</h1>
 <br>
-<h2 class="text-2xl">{_g.spot.heading}</h2>
+<h2 class="text-2xl font-[Raleway]">{_g.spot.heading}</h2>
 <p>{_g.spot.explain}</p>
   {_g.spot.today, [day => (time()|intlFullDay)]}
-  <div class="overflow-x-auto w-96 h-96">
-    <table class="table table-zebra table-pin-rows font-mono">
+  <div class="overflow-x-auto w-96 max-h-[65ch]">
+    <table class="table table-zebra table-pin-rows font-[Martian_Mono] text-xs">
 
 
   {foreach $spotPrices as $price}

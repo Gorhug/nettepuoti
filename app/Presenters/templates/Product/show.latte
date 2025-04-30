@@ -57,11 +57,11 @@
 {/for}
 </div>
 {cache "$locale/$product->id", tags: ["product/$product->id"]}
-    <h2 class="card-title" n:block="title">{$product->name}</h2>
+    <h2 class="card-title font-[Raleway]" n:block="title">{$product->name}</h2>
     <div class="font-extrabold text-justify">{$owner}</div>
     <div class="italic text-justify">{$product->created_at|localDate: date: full}</div>
-    <div class="font-serif text-justify hyphens-auto italic">{$product->brief}</div>
-    <div class="prose text-justify hyphens-auto" hx-disable>{block|trim|parsedown}{$product->description}{/block}</div>
+    <div class="font-semibold text-justify hyphens-auto italic">{$product->brief}</div>
+    <div class="prose text-justify hyphens-auto {$proseFonts}" hx-disable>{block|trim|parsedown}{$product->description}{/block}</div>
 {/cache}
     <div class="card-actions justify-end">
       <button n:if="$user->isAllowed('media') && $user_id == $product->owner" class="btn btn-primary" onclick="media_modal.showModal()">{_g.product.galleryOpen}</button>

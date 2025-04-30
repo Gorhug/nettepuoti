@@ -148,6 +148,14 @@ user:
     bio_fi: "Lyhyt esittely (suomenkielinen)"
     bio_fiRequired: "Kirjoita esittely"
     sendDetailsForm: "Tallenna tiedot"
+layout:
+    openSidebar: "avaa sivunavigointivalikko"
+    closeSidebar: "sulje sivunavigointivalikko"
+    labelGlobeMenu: "avaa kielivalikko"
+    labelCatlogo: "kissalogo"
+    labelGithub: "Github"
+    labelItchio: "itch.io"
+    labelRSS: "RSS syöte"
 mdCheatSheet: '''
 Alla olevan ohjeen [alkuperäinen versio](https://github.com/akx/markdown-cheatsheet-fi), Copyright Aarni Koskela.
 Joitakin osioita muutettu/poistettu (kaikkia ominaisuuksia ei tueta, lähinnä HTML-tägit Markdownin seassa).

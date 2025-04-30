@@ -36,6 +36,7 @@ abstract class BasePresenter extends Presenter
         $this->redrawControl('title');
         $this->redrawControl('content');
         $this->template->locale = $this->locale;
+        $this->template->proseFonts = "font-[Lora] prose-headings:font-[Raleway] prose-headings:font-semibold prose-code:font-[Martian_Mono] prose-pre:font-[Martian_Mono]";
         $fullLoc = $this->locale === 'fi' ? 'fi_FI' : 'en_FI';
         $dater = new IntlDateFormatter(
             $fullLoc,

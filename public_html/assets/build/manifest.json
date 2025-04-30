@@ -4,7 +4,7 @@
     "name": "_commonjsHelpers"
   },
   "src/css/app.css": {
-    "file": "app-DKiNRqI8.css",
+    "file": "app-B8u6Lic2.css",
     "src": "src/css/app.css",
     "isEntry": true
   },
@@ -14,12 +14,12 @@
     "isEntry": true
   },
   "src/js/app.js": {
-    "file": "app-SlC4-Knt.js",
+    "file": "app-yrRkT57S.js",
     "name": "app",
     "src": "src/js/app.js",
     "isEntry": true,
     "css": [
-      "app-DKiNRqI8.css",
+      "app-B8u6Lic2.css",
       "htmx-DI60x0LJ.css"
     ]
   },

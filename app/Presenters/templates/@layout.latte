@@ -60,8 +60,14 @@
 					</label>
 				</div>
 				<div class="flex-1 px-2 mx-2">
-					<a n:href=":Home:default" class="font-black text-2xl ajax font-[Segoe_UI]">gorhug.fi</a>
+					<a n:href=":Home:default" class="font-black text-2xl ajax font-[Raleway]">gorhug.fi</a>
 				</div>
+				<nav class="flex-none hidden lg:block font-[Raleway] font-medium">
+					<menu class="menu menu-horizontal">
+						{* Navbar menu content here *}
+						{include links}
+					</menu>
+				</nav>
 				<details class="dropdown dropdown-end">
 					<span class="hidden" id="globe-label">{_g.layout.labelGlobeMenu}</span>
 					<summary class="m-1 btn">{svgIcon 'fill/svg/globe.svg', class: 'fill-current stroke-none w-8 h-8', aria-labelledby: globe-label } {$locale}</summary>
@@ -70,15 +76,9 @@
 						<li><a n:href="this, locale: fi" lang="fi" n:class="isLinkCurrent() ? 'bg-accent text-accent-content'">suomi</a></li>
 					</ul>
 				</details>
-				<nav class="flex-none hidden lg:block">
-					<menu class="menu menu-horizontal">
-						{* Navbar menu content here *}
-						{include links}
-					</menu>
-				</nav>
 			</header>
 			<div id="indicator" class="htmx-indicator toast toast-center toast-middle z-50 mainContent"><span class="loading loading-bars text-primary loading-lg"></span></div>
-			<div class="hero min-h-screen bg-base-200">
+			<div class="hero min-h-screen bg-radial-[at_75%_25%] from-base-300 to-base-200">
 				<main class="sm:w-11/12 font-[Lora]" n:snippet="content">
 				<div n:ifcontent class="toast toast-end toast-bottom">
 					<div n:foreach="$flashes as $flash" n:class="alert, $flash->type"><span>{$flash->message}</span></div>
@@ -87,11 +87,11 @@
 				</main>
 			</div>
 			{block footer}
-			<footer class="footer sm:footer-horizontal p-10">
+			<footer class="footer sm:footer-horizontal p-10 font-[Raleway]">
 				<div>
 					{* LOGO TÄHÄN, käytin lataus-ikonia *}
-					<img src="/img/catlogo.svg" alt={_g.footer.labelCatlogo} class="w-16 rounded-lg shadow-2xl" /> 
-					<p>gorhug.fi<br />&copy; Ilkka Forsblom</p>
+					<img src="/img/catlogo.svg" alt={_g.layout.labelCatlogo} class="w-16 m-2 rounded-lg shadow-2xl" />
+					<p class="mx-2"><span class="font-[Raleway] font-black">gorhug.fi</span><br />&copy; Ilkka Forsblom</p>
 				</div>
 				<div>
 					<span class="footer-title">{_g.elsewhere}</span>
@@ -116,8 +116,8 @@
 
 		</div>
 		<div class="drawer-side z-50">
-			<label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
-			<menu class="menu p-4 bg-base-100 min-h-full text-4xl space-y-8">
+			<label for="my-drawer-3" aria-label={_g.layout.closeSidebar} class="drawer-overlay"></label>
+			<menu class="menu p-4 bg-base-100 min-h-full text-4xl space-y-8 font-[Raleway] font-medium">
 				{* Sidebar content here *}
 				{include links}
 			</menu>

@@ -7,7 +7,7 @@
         <input type="radio" id="markdownMD" name="mdTabs" class="tab hidden" aria-label="Markdown" />
         <pre class="tab-content border-base-300 bg-base-100 p-10 text-left text-wrap">{_g.mdCheatSheet}</pre>
         <input type="radio" id="markdownHTML" name="mdTabs" class="tab hidden" aria-label="HTML" checked="checked" />
-        <div class="tab-content border-base-300 bg-base-100 p-10 prose text-left max-w-none">{block|parsedown}{_g.mdCheatSheet}{/block}</div>
+        <div class="tab-content border-base-300 bg-base-100 p-10 prose text-left max-w-none {$proseFonts}">{block|parsedown}{_g.mdCheatSheet}{/block}</div>
     </div>
   </div>
   <div class="toast toast-center toast-bottom flex flex-row">
