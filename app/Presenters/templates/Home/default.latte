@@ -18,7 +18,7 @@
     </button> *}
 
 	{* <h1>Items for sale</h1> *}
-	<div class="card bg-base-100 shadow-xl my-4" n:foreach="$products as $product">
+	<article class="card bg-base-100 shadow-xl my-4" n:foreach="$products as $product">
 		<a n:href="Product:show $product->id">
 			<section class="card-body hover:text-primary">
 				<span class="card-title font-[Raleway] font-semibold link link-primary">{$product->name}</span>
@@ -32,7 +32,7 @@
 				</div> *}
 			</section>
 		</a>
-	</div>
+	</article>
 </div>
 </div>
 {/cache}

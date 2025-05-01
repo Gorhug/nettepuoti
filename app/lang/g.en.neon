@@ -17,6 +17,7 @@ link:
     editproduct: 'Edit this product'
     media: "Media gallery"
     mediaUpload: "Upload an image"
+    infoPage: "Info"
 spot:
     hour: 'Hour'
     centKwh: 'cent/kWh'
@@ -159,6 +160,33 @@ layout:
     labelRSS: "RSS feed"
 kapakka:
     profile: "User: %username%"
+info: '''
+
+# Privacy
+
+## Cookies
+
+This website only uses stored cookies for logged in users. The tech stack powering the website uses temporary cookies
+to protect website functionality such as protecting form submissions. All cookies used are necessary for the website's
+functionality and none are used for tracking you across the web.
+
+## Storage of personal information
+
+Logged in users have the possibility to store information on the website. Deletion of this information must be asked for
+by contact form or personal contact. 
+
+The contact form sends an email to the website admin. Such emails are stored as long as is necessary to handle requests within.
+They will be deleted afterwards.
+
+The website has ActivityPub protocol support. Messages the website received through ActivityPub may be deleted through the use of ActivityPub. 
+Please note that some metadata, such as time of receipt and author might be stored and displayed even after message deletion.
+
+# Accessibility
+
+While effort has been made to make the website accessible, some issues with labeling and keyboard navigation may remain. These and
+other issues may be reported through the contact form. They are being worked on regardless, but requests help with focusing 
+on actual noticed issues.
+'''
 mdCheatSheet: '''
 # Markdown Cheat Sheet
 

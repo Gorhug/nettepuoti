@@ -1,0 +1,16 @@
+{block content}
+
+<div class="hero-content">
+<div class="max-w-md">
+      {define title}{_g.link.infoPage}{/define}
+
+{* <span class="bg-clip-text font-serif text-transparent box-decoration-clone bg-linear-to-br from-primary via-accent to-secondary text-center text-5xl sm:text-9xl h-48">gorhug.fi</span> *}
+    <article class="prose mt-24 text-justify hyphens-auto {$proseFonts}">
+
+        {block|parsedown}
+        {_g.info}
+        {/block}
+    </article>
+
+</div>
+</div>

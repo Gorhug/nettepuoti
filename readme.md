@@ -1,3 +1,9 @@
+# Warning!
+
+Please note that this is the source code to my personal website, containing things you
+definitely should and must change before making **public** use of it. After all, you are not me,
+and I have not given you right to pretend to be me.
+
 
 Yksinkertainen blogialusta: nettepuoti
 ======================================

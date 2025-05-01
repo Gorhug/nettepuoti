@@ -16,6 +16,7 @@ link:
     editproduct: 'Muokkaa tuotetta'
     media: "Kuvagalleria"
     mediaUpload: "Lisää kuva"
+    infoPage: "Tietoja"
 spot:
     hour: 'Tunti'
     centKwh: 'snt/kWh'
@@ -158,6 +159,33 @@ layout:
     labelRSS: "RSS syöte"
 kapakka:
     profile: "Käyttäjä: %username%"
+info: '''
+
+# Yksityisyys
+
+## Evästeet
+
+Pysyviä evästeitä (cookies) käytetään sisäänkirjautuneille käyttäjille. Väliaikaisia evästeitä käytetään sivuston
+toimintojen suojaamiseen (esim. lomakesuojaus). Kaikki käytetyt evästeet ovat välttämättömiä sivuston toiminnalle, eikä niitä
+käytetä käyttäjän seurantaan internetissä.
+
+## Tietojen säilytys
+
+Sisäänkirjautuneet käyttäjät voivat tallentaa tietoja järjestelmään. Näiden tietojen poistamiseksi on tehtävä pyyntö ylläpitäjälle
+lomakkeella tai henkilökohtaisesti.
+
+Palautelomake lähettää sähköpostin ylläpitäjälle. Näitä pidetään tallessa niin kauan kuin palautteen käsittely vaatii, jonka jälkeen ne
+poistetaan.
+
+Sivusto tukee ActivityPub (AP)-protokollaa. Sivuston AP-protokollalla vastaanottamat viestit voi poistaa AP-protokollaa käyttämällä. Joitakin metatietoja
+(alkuperäisen viestin aikaleima, lähettäjä) voidaan tallentaa ja näyttää tämän jälkeenkin.
+
+# Saavutettavuus
+
+Saavutettavuuden eteen on tehty töitä, mutta joitakin puutteita voi esiintyä näppäimistönavigoinnin ja kuvien ja valikoiden otsikoinnin suhteen.
+Havaituista puutteista voi ilmoittaa palautelomakkeella. Työ saavutettavuuden eteen jatkuu joka tapauksessa, mutta raportointi auttaa
+korjaamaan oikeasti ongelmia auheuttavat puutteet.
+'''
 mdCheatSheet: '''
 Alla olevan ohjeen [alkuperäinen versio](https://github.com/akx/markdown-cheatsheet-fi), Copyright Aarni Koskela.
 Joitakin osioita muutettu/poistettu (kaikkia ominaisuuksia ei tueta, lähinnä HTML-tägit Markdownin seassa).

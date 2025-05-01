@@ -56,4 +56,6 @@ final class HomePresenter extends BasePresenter
         $httpResponse = $this->getHttpResponse();
         $httpResponse->setContentType("application/rss+xml", "utf-8");
     }
+
+    public function renderInfo(){}
 }
