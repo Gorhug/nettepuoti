@@ -75,6 +75,6 @@ final class MediaFacade
 
 	public function getImages($owner): Selection
 	{
-		return $this->database->table('images')->where('owner', $owner);
+		return $this->database->table('images')->where('owner', $owner)->order(("id DESC"));
 	}
 }

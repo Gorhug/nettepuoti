@@ -87,7 +87,8 @@ final class ProductPresenter extends BasePresenter
 		if ($user->isAllowed('media')) {
 			$this->template->images = $this->database
 				->table('images')
-				->where('owner', $user->getId());
+				->where('owner', $user->getId())
+				->order("id DESC");
 		}
 		$owner = $product->ref('users', 'owner');
 		$owner_name = $owner->realname ?? $owner->username ?? '?';

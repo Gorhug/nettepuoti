@@ -105,7 +105,7 @@ edit:
 product:
     galleryOpen: "Valitse tuotekuvat"
     galleryTitle: "Valitse kuvat"
-    galleryInstructions: "Valitse tuotekuvat, suositus enintään neljä (4)."
+    galleryInstructions: "Valitse julkaisun kuvat, suositus enintään neljä (4)."
     galleryClose: "Sulje tallentamatta"
     updateGallery: "Tallenna valinnat"
     galleryUpdated: "Kuvavalinnat tallennettu."
@@ -120,7 +120,7 @@ media:
     notFound: "Kuvaa ei löydy tietokannasta"
     defaultInstructions: 
         """
-        Punaisilla rajatuilla kuvilla ei ole kuvatekstejä, muokkaa klikkaamalla kuvaa.
+        Punaisella rajatuilla kuvilla ei ole kuvatekstejä, muokkaa klikkaamalla kuvaa.
 
         Kuvien alla olevat painikkeet kopioivat leikepöydälle linkin kuvaan **Markdown** muodossa,
         johon on lisätty kuvausteksti painikkeessa mainitulla kielellä.

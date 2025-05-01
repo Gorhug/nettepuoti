@@ -1,7 +1,7 @@
 {block content}
 <div class="flex-col">
 
-    <h1 class="text-5xl font-bold" n:block="title">{_g.upload.title}</h1>
+    <h1 class="text-5xl font-semibold font-[Raleway]" n:block="title">{_g.upload.title}</h1>
 
 
     <div class="m-8">{_g.upload.explain, [formats => $formats]} {_g.upload.fileSize, [size => ($maxFileSize | bytes)]}</div>
