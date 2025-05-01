@@ -64,6 +64,7 @@
     <div class="prose text-justify hyphens-auto {$proseFonts}" hx-disable>{block|trim|parsedown}{$product->description}{/block}</div>
 {/cache}
     <div class="card-actions justify-end font-[Raleway]">
+      <a n:if="$user->isAllowed('activitypub') && $user_id == $product->owner" n:href="publish!" n:attr="disabled: $product->ap_guid ? true" class="btn btn-primary">{_g.product.apPublish}</a>
       <button n:if="$user->isAllowed('media') && $user_id == $product->owner" class="btn btn-primary" onclick="media_modal.showModal()">{_g.product.galleryOpen}</button>
       <a n:if="$user->isAllowed('product') && $user_id == $product->owner" n:href="Edit:edit $product->id" class="btn btn-primary ajax">{_g.link.editproduct}</a>
     </div>

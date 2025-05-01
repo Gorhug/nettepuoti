@@ -157,6 +157,8 @@ layout:
     labelGithub: "Github"
     labelItchio: "itch.io"
     labelRSS: "RSS feed"
+kapakka:
+    profile: "User: %username%"
 mdCheatSheet: '''
 # Markdown Cheat Sheet
 

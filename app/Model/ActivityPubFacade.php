@@ -85,7 +85,7 @@ final class ActivityPubFacade
 
     public function webfinger($username, $server)
     {
-  
+
         // {
         //     "subject": "acct:gorhug@masto.ai",
         //     "aliases": [
@@ -109,17 +109,22 @@ final class ActivityPubFacade
         //       }
         //     ]
         //   }
-          
-        $webfinger = array(
+
+        $webfinger = [
             "subject" => "acct:{$username}@{$server}",
-            "links" => array(
-                array(
+            "links" => [
+                [
                     "rel" => "self",
                     "type" => "application/activity+json",
                     "href" => $this->lg->link("Pub:user", ["username" => $username]),
-                )
-            )
-        );
+                ],
+                [
+                    "rel" => "http://webfinger.net/rel/profile-page",
+                    "type" => "text/html",
+                    "href" => $this->lg->link("Kapakka:profile", ["username" => $username]),
+                ],
+            ]
+        ];
         // header( "Content-Type: application/json" );
         return $webfinger;
     }
@@ -303,8 +308,8 @@ final class ActivityPubFacade
                 $status = true;
                 break;
             case "Undo":
-                // case "Delete":
-                // case "Update":
+            case "Delete":
+            case "Update":
                 // $id = $inbox_message["id"];
                 $actor = $inbox_message["actor"];
                 //	The thing being undone
@@ -315,8 +320,8 @@ final class ActivityPubFacade
                 $object_type = $object["type"] ?? $inbox_type;
                 // I don't really care if there is a message in the database about this
                 // since the actor was verified (PubPresenter does that) and requested an unfollow,
-                // that's enough. Delete is for Create activity, Update isn't an unfollow?
-                if ("Follow" == $object_type && $inbox_type == "Undo") {
+                // that's enough. 
+                if ("Follow" == $object_type) {
                     $this->database->table('ap_followers')->where([
                         "followed_id" => $user_id,
                         "actor" => $actor,
@@ -328,18 +333,6 @@ final class ActivityPubFacade
                 // I could do some updating or deleting, but also, I could just handle stuff when
                 // reading. reading is free. writing is expensive... or so I'll claim while nodding wisely 🥸
                 // or I could just run a cron job...
-
-                // $rows = $this->database->table('ap_inbox')->where([
-                //     "message_json->>'$.actor'" => $actor,
-                //     "recipient_id" => $user_id,
-                // ])->whereOr([
-                //     "message_json->>'$.id'" => $object_id,
-                //     "message_json->>'$.object.id" => $object_id
-                // ]);
-
-                // foreach ($rows as $row) {
-                //     ...
-                // }
                 break;
             default:
                 break;
@@ -458,18 +451,19 @@ final class ActivityPubFacade
         return $status;
     }
 
-    public function replies($replies_guid) {
-        $username = $this->database->fetchField("SELECT message_json->>'$.actor' AS actor FROM ap_outbox WHERE message_json->>'$.object.replies' = ?", $replies_guid);
-        if (!$username) {
+    public function replies($replies_guid)
+    {
+        $row = $this->database->fetch("SELECT message_json->>'$.actor' AS actor, sender_id FROM ap_outbox WHERE message_json->>'$.object.replies' = ?", $replies_guid);
+        if (!$row) {
             return null;
         }
         $message = [
             "@context" => "https://www.w3.org/ns/activitystreams",
             "id" => $replies_guid,
             "type" => "OrderedCollection",
-            "attributedTo" => $this->lg->link("Pub:user", ["username" => $username]),
+            "attributedTo" => $row->actor,
             "to" => [
-                $this->lg->link("Pub:followers", ["username" => $username]),
+                $this->lg->link("Pub:followers", ["username" => $this->database->table("users")->get($row->sender_id)->username]),
             ],
             "totalItems" => 0,
             "items" => [],
@@ -578,7 +572,9 @@ final class ActivityPubFacade
         // }
 
         $posts = $this->database->query("
-            SELECT message_json->>'$.object.id' AS object_id, message_json->>'$.id' AS id, message_json->>'$.type' AS type 
+            SELECT message_json->>'$.object.id' AS object_id, message_json->>'$.id' AS id, 
+            message_json->>'$.type' AS type, message_json->>'$.object.type' AS object_type,
+            message_json->>'$.actor' AS actor 
             FROM ap_outbox 
             WHERE sender_id = ? AND message_json->>'$.type' IN ? ORDER BY created_at DESC",
             $user_id,
@@ -587,10 +583,11 @@ final class ActivityPubFacade
         $items = [];
         foreach ($posts as $post) {
             $id = $post->object_id ?? $post->id;
+            $type = $post->object_type ?? $post->type;
             $items[] = array(
-                "type" => $post->type,
-                "actor" => $this->lg->link("Pub:user", ["username" => $username]),
-                "object" => $this->lg->link("Pub:guid", ["username" => $id])
+                "type" => $type,
+                "actor" => $post->actor,
+                "object" => $id,
             );
         }
         //	Create User's outbox
@@ -668,7 +665,7 @@ final class ActivityPubFacade
     {
         $row = $this->database->fetch("SELECT message_json->>'$.id' AS id, message_json->>'$.object.id' AS object_id, 
             message_json->'$' AS full_json, message_json->'$.object' as object_json 
-            FROM ap_outbox WHERE ? IN (message_json->>'$.object.id', message_json->>$'.id')
+            FROM ap_outbox WHERE ? IN (message_json->>'$.object.id', message_json->>'$.id')
             ORDER BY created_at DESC", $guid);
         if (!$row) {
             return null;

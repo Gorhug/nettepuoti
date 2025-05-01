@@ -36,8 +36,9 @@ final class RouterFactory
 		$router->addRoute('.well-known/nodeinfo', 'Pub:wk');
 		$router->addRoute('nodeinfo/2.1', 'Pub:nodeinfo');
 		// $router->addRoute('well-known/nodeinfo', 'Pub:nodeinfo');
+		$router->addRoute('@<username>/<locale=en (fi|en)>', 'Kapakka:profile');
 		$router->addRoute('pub/<action>/<username>', 'Pub:default');
-		$router->addRoute('@<username>', 'Pub:user');
+		
 		// $router->addRoute('user/<username>', 'Pub:user');
 		$router->addRoute('<locale=en (fi|en)>/manage/<presenter>/<action>', [
 			'module' => 'Admin',

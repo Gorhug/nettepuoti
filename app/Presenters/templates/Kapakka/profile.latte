@@ -1,0 +1,22 @@
+{block content}
+<div class="flex-col space-y-4 hero-content">
+    <article id="profile" class="space-y-4">
+        <div class="mb-4">
+            <h1 class="text-4xl font-semibold font-[Raleway]" n:block="title">{_g.kapakka.profile, ["username" => $username]}</h1>
+        </div>
+        <section n:class="!$avatar ? avatar-placeholder, avatar">
+            {var $alt_column = $locale == 'en' ? 'alt' : 'alt_fi'}
+            <div class="bg-neutral text-neutral-content w-24">
+                <span n:if="!$avatar" class="text-3xl">{$username|first|upper}</span>
+                <img n:else src="{$uploadDir}/{$avatar->filename}" alt={$avatar->$alt_column ?? $avatar->filename} width={$avatar->width} height={$avatar->height}>
+            </div>
+        </section>
+        {var $bio_column = $locale == fi ? bio_fi : bio}
+
+        <p n:if="$details->realname">{$details->realname}</p>
+        <p n:else>{_g.dashboard.realnameNotSet}</p>
+
+        <section n:if="$details->$bio_column" class="prose">{block|parsedown}{$details->$bio_column}{/block}</section>
+        <p n:else>{_g.dashboard.bioNotSet}</p>
+    </article>
+</div>

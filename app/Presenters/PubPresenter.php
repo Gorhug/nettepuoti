@@ -50,7 +50,7 @@ class PubPresenter extends Presenter
 	public function beforeRender()
 	{
 		// setting this here so $this->error() processes as json
-		// $this->getHttpResponse()->setContentType('application/json', 'utf-8');
+		$this->getHttpResponse()->setContentType('application/json', 'utf-8');
 	}
 
 	public function renderWebfinger()
@@ -158,13 +158,13 @@ class PubPresenter extends Presenter
 		$this->sendActivityJson($this->ap->outbox($user_id, $username));
 	}
 
-	public function renderTest(string $username)
-	{
-		$url = $this->getHttpRequest()->getUrl();
-		$product = $this->productFacade->getPublicProducts()->fetchAll()[3];
-		$user_id = $this->users->getId($username);
-		$this->sendJson($this->ap->createFromProduct($product, $user_id, $username, $url));
-	}
+	// public function renderTest(string $username)
+	// {
+	// 	$url = $this->getHttpRequest()->getUrl();
+	// 	$product = $this->productFacade->getPublicProducts()->fetchAll()[3];
+	// 	$user_id = $this->users->getId($username);
+	// 	$this->sendJson($this->ap->createFromProduct($product, $user_id, $username, $url));
+	// }
 
 	public function renderGuid(string $username)
 	{
@@ -358,7 +358,7 @@ class PubPresenter extends Presenter
 
 		return $verified;
 	}
-
+	
 	// public function renderNodeinfo()
 	// {
 	//     $this->sendJson($this->ap->nodeinfo());

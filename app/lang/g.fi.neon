@@ -156,6 +156,8 @@ layout:
     labelGithub: "Github"
     labelItchio: "itch.io"
     labelRSS: "RSS syöte"
+kapakka:
+    profile: "Käyttäjä: %username%"
 mdCheatSheet: '''
 Alla olevan ohjeen [alkuperäinen versio](https://github.com/akx/markdown-cheatsheet-fi), Copyright Aarni Koskela.
 Joitakin osioita muutettu/poistettu (kaikkia ominaisuuksia ei tueta, lähinnä HTML-tägit Markdownin seassa).

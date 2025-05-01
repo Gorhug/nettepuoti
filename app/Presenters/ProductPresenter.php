@@ -19,6 +19,7 @@ along with Nettepuoti. If not, see <https://www.gnu.org/licenses/>.
 */
 namespace App\Presenters;
 
+use App\Model\ActivityPubFacade;
 use App\Settings;
 use Naja\Guide\Application\UI\Presenters\BasePresenter;
 use Nette;
@@ -32,7 +33,8 @@ final class ProductPresenter extends BasePresenter
 	public function __construct(
 		private Explorer $database,
 		private Translator $translator,
-		private Settings $settings
+		private Settings $settings,
+		private ActivityPubFacade $activityPubFacade
 	) {
 		/** Okay, so a lot of sqlite test code is here. Why? 🤷🏼 */
 		
@@ -63,7 +65,7 @@ final class ProductPresenter extends BasePresenter
 		}
 		$product = $this->database
 			->table('products')
-			->select('id, ?name AS name, ?name AS description, ?name AS brief, created_at, owner', $name, $description, $brief)
+			->select('id, ?name AS name, ?name AS description, ?name AS brief, created_at, owner, ap_guid', $name, $description, $brief)
 			->get($id);
 
 		if (!$product) {
@@ -125,6 +127,24 @@ final class ProductPresenter extends BasePresenter
 				->insert($images);
 		});
 		$this->flashMessage($this->translator->translate('g.product.galleryUpdated'), 'alert-success');
+		$this->redirect('Product:show', ['id' => $id]);
+	}
+
+	public function handlePublish(int $id): void
+	{
+		$user = $this->getUser();
+		if (!$user->isAllowed('activitypub')) {
+			$this->error($this->translator->translate('g.dashboard.apNotAllowed'), IResponse::S403_Forbidden);
+		}
+		$user_id = $user->getId();
+		$product = $this->database->table('products')->get($id);
+		if (!$product) {
+			$this->error($this->translator->translate('g.edit.notFound'));
+		} elseif ($product->owner !== $user_id) {
+			$this->error($this->translator->translate('g.edit.notOwner'), IResponse::S403_Forbidden);
+		}
+		$this->activityPubFacade->createFromProduct($product, $user_id, $user->getIdentity()->username, $this->getHttpRequest()->getUrl());
+		$this->flashMessage($this->translator->translate('g.product.publishedUpdated'), 'alert-success');
 		$this->redirect('Product:show', ['id' => $id]);
 	}
 
