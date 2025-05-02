@@ -3,12 +3,6 @@ ALTER TABLE products ADD COLUMN brief_fi TEXT NOT NULL DEFAULT 'Plokiteksti, joh
 
 
 -- MEDIA
--- old images, newer below
-CREATE TABLE images(
-    id INTEGER PRIMARY KEY,
-    filename TEXT NOT NULL UNIQUE,
-    owner INTEGER REFERENCES users (id) ON DELETE SET NULL
-);
 
 CREATE TABLE product_gallery(
     id INTEGER PRIMARY KEY,

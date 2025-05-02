@@ -77,6 +77,8 @@ dashboard:
     apDisabled: "You can access ActivityPub (AP) features. Clicking the button below makes your account visible on AP."
     createKeys: "Enable ActivityPub features"
     apNotAllowed: "Your account does not have rights to ActivityPub features."
+    bioNotSet: "No bio set."
+    realnameNotSet: "No real name set."
 edit:
     noRights: 'You do not have the right to edit articles.'
     notOwner: 'You are not the author of this article.'
@@ -160,6 +162,8 @@ layout:
     labelRSS: "RSS feed"
 kapakka:
     profile: "User: %username%"
+ap:
+    keysCreated: "ActivityPub features enabled."
 info: '''
 
 # Privacy
