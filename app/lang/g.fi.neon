@@ -158,7 +158,7 @@ layout:
     labelItchio: "itch.io"
     labelRSS: "RSS syöte"
 kapakka:
-    profile: "Käyttäjä: %username%"
+    profile: "%username%"
 info: '''
 
 # Yksityisyys

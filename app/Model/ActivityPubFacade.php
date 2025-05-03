@@ -138,6 +138,7 @@ final class ActivityPubFacade
         $params = ["username" => $username];
         $latte = $this->latteFactory->create();
         $userLink = $this->lg->link("Pub:user", $params);
+        $enSummary = $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $user->bio]);
         $user = array(
             "@context" => [
                 "https://www.w3.org/ns/activitystreams",
@@ -151,11 +152,12 @@ final class ActivityPubFacade
             "outbox" => $this->lg->link("Pub:outbox", $params),
             "preferredUsername" => $username, //rawurldecode( $username ),
             "name" => $user->realname,
+            "summary" => $enSummary,
             "summaryMap" => [
-                'en' => $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $user->bio]),
+                'en' => $enSummary,
                 'fi' => $latte->renderToString(__DIR__ . '/markdown.latte', ['markdown' => $user->bio_fi])
             ],
-            "url" => $userLink,
+            "url" => $this->lg->link("Kapakka:profile", $params),
             "manuallyApprovesFollowers" => false,
             "discoverable" => true,
             "published" => $user->keys_created_at,
@@ -309,7 +311,8 @@ final class ActivityPubFacade
                 break;
             case "Undo":
             case "Delete":
-            case "Update":
+                // TODO: if it's a follower update store new data
+            // case "Update": 
                 // $id = $inbox_message["id"];
                 $actor = $inbox_message["actor"];
                 //	The thing being undone
@@ -380,6 +383,7 @@ final class ActivityPubFacade
                 "type" => "Image",
                 "mediaType" => $mimetype,
                 "url" => $url_string,
+                "name" => $image->alt ?? $image->filename,
                 "nameMap" => [
                     "en" => $image->alt ?? $image->filename,
                     "fi" => $image->alt_fi ?? $image->filename,
@@ -416,9 +420,13 @@ final class ActivityPubFacade
             "published" => $timestamp,
             "attributedTo" => $userLink,
             "inReplyTo" => null,
+            "name" => $nameMap["en"],
             "nameMap" => $nameMap,
+            "content" => $contentMap["en"],
             "contentMap" => $contentMap,
+            "summary" => $summaryMap["en"],
             "summaryMap" => $summaryMap,
+            "source" => $sourceMap["en"],
             "sourceMap" => $sourceMap,
             "to" => ["https://www.w3.org/ns/activitystreams#Public"],
             "tag" => $tags,

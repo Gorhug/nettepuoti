@@ -99,7 +99,9 @@ class PubPresenter extends Presenter
 	public function renderUser(string $username)
 	{
 		$http_request = $this->getHttpRequest();
-
+		if (str_contains($http_request->getHeader('Accept'), 'text/html')) {
+			$this->redirect("Kapakka:profile", ["username" => $username]);
+		}
 		$url = $http_request->getUrl();
 		$user_id = $this->checkForApUser($username);
 		$this->sendActivityJson($this->ap->username($user_id, $username, $url));
