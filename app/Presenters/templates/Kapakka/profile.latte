@@ -18,5 +18,12 @@
 
         <section n:if="$details->$bio_column" class="prose {$proseFonts}">{block|parsedown}{$details->$bio_column}{/block}</section>
         <p n:else>{_g.dashboard.bioNotSet}</p>
+
+        <section><h3 class="text-2xl font-semibold font-[Raleway]">{_g.kapakka.publishedArticles}</h3>
+        {var $nameColumn = $locale == 'fi'? 'name_fi' :'name'}
+            <ul>
+                <li n:foreach="$messages as $message"><a n:href="Product:show $message->id" class="link link-primary">{$message->$nameColumn}</a></li>
+            </ul>
+        </section>
     </article>
 </div>

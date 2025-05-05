@@ -85,31 +85,6 @@ final class ActivityPubFacade
 
     public function webfinger($username, $server)
     {
-
-        // {
-        //     "subject": "acct:gorhug@masto.ai",
-        //     "aliases": [
-        //       "https://masto.ai/@gorhug",
-        //       "https://masto.ai/users/gorhug"
-        //     ],
-        //     "links": [
-        //        {
-        //         "rel": "http://webfinger.net/rel/profile-page",
-        //         "type": "text/html",
-        //         "href": "https://masto.ai/@gorhug"
-        //       },
-        //       {
-        //         "rel": "self",
-        //         "type": "application/activity+json",
-        //         "href": "https://masto.ai/users/gorhug"
-        //       },
-        //       {
-        //         "rel": "http://ostatus.org/schema/1.0/subscribe",
-        //         "template": "https://masto.ai/authorize_interaction?uri={uri}"
-        //       }
-        //     ]
-        //   }
-
         $webfinger = [
             "subject" => "acct:{$username}@{$server}",
             "links" => [
@@ -224,13 +199,6 @@ final class ActivityPubFacade
 
     public function inbox($user_id, $username, $input, $inbox_message, $verified)
     {
-        // global $body, $server, $username, $key_private, $directories;
-
-        // $inbox_message = Json::decode($input, true);
-        // if (!$this->verifyHTTPSignature($input, $inbox_message)) {
-        //     return false;
-        // }
-
         // TODO: in the future don't bother saving unverified stuff. currently for debugging
         $values = [
             "recipient_id" => $user_id,
@@ -410,12 +378,12 @@ final class ActivityPubFacade
         $create_guid = $this->guid();
         $article_guid = $this->guid();
         $userLink = $this->lg->link("Pub:user", ["username" => $username]);
-
+        $article_full_guid = $this->lg->link("Pub:guid", ["username" => $article_guid]);
         $note = [
             "@context" => array(
                 "https://www.w3.org/ns/activitystreams"
             ),
-            "id" => $this->lg->link("Pub:guid", ["username" => $article_guid]),
+            "id" => $article_full_guid,
             "type" => "Article",
             "published" => $timestamp,
             "attributedTo" => $userLink,
@@ -454,7 +422,7 @@ final class ActivityPubFacade
         ];
         $outbox_row = $this->database->table('ap_outbox')->insert($values);
         $status = $this->sendMessageToFollowers($message_json, $user_id, $username, $outbox_row->rowid);
-        $product->update(['ap_guid' => $article_guid, 'published_at' => new DateTimeImmutable($timestamp)]);
+        $product->update(['ap_guid' => $article_full_guid, 'published_at' => new DateTimeImmutable($timestamp)]);
         $outbox_row->update(['http_status' => $status]);
         return $status;
     }
@@ -562,23 +530,6 @@ final class ActivityPubFacade
 
     public function outbox($user_id, $username)
     {
-        // global $server, $username, $directories;
-
-        //	Get all posts
-        // $posts = array_reverse( glob( $directories["posts"] . "/*.json") );
-        //	Number of posts
-        // $totalItems = count( $posts );
-        //	Create an ordered list
-        // $orderedItems = [];
-        // foreach ( $posts as $post ) {
-        // 	$postData = json_decode( file_get_contents( $post ), true );
-        // 	$orderedItems[] = array(
-        // 		"type"   => $postData["type"],
-        // 		"actor"  => "https://{$server}/{$username}",
-        // 		"object" => "https://{$server}/{$post}"
-        // 	);
-        // }
-
         $posts = $this->database->query("
             SELECT message_json->>'$.object.id' AS object_id, message_json->>'$.id' AS id, 
             message_json->>'$.type' AS type, message_json->>'$.object.type' AS object_type,
@@ -610,6 +561,20 @@ final class ActivityPubFacade
 
         //	Render the page
         return $outbox;
+    }
+
+    public function messages($user_id) {
+        $messages = $this->database->query("
+            SELECT products.id AS id, products.name AS name, products.name_fi as name_fi
+            FROM ap_outbox INNER JOIN products
+            ON products.ap_guid = message_json->>'$.object.id'
+            WHERE sender_id = ? AND message_json->>'$.type' IN ? ORDER BY products.published_at DESC",
+            $user_id,
+            ['Create', ]//'Like', 'Announce']
+        );
+  
+        return $messages;
+    
     }
 
     public function wk_nodeinfo()

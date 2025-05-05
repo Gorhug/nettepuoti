@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace App\Presenters;
 
+use App\Model\ActivityPubFacade;
 use App\Model\ProductFacade;
 use App\Model\UserFacade;
 use App\Settings;
@@ -33,6 +34,7 @@ final class KapakkaPresenter extends BasePresenter
     public function __construct(
         private UserFacade $users,
         private Settings $settings,
+        private ActivityPubFacade $ap,
     ) {
     }
 
@@ -45,5 +47,6 @@ final class KapakkaPresenter extends BasePresenter
         $this->template->username = $username;
 		$this->template->details = $this->users->getDetails($user_id);
 		$this->template->avatar = $this->users->getAvatar($user_id);
+        $this->template->messages = $this->ap->messages($user_id);
 	}
 }
