@@ -94,6 +94,11 @@ final class ProductPresenter extends BasePresenter
 		}
 		$owner = $product->ref('users', 'owner');
 		$owner_name = $owner->realname ?? $owner->username ?? '?';
+		if ($product->ap_guid) {
+			$repliesActors = $this->activityPubFacade->getRepliesWithActors($product->ap_guid, $owner->id, $owner->username, $owner->id !== $user->getId());
+			$this->template->replies = $repliesActors['replies'];
+			$this->template->actors = $repliesActors['actors'];
+		}
 		$this->template->owner = $owner_name;
 	}
 

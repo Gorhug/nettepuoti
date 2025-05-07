@@ -114,6 +114,7 @@ product:
     updateGallery: "Save image choices"
     galleryUpdated: "Image choices saved."
     apPublish: "Publish to ActivityPub"
+    replies: "Replies"
 media:
     notAllowed: "You don't have media management rights."
     editTitle: "Edit image descriptions"

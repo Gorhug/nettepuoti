@@ -428,6 +428,30 @@ final class ActivityPubFacade
         return $status;
     }
 
+    public function getRepliesWithActors($guid, $user_id, $username, bool $publicOnly) {
+        $replie_rows = $this->database->query("SELECT message_json->'$.object' AS reply_json
+        FROM ap_inbox WHERE message_json->>'$.object.inReplyTo' = ?
+        ORDER BY created_at DESC", $guid);
+        $actors = [];
+        $replies = [];
+        foreach ($replie_rows as $row) {
+            $reply = Json::decode($row->reply_json, true);
+            if ($publicOnly && !in_array("https://www.w3.org/ns/activitystreams#Public", $reply["to"] ?? [])) {
+                continue;
+            }
+            $replies[] = $reply;
+            $actor = $reply['attributedTo'];
+            if (!isset($actors[$actor])) {
+                $follower = $this->database->table('ap_followers')->where("actor", $actor)->fetch();
+                if ($follower) {
+                    $actors[$actor] = JSON::decode($follower->details_json, true);
+                } else {
+                    $actors[$actor] = $this->getJsonFromUrl($actor, $user_id, $username);
+                }
+            }
+        }
+        return ['replies' => $replies, 'actors' => $actors];
+    }
     public function replies($replies_guid)
     {
         $row = $this->database->fetch("SELECT message_json->>'$.actor' AS actor, sender_id FROM ap_outbox WHERE message_json->>'$.object.replies' = ?", $replies_guid);
