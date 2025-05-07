@@ -110,6 +110,7 @@ product:
     galleryClose: "Sulje tallentamatta"
     updateGallery: "Tallenna valinnat"
     galleryUpdated: "Kuvavalinnat tallennettu."
+    apPublish: "Julkaise (ActivityPub)"
 media:
     notAllowed: "Sinulla ei ole mediahallintaoikeuksia."
     editTitle: "Muokkaa tekstikuvauksia"
@@ -159,6 +160,7 @@ layout:
     labelRSS: "RSS syöte"
 kapakka:
     profile: "%username%"
+    publishedArticles: "Julkaisut"
 info: '''
 
 # Yksityisyys

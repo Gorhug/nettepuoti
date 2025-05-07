@@ -388,6 +388,7 @@ final class ActivityPubFacade
             "published" => $timestamp,
             "attributedTo" => $userLink,
             "inReplyTo" => null,
+            "url" => $this->lg->link("Product:show", ["id" => $product->id, "locale" => 'en']),
             "name" => $nameMap["en"],
             "nameMap" => $nameMap,
             "content" => $contentMap["en"],
@@ -519,7 +520,7 @@ final class ActivityPubFacade
                 $deliveries[] = [
                     "inbox_url" => $url,
                     "status" => $status,
-                    "message_rowid" => $outbox_rowid
+                    "outbox_rowid" => $outbox_rowid
                 ];
             }
         } while ($msg);

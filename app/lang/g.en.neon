@@ -113,6 +113,7 @@ product:
     galleryClose: "Close without saving"
     updateGallery: "Save image choices"
     galleryUpdated: "Image choices saved."
+    apPublish: "Publish to ActivityPub"
 media:
     notAllowed: "You don't have media management rights."
     editTitle: "Edit image descriptions"
@@ -162,6 +163,7 @@ layout:
     labelRSS: "RSS feed"
 kapakka:
     profile: "%username%"
+    publishedArticles: "Published articles"
 ap:
     keysCreated: "ActivityPub features enabled."
 info: '''
