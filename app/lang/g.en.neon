@@ -115,6 +115,7 @@ product:
     galleryUpdated: "Image choices saved."
     apPublish: "Publish to ActivityPub"
     replies: "Replies"
+    replyBy: "%actor% wrote on %when%"
 media:
     notAllowed: "You don't have media management rights."
     editTitle: "Edit image descriptions"

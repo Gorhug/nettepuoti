@@ -112,6 +112,7 @@ product:
     galleryUpdated: "Kuvavalinnat tallennettu."
     apPublish: "Julkaise (ActivityPub)"
     replies: "Vastaukset"
+    replyBy: "%actor% kirjoitti %when%"
 media:
     notAllowed: "Sinulla ei ole mediahallintaoikeuksia."
     editTitle: "Muokkaa tekstikuvauksia"

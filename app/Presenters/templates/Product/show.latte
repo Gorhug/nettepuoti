@@ -64,9 +64,18 @@
     <div class="prose text-justify hyphens-auto {$proseFonts}" hx-disable>{block|trim|parsedown}{$product->description}{/block}</div>
 {/cache}
   {if $replies}
-    <h3 class="text-2xl font-[Raleway]">{_g.product.replies}</h3>
+    <h3 class="text-2xl font-semibold font-[Raleway]">{_g.product.replies}</h3>
     {foreach $replies as $reply}
-      <p>{$reply['content']|stripHtml|breakLines}</p>
+    <article>
+      
+      <section class="font-semibold font-[Raleway]">
+        <a href={$reply[url]} class="link link-hover link-primary">
+          {_g.product.replyBy, [actor: $actors[$reply['attributedTo']]['name'] ?? '?', when: ($reply['published']|localDate)]}: 
+        </a>
+      </section>
+      
+      <section>{$reply['content']|stripHtml|breakLines}</section>
+    </article>
     {/foreach}
   {/if}
     <div class="card-actions justify-end font-[Raleway]">
