@@ -1,6 +1,7 @@
 {import basic-form.latte}
 <!DOCTYPE html>
 {capture $here}{link //this}{/capture}
+{default $locale = en}
 {var $ogDefaults = [
 	"og:title" => gorhug.fi, 
 	"og:type" => website, 

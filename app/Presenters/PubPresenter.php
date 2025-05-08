@@ -315,18 +315,18 @@ class PubPresenter extends Presenter
 			$userData = $this->ap->getJsonFromUrl($publicKeyURL, $user_id, $username);
 			$actorData = $this->ap->getJsonFromUrl($body["actor"], $user_id, $username);
 		} catch (\Exception $e) {
-			Debugger::log($e, Debugger::ERROR);
+			Debugger::log($e, Debugger::WARNING);
 			return false;
 		}
-		$publicKey = $userData["publicKey"]["publicKeyPem"];
+		$publicKey = $userData["publicKey"]["publicKeyPem"] ?? null;
 
 		//	Check that the actor's key is the same as the key used to sign the message
 		//	Get the actor's public key
 
-		$actorPublicKey = $actorData["publicKey"]["publicKeyPem"];
+		$actorPublicKey = $actorData["publicKey"]["publicKeyPem"] ?? null;
 
-		if ($publicKey != $actorPublicKey) {
-			Debugger::log("Signature keys don't match, {$debug_info}", Debugger::WARNING);
+		if (!$publicKey || !$actorPublicKey || $publicKey != $actorPublicKey) {
+			Debugger::log("Signature keys don't match or null, {$debug_info}", Debugger::WARNING);
 			return false;
 		}
 

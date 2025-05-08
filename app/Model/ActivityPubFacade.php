@@ -199,16 +199,18 @@ final class ActivityPubFacade
 
     public function inbox($user_id, $username, $input, $inbox_message, $verified)
     {
-        // TODO: in the future don't bother saving unverified stuff. currently for debugging
+
+        if (!$verified) {
+            return false;
+        }
+
         $values = [
             "recipient_id" => $user_id,
             "message_json" => $this->database::literal('jsonb(?)', $input),
             "verified" => $verified,
         ];
         $inbox_row = $this->database->table('ap_inbox')->insert($values);
-        if (!$verified) {
-            return false;
-        }
+
         $inbox_type = $inbox_message["type"];
         //	This inbox only sends responses to follow requests.
         //	A remote server sends the inbox a follow request which is a JSON file saying who they are.
@@ -442,9 +444,9 @@ final class ActivityPubFacade
             $replies[] = $reply;
             $actor = $reply['attributedTo'];
             if (!isset($actors[$actor])) {
-                $follower = $this->database->table('ap_followers')->where("actor", $actor)->fetch();
+                $follower = $this->database->query("SELECT details_json->'$' AS details FROM ap_followers WHERE actor = ?", $actor)->fetch();
                 if ($follower) {
-                    $actors[$actor] = JSON::decode($follower->details_json, true);
+                    $actors[$actor] = JSON::decode($follower->details, true);
                 } else {
                     $actors[$actor] = $this->getJsonFromUrl($actor, $user_id, $username);
                 }
