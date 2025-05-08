@@ -171,7 +171,15 @@ class PubPresenter extends Presenter
 	public function renderGuid(string $username)
 	{
 		// $username is actually GUID in here
-		$msg = $this->ap->getByGuid($this->getHttpRequest()->getUrl()->getAbsoluteUrl());
+		$http_request = $this->getHttpRequest();
+		$full_guid = $http_request->getUrl()->getAbsoluteUrl();
+		if (str_contains($http_request->getHeader('Accept'), 'text/html')) {
+			$product = $this->productFacade->getByGuid($full_guid);
+			if ($product) {
+				$this->redirect("Product:show", ["id" => $product->id, "locale" => 'en']);
+			}
+		}
+		$msg = $this->ap->getByGuid($full_guid);
 		if ($msg) {
 			$this->sendActivityJson($msg);
 		} else {

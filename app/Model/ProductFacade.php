@@ -43,4 +43,10 @@ final class ProductFacade
 			->where('created_at < ', (new \DateTimeImmutable())->format(DATE_ATOM))
 			->order('created_at DESC');
 	}
+
+	public function getByGuid($guid) {
+		return $this->database
+			->table('products')
+			->where('ap_guid', $guid)->fetch();
+	}
 }
