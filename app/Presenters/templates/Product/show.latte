@@ -71,11 +71,11 @@
       
       <section class="font-semibold font-[Raleway]">
         <a href={$reply[url]} class="link link-hover link-primary">
-          {_g.product.replyBy, [actor: $actors[$reply['attributedTo']]['name'] ?? '?', when: ($reply['published']|localDate)]}: 
+          {_g.product.replyBy, [actor: $actors[$reply[attributedTo]][name] ?? '?', when: ($reply[published]|localDate)]}: 
         </a>
       </section>
       
-      <section>{$reply['content']|stripHtml|breakLines}</section>
+      <section class="prose {$proseFonts}" hx-disable>{$reply[contentSafe]|noescape}</section>
     </article>
     {/foreach}
   {/if}

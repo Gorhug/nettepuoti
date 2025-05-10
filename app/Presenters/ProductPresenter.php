@@ -95,8 +95,15 @@ final class ProductPresenter extends BasePresenter
 		$owner = $product->ref('users', 'owner');
 		$owner_name = $owner->realname ?? $owner->username ?? '?';
 		if ($product->ap_guid) {
+			$config = \HTMLPurifier_Config::createDefault();
+			$purifier = new \HTMLPurifier($config);
+			
 			$repliesActors = $this->activityPubFacade->getRepliesWithActors($product->ap_guid, $owner->id, $owner->username, $owner->id !== $user->getId());
-			$this->template->replies = $repliesActors['replies'];
+			$replies = $repliesActors['replies'];
+			foreach ($replies as $key => $reply) {
+				$replies[$key]['contentSafe'] = $purifier->purify($reply['content']);	
+			}
+			$this->template->replies = $replies;
 			$this->template->actors = $repliesActors['actors'];
 		}
 		$this->template->owner = $owner_name;
