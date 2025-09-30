@@ -48,11 +48,11 @@ abstract class BasePresenter extends Presenter
         $this->template->addFilter('intlDay', fn($date) => $dater->format($date));
         $hourer = new IntlDateFormatter(
             $fullLoc,
-            IntlDateFormatter::FULL,
-            IntlDateFormatter::FULL,
+            IntlDateFormatter::NONE,
+            IntlDateFormatter::SHORT,
             'Europe/Helsinki',
             IntlDateFormatter::GREGORIAN,
-            'HH'
+            // 'HH'
         );
         $this->template->addFilter('intlHour', fn($date) => $hourer->format($date));
 

@@ -135,6 +135,7 @@ final class SpotPriceFacade
             foreach ($entsoe->TimeSeries as $series) {
                 // print_r($series);
                 foreach ($series->Period as $period) {
+                    $interval = new \DateInterval($period->resolution);
                     $time = new \DateTimeImmutable($period->timeInterval->start);
                     $prev_point = $period->Point[0];
                     // print_r($time);
@@ -152,7 +153,7 @@ final class SpotPriceFacade
                             'euro_mwh' => (string) $point->$amount
                         ];
                         // print_r($point);
-                        $time = $time->add($i_hour);
+                        $time = $time->add($interval);
                         $prev_point = $point;
                     }
                     // TODO: timeinterval->end tarkistettava onko saavutettu
