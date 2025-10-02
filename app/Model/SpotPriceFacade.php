@@ -146,7 +146,7 @@ final class SpotPriceFacade
                                 'hour' => $time,
                                 'euro_mwh' => (string) $prev_point->$amount
                             ];
-                            $time = $time->add($i_hour);
+                            $time = $time->add($interval);
                         }
                         $new[] = [
                             'hour' => $time,
