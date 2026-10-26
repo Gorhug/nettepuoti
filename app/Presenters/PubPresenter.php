@@ -133,10 +133,18 @@ class PubPresenter extends Presenter
 		$user_id = $this->checkForApUser($username);
 		$http_request = $this->getHttpRequest();
 		$input = $http_request->getRawBody();
-		$inbox_message = Json::decode($input, true);
+		if (!$http_request->isMethod("POST")) {
+			$this->error("This is the inbox endpoint for POSTing messages", IResponse::S405_MethodNotAllowed);
+		}
+		try {
+			$inbox_message = Json::decode($input, true);
+		} catch (\Exception $e) {
+			$this->error("Invalid JSON", IResponse::S400_BAD_REQUEST);
+		}
 		$headers = $http_request->getHeaders();
 		$verified = $this->verifyHTTPSignature($input, $inbox_message, $headers, $user_id, $username);
 		$status = $this->ap->inbox($user_id, $username, $input, $inbox_message, $verified);
+		// always pretend everything is ok?
 		if (!$verified) {
 			$this->error("Signature verification failed.", IResponse::S401_Unauthorized);
 		}
@@ -187,7 +195,8 @@ class PubPresenter extends Presenter
 		}
 	}
 
-	public function renderReplies(string $username) {
+	public function renderReplies(string $username)
+	{
 		$msg = $this->ap->replies($this->getHttpRequest()->getUrl()->getAbsoluteUrl());
 		if ($msg) {
 			$this->sendActivityJson($msg);
@@ -240,22 +249,30 @@ class PubPresenter extends Presenter
 
 		//	Validate the Digest
 		//	It is the hash of the raw input string, in binary, encoded as base64.
-		$digestString = $headers["digest"];
-
+		$digestString = $headers["digest"] ?? $headers["content-digest"] ?? null;
+		if (!$digestString) {
+			Debugger::log("No digest found for {$debug_info}", Debugger::WARNING);
+			return false;
+		}
 		//	Usually in the form `SHA-256=Ofv56Jm9rlowLR9zTkfeMGLUG1JYQZj0up3aRPZgT0c=`
 		//	The Base64 encoding may have multiple `=` at the end. So split this at the first `=`
 		$digestData = explode("=", $digestString, 2);
 		$digestAlgorithm = $digestData[0];
-		$digestHash = $digestData[1];
-
+		// $digestHash = $digestData[1];
+		$digestHash = str_replace(search: ":", replace: "", subject: $digestData[1]);
 		//	There might be many different hashing algorithms
 		//	TODO: Find a way to transform these automatically
 		//	See https://github.com/superseriousbusiness/gotosocial/issues/1186#issuecomment-1976166659 and https://github.com/snarfed/bridgy-fed/issues/430 for hs2019
 		$digestAlgorithm = strtolower($digestAlgorithm);
-		if ("sha-256" == $digestAlgorithm || "hs2019" == $digestAlgorithm) {
+		$digestAlgorithm = str_replace(search: "-", replace: "", subject: $digestAlgorithm);
+		if ("hs2019" == $digestAlgorithm) {
 			$digestAlgorithm = "sha256";
-		} else if ("sha-512" == $digestAlgorithm) {
-			$digestAlgorithm = "sha512";
+		} else {
+			$algos = hash_algos();
+			if (!in_array($digestAlgorithm, $algos)) {
+				Debugger::log("No digest algorithm {$digestAlgorithm} for {$debug_info}", Debugger::WARNING);
+				return false;
+			}
 		}
 
 		//	Manually calculate the digest based on the data sent
@@ -268,87 +285,176 @@ class PubPresenter extends Presenter
 			return false;
 		}
 
-		//	Examine the signature
-		$signatureHeader = $headers["signature"];
 
-		// Extract key information from the Signature header
-		$signatureParts = [];
-		//	Converts 'a=b,c=d e f' into ["a"=>"b", "c"=>"d e f"]
-		// word="text"
-		preg_match_all('/(\w+)="([^"]+)"/', $signatureHeader, $matches);
-		foreach ($matches[1] as $index => $key) {
-			$signatureParts[$key] = $matches[2][$index];
-		}
+		//  The signature format is signature => <signature name>=:<base64 encoded hash>:
+		$signatureString = $headers["signature"];
+		//  The Base64 encoding may have multiple `=` at the end. So split this at the first `=`.
+		$signatureData = explode(separator: "=", string: $signatureString, limit: 2);
+		$signatureName = $signatureData[0];
 
-		//	Manually reconstruct the header string
-		$signatureHeaders = explode(" ", $signatureParts["headers"]);
-		$signatureString = "";
-		foreach ($signatureHeaders as $signatureHeader) {
-			if ("(request-target)" == $signatureHeader) {
-				$method = strtolower($_SERVER["REQUEST_METHOD"]);
-				$target = $_SERVER["REQUEST_URI"];
-				$signatureString .= "(request-target): {$method} {$target}\n";
-			} else if ("host" == $signatureHeader) {
-				$host = strtolower($_SERVER["HTTP_HOST"]);
-				$signatureString .= "host: {$host}\n";
-			} else {
-				$signatureString .= "{$signatureHeader}: " . $headers[$signatureHeader] . "\n";
+		//  The signature is surrounded by `:` characters.
+		$signatureB64 = str_replace(search: ":", replace: "", subject: $signatureData[1]);
+
+		//  The signature-input format is complicated!
+		$signatureInputString = $headers["signature-input"] ?? null;
+		if ($signatureInputString) {
+			// YAY it's the new standard 
+
+			//  Get the parameters. Assume there is only one signature.
+			$signatureParamsString = explode(separator: "=", string: $signatureInputString, limit: 2)[1];
+
+			//  Get the different elements of the signature.
+			$signatureInputData = explode(separator: ";", string: $signatureInputString);
+
+			//  Construct the data.
+			$signatureInput = [];
+			foreach ($signatureInputData as $signatureInputParts) {
+				$partsData = explode(separator: "=", string: $signatureInputParts);
+				//  Strip quotes from keyid and parentheses from sig1.
+				if ("keyid" == $partsData[0]) {
+					$partsData[1] = str_replace(search: "\"", replace: "", subject: $partsData[1]);
+				}
+
+				if ($signatureName == $partsData[0]) {
+					$partsData[1] = str_replace(search: ["(", ")"], replace: "", subject: $partsData[1]);
+				}
+
+				$signatureInput[$partsData[0]] = $partsData[1];
 			}
+
+			$signatureStructure = $signatureInput[$signatureName];
+			$signatureKeyID = $signatureInput["keyid"] ?? null;
+
+
+			//  Remove quotes.
+			$signatureStructure = str_replace(search: "\"", replace: "", subject: $signatureStructure);
+			$signatureStructureData = explode(separator: " ", string: $signatureStructure);
+
+			//  https://www.rfc-editor.org/info/rfc9421/#section-2.5
+			$signatureBase = "";
+			foreach ($signatureStructureData as $signatureStructureParts) {
+				if ("@method" == $signatureStructureParts) {
+					//  https://www.rfc-editor.org/info/rfc9421/#name-method
+					$signatureBase .= "\"@method\": " . $_SERVER["REQUEST_METHOD"] . "\n";
+				}
+				if ("@target-uri" == $signatureStructureParts) {
+					//  https://www.rfc-editor.org/info/rfc9421/#section-2.2.2
+					//  Change the domain name to your own.
+					$signatureBase .= "\"@target-uri\": https://EXAMPLE.COM" . $_SERVER["REQUEST_URI"] . "\n";
+				}
+				if ("content-digest" == $signatureStructureParts) {
+					$signatureBase .= "\"content-digest\": $digestString\n";
+				}
+			}
+
+			//  https://victoronsoftware.com/posts/http-message-signatures/#how-the-signature-is-created
+			$signatureBase .= "\"@signature-params\": $signatureParamsString";
+
+			//  Get the signing user's public key.
+			//  This is usually in the form `https://example.com/user/username#main-key`
+			//  This is to differentiate if the user has multiple keys.
+			//  This may need to be a signed request. You will need to write your own getDataFromURl() function to get the sending user's key.
+			try {
+				$userData = $this->ap->getJsonFromUrl($signatureKeyID, $user_id, $username);
+			} catch (\Exception $e) {
+				Debugger::log($e->getMessage(), Debugger::WARNING);
+				return false;
+			}
+			// $userData = getDataFromURl($signatureKeyID);
+			if (!$userData) {
+				Debugger::log("No data for {$signatureKeyID}", Debugger::WARNING);
+				return false;
+			}
+			$publicKey = $userData["publicKey"]["publicKeyPem"];
+
+			$verified = openssl_verify(
+				data: $signatureBase,
+				signature: base64_decode($signatureB64),
+				public_key: $publicKey,
+				algorithm: $digestAlgorithm
+			);
+		} else {
+			// WELL FUCK, it's the old standard
+
+			//	Examine the signature
+			$signatureHeader = $headers["signature"];
+
+			// Extract key information from the Signature header
+			$signatureParts = [];
+			//	Converts 'a=b,c=d e f' into ["a"=>"b", "c"=>"d e f"]
+			// word="text"
+			preg_match_all('/(\w+)="([^"]+)"/', $signatureHeader, $matches);
+			foreach ($matches[1] as $index => $key) {
+				$signatureParts[$key] = $matches[2][$index];
+			}
+
+			//	Manually reconstruct the header string
+			$signatureHeaders = explode(" ", $signatureParts["headers"]);
+			$signatureString = "";
+			foreach ($signatureHeaders as $signatureHeader) {
+				if ("(request-target)" == $signatureHeader) {
+					$method = strtolower($_SERVER["REQUEST_METHOD"]);
+					$target = $_SERVER["REQUEST_URI"];
+					$signatureString .= "(request-target): {$method} {$target}\n";
+				} else if ("host" == $signatureHeader) {
+					$host = strtolower($_SERVER["HTTP_HOST"]);
+					$signatureString .= "host: {$host}\n";
+				} else {
+					$signatureString .= "{$signatureHeader}: " . $headers[$signatureHeader] . "\n";
+				}
+			}
+
+			//	Remove trailing newline
+			$signatureString = trim($signatureString);
+
+			//	Get the Public Key
+			//	The link to the key might be sent with the body, but is always sent in the Signature header.
+			$signatureKeyID = $signatureParts["keyId"];
+
+			//	This is usually in the form `https://example.com/user/username#main-key`
+			//	This is to differentiate if the user has multiple keys
+			//	TODO: Check the actual key
+			// $actorUrl = $body["actor"];
+			try {
+				$userData = $this->ap->getJsonFromUrl($signatureKeyID, $user_id, $username);
+			} catch (\Exception $e) {
+				Debugger::log($e->getMessage(), Debugger::WARNING);
+				return false;
+			}
+			$publicKey = $userData["publicKey"]["publicKeyPem"] ?? null;
+
+			//	Check that the actor's key is the same as the key used to sign the message
+			//	Get the actor's public key
+
+			// $actorPublicKey = $actorData["publicKey"]["publicKeyPem"] ?? null;
+
+			if (!$publicKey) {
+				Debugger::log("Signature public key {$signatureKeyID} not available, {$debug_info}", Debugger::WARNING);
+				return false;
+			}
+
+			//	Get the remaining parts
+			$signature = base64_decode($signatureParts["signature"]);
+			$algorithm = $signatureParts["algorithm"];
+
+			//	There might be many different signing algorithms
+			//	TODO: Find a way to transform these automatically
+			//	See https://github.com/superseriousbusiness/gotosocial/issues/1186#issuecomment-1976166659 and https://github.com/snarfed/bridgy-fed/issues/430 for hs2019
+			if ("hs2019" == $algorithm) {
+				$algorithm = "sha256";
+			}
+
+			// Finally! Calculate whether the signature is valid
+			// Returns 1 if verified, 0 if not, false or -1 if an error occurred
+			$verified = openssl_verify(
+				$signatureString,
+				$signature,
+				$publicKey,
+				$algorithm
+			);
 		}
 
-		//	Remove trailing newline
-		$signatureString = trim($signatureString);
 
-		//	Get the Public Key
-		//	The link to the key might be sent with the body, but is always sent in the Signature header.
-		$publicKeyURL = $signatureParts["keyId"];
-
-		//	This is usually in the form `https://example.com/user/username#main-key`
-		//	This is to differentiate if the user has multiple keys
-		//	TODO: Check the actual key
-		try {
-			// $userDataJson = $this->ap->getDataFromUrl($publicKeyURL, $user_id, $username);
-			// $actorDataJson = $this->ap->getDataFromUrl($body["actor"], $user_id, $username);
-			// $userData = Json::decode($userDataJson, true);
-			// $actorData = Json::decode($actorDataJson, true);
-
-			$userData = $this->ap->getJsonFromUrl($publicKeyURL, $user_id, $username);
-			$actorData = $this->ap->getJsonFromUrl($body["actor"], $user_id, $username);
-		} catch (\Exception $e) {
-			Debugger::log($e, Debugger::WARNING);
-			return false;
-		}
-		$publicKey = $userData["publicKey"]["publicKeyPem"] ?? null;
-
-		//	Check that the actor's key is the same as the key used to sign the message
-		//	Get the actor's public key
-
-		$actorPublicKey = $actorData["publicKey"]["publicKeyPem"] ?? null;
-
-		if (!$publicKey || !$actorPublicKey || $publicKey != $actorPublicKey) {
-			Debugger::log("Signature keys don't match or null, {$debug_info}", Debugger::WARNING);
-			return false;
-		}
-
-		//	Get the remaining parts
-		$signature = base64_decode($signatureParts["signature"]);
-		$algorithm = $signatureParts["algorithm"];
-
-		//	There might be many different signing algorithms
-		//	TODO: Find a way to transform these automatically
-		//	See https://github.com/superseriousbusiness/gotosocial/issues/1186#issuecomment-1976166659 and https://github.com/snarfed/bridgy-fed/issues/430 for hs2019
-		if ("hs2019" == $algorithm) {
-			$algorithm = "sha256";
-		}
-
-		//	Finally! Calculate whether the signature is valid
-		//	Returns 1 if verified, 0 if not, false or -1 if an error occurred
-		$verified = openssl_verify(
-			$signatureString,
-			$signature,
-			$publicKey,
-			$algorithm
-		);
 
 		//	Convert to boolean
 		if ($verified === 1) {
@@ -366,9 +472,9 @@ class PubPresenter extends Presenter
 		}
 
 
-		return $verified;
+		return $verified ? $signatureKeyID : $verified;
 	}
-	
+
 	// public function renderNodeinfo()
 	// {
 	//     $this->sendJson($this->ap->nodeinfo());

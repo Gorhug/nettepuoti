@@ -57,5 +57,5 @@ forms:
 		Email: g.form.upEmailInvalid
 		Float: g.edit.floatValid
 
-php:
-	session.serialize_handler: igbinary
+# php:
+# 	session.serialize_handler: igbinary

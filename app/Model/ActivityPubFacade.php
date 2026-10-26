@@ -176,7 +176,7 @@ final class ActivityPubFacade
     {
 
         // $followers = $this->database->table('ap_followers')->where('followed_id', $user_id)->select("details_json->>'$.id' AS follower_id")->order('created_at DESC');
-        $followers = $this->database->query("SELECT details_json->>'$.id' AS follower_id FROM ap_followers WHERE followed_id = ? ORDER BY created_at DESC", $user_id);
+        $followers = $this->database->query("SELECT json_extract(details_json, '$.id') AS follower_id FROM ap_followers WHERE followed_id = ? ORDER BY created_at DESC", $user_id);
         $items = [];
         foreach ($followers as $follower) {
             $items[] = $follower->follower_id;
@@ -206,8 +206,9 @@ final class ActivityPubFacade
 
         $values = [
             "recipient_id" => $user_id,
-            "message_json" => $this->database::literal('jsonb(?)', $input),
+            "message_json" => $this->database::literal('json(?)', $input),
             "verified" => $verified,
+            "created_at" => new DateTimeImmutable(),
         ];
         $inbox_row = $this->database->table('ap_inbox')->insert($values);
 
@@ -431,8 +432,11 @@ final class ActivityPubFacade
     }
 
     public function getRepliesWithActors($guid, $user_id, $username, bool $publicOnly) {
-        $replie_rows = $this->database->query("SELECT message_json->'$.object' AS reply_json
-        FROM ap_inbox WHERE message_json->>'$.object.inReplyTo' = ?
+        #$replie_rows = $this->database->query("SELECT message_json->'$.object' AS reply_json
+        #FROM ap_inbox WHERE message_json->>'$.object.inReplyTo' = ?
+        #ORDER BY created_at DESC", $guid);
+        $replie_rows = $this->database->query("SELECT json_extract(message_json, '$.object') AS reply_json
+        FROM ap_inbox WHERE json_extract(message_json, '$.object.inReplyTo') = ?
         ORDER BY created_at DESC", $guid);
         $actors = [];
         $replies = [];
@@ -444,7 +448,8 @@ final class ActivityPubFacade
             $replies[] = $reply;
             $actor = $reply['attributedTo'];
             if (!isset($actors[$actor])) {
-                $follower = $this->database->query("SELECT details_json->'$' AS details FROM ap_followers WHERE actor = ?", $actor)->fetch();
+                // $follower = $this->database->query("SELECT details_json->'$' AS details FROM ap_followers WHERE actor = ?", $actor)->fetch();
+                $follower = $this->database->query("SELECT json_extract(details_json, '$') AS details FROM ap_followers WHERE actor = ?", $actor)->fetch();
                 if ($follower) {
                     $actors[$actor] = JSON::decode($follower->details, true);
                 } else {
@@ -456,7 +461,9 @@ final class ActivityPubFacade
     }
     public function replies($replies_guid)
     {
-        $row = $this->database->fetch("SELECT message_json->>'$.actor' AS actor, sender_id FROM ap_outbox WHERE message_json->>'$.object.replies' = ?", $replies_guid);
+        // $row = $this->database->fetch("SELECT message_json->>'$.actor' AS actor, sender_id FROM ap_outbox WHERE message_json->>'$.object.replies' = ?", $replies_guid);
+        $row = $this->database->fetch("SELECT json_extract(message_json,'$.actor') AS actor, sender_id FROM ap_outbox WHERE json_extract(message_json, '$.object.replies') = ?", $replies_guid);
+        $row = null;
         if (!$row) {
             return null;
         }
@@ -473,13 +480,17 @@ final class ActivityPubFacade
         ];
         return $message;
     }
+
+    # FIXME: json operators to functions
     public function sendMessageToFollowers($message_json, $user_id, $username, $outbox_rowid)
     {
         // global $directories;
         //	Read existing followers
 
         // $followers = $this->database->table('ap_followers')->where("followed_id", $user_id)->select("details_json->>'$.endpoints.sharedInbox' AS shared_inbox, details_json->>'$.inbox' AS inbox");
-        $followers = $this->database->query("SELECT details_json->>'$.endpoints.sharedInbox' AS shared_inbox, details_json->>'$.inbox' AS inbox FROM ap_followers WHERE followed_id = ?", $user_id);
+        $followers = $this->database->query("
+            SELECT json_extract(details_json, '$.endpoints.sharedInbox') AS shared_inbox, 
+            json_extract(details_json, '$.inbox') AS inbox FROM ap_followers WHERE followed_id = ?", $user_id);
 
         //	Get all the inboxes
         $inboxes = [];
@@ -557,12 +568,22 @@ final class ActivityPubFacade
 
     public function outbox($user_id, $username)
     {
+        // $posts = $this->database->query("
+        //     SELECT message_json->>'$.object.id' AS object_id, message_json->>'$.id' AS id, 
+        //     message_json->>'$.type' AS type, message_json->>'$.object.type' AS object_type,
+        //     message_json->>'$.actor' AS actor 
+        //     FROM ap_outbox 
+        //     WHERE sender_id = ? AND message_json->>'$.type' IN ? ORDER BY created_at DESC",
+        //     $user_id,
+        //     ['Create', 'Like', 'Announce']
+        // );
+
         $posts = $this->database->query("
-            SELECT message_json->>'$.object.id' AS object_id, message_json->>'$.id' AS id, 
-            message_json->>'$.type' AS type, message_json->>'$.object.type' AS object_type,
-            message_json->>'$.actor' AS actor 
+            SELECT json_extract(message_json,'$.object.id') AS object_id, json_extract(message_json,'$.id') AS id, 
+            json_extract(message_json, '$.type') AS type, json_extract(message_json, '$.object.type') AS object_type,
+            json_extract(message_json, '$.actor') AS actor 
             FROM ap_outbox 
-            WHERE sender_id = ? AND message_json->>'$.type' IN ? ORDER BY created_at DESC",
+            WHERE sender_id = ? AND json_extract(message_json, '$.type') IN ? ORDER BY created_at DESC",
             $user_id,
             ['Create', 'Like', 'Announce']
         );
@@ -594,8 +615,8 @@ final class ActivityPubFacade
         $messages = $this->database->query("
             SELECT products.id AS id, products.name AS name, products.name_fi as name_fi
             FROM ap_outbox INNER JOIN products
-            ON products.ap_guid = message_json->>'$.object.id'
-            WHERE sender_id = ? AND message_json->>'$.type' IN ? ORDER BY products.published_at DESC",
+            ON products.ap_guid = json_extract(message_json, '$.object.id')
+            WHERE sender_id = ? AND json_extract(message_json,'$.type') IN ? ORDER BY products.published_at DESC",
             $user_id,
             ['Create', ]//'Like', 'Announce']
         );
@@ -630,7 +651,7 @@ final class ActivityPubFacade
         // $totalItems = count( $posts );
         $totalUsers = $this->database->table('users')->where("keys_created_at NOT", null)->count('*');
         // $totalPosts = $this->database->table('ap_outbox')->where("message_json->>'$.type'", "Create")->count('*');
-        $totalPosts = $this->database->query("SELECT COUNT(*) AS total FROM ap_outbox WHERE message_json->>'$.type' = 'Create'")->fetchField();
+        $totalPosts = $this->database->query("SELECT COUNT(*) AS total FROM ap_outbox WHERE json_extract(message_json, '$.type') = 'Create'")->fetchField();
         $nodeinfo = array(
             "version" => "2.1",	//	Version of the schema, not the software
             "software" => array(
@@ -663,9 +684,9 @@ final class ActivityPubFacade
 
     public function getByGuid($guid)
     {
-        $row = $this->database->fetch("SELECT message_json->>'$.id' AS id, message_json->>'$.object.id' AS object_id, 
-            message_json->'$' AS full_json, message_json->'$.object' as object_json 
-            FROM ap_outbox WHERE ? IN (message_json->>'$.object.id', message_json->>'$.id')
+        $row = $this->database->fetch("SELECT json_extract(message_json, '$.id') AS id, json_extract(message_json, '$.object.id') AS object_id, 
+            json_extract(message_json,'$') AS full_json, json_extract(message_json, '$.object') as object_json 
+            FROM ap_outbox WHERE ? IN (json_extract(message_json, '$.object.id'), json_extract(message_json,'$.id'))
             ORDER BY created_at DESC", $guid);
         if (!$row) {
             return null;
@@ -714,11 +735,11 @@ final class ActivityPubFacade
         $status_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 
         // Check for errors
-        if (curl_errno($ch) || $status_code == 404) {
+        if (curl_errno($ch) || $status_code >= 400 ||!$urlJSON) {
             // Handle cURL error
             // $error_message = curl_error( $ch ) . "\nUrl: {$url}\nHeaders: " . json_encode( $headers );
             $curl_error = curl_error($ch);
-            $error_message = "Curl error: {$curl_error}, for Url: {$url}";
+            $error_message = "Curl error: {$curl_error}, {$status_code}, for Url: {$url}";
             throw new \Exception($error_message);
         }
 

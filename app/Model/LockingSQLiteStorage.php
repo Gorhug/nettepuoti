@@ -24,8 +24,8 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
 	private \PDO $pdo;
 	private const SleepLength = 250000;
 	private $staleLocks = [];
-	private $serializer = "serialize";
-	private $unserializer = "unserialize";
+	private $serializer;
+	private $unserializer;
 	public function __construct(string $path)
 	{
 		if ($path !== ':memory:' && !is_file($path)) {
@@ -33,8 +33,11 @@ class LockingSQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkR
 		}
 
 		if (extension_loaded('igbinary')) {
-			$this->serializer = 'igbinary_serialize';
-			$this->unserializer = 'igbinary_unserialize';
+			$this->serializer = igbinary_serialize(...);
+			$this->unserializer = igbinary_unserialize(...);
+		} else {
+			$this->serializer = serialize(...);
+			$this->unserializer = unserialize(...);
 		}
 
 		$this->pdo = new \PDO('sqlite:' . $path);
